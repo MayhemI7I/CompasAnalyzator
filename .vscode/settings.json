@@ -1,0 +1,60 @@
+{
+    "go.useLanguageServer": true,
+    "go.toolsManagement.autoUpdate": true,
+    "go.lintTool": "golangci-lint",
+    "go.formatTool": "goimports",
+    "go.delveConfig": {
+        "dlvLoadConfig": {
+            "followPointers": true,
+            "maxVariableRecurse": 1,
+            "maxStringLen": 512,
+            "maxArrayValues": 64,
+            "maxStructFields": -1
+        }
+    },
+    "go.toolsEnvVars": {
+        "GO111MODULE": "on"
+    },
+    "go.inferGopath": true,
+    "go.alternateTools": {
+        "go": "go"
+    },
+    "go.buildOnSave": "workspace",
+    "go.lintOnSave": "workspace",
+    "go.vetOnSave": "workspace",
+    "go.coverOnSave": false,
+    "go.useCodeSnippetsOnFunctionSuggest": true,
+    "go.useCodeSnippetsOnFunctionSuggestWithoutType": true,
+    "go.snippets": {
+        "func": {
+            "prefix": "func",
+            "body": [
+                "func ${1:name}(${2:params}) ${3:returnType} {",
+                "\t$0",
+                "}"
+            ],
+            "description": "Function declaration"
+        }
+    },
+    "gopls": {
+        "ui.semanticTokens": true,
+        "ui.completion.usePlaceholders": true,
+        "ui.completion.completeFunctionCalls": true,
+        "ui.documentation.hoverKind": "FullDocumentation",
+        "ui.codelenses": {
+            "gc_details": true,
+            "regenerate_cgo": true,
+            "generate": true,
+            "tidy": true,
+            "upgrade_dependency": true,
+            "vendor": true
+        },
+        "ui.diagnostic.analyses": {
+            "unusedparams": true,
+            "shadow": true
+        },
+        "ui.completion.usePlaceholders": true,
+        "ui.completion.completeFunctionCalls": true,
+        "ui.documentation.hoverKind": "FullDocumentation"
+    }
+} 
