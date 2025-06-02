@@ -232,60 +232,93 @@ func runSession(dataDir, successDir, failureDir string) models.SessionResults {
 			continue
 		}
 
-		// Проверяем, что имя папки - это число
-		compassNumber, err := strconv.Atoi(folder.Name())
-		if err != nil || compassNumber > 20000 {
+		folderName := folder.Name()
+
+		// Проверка формата имени папки: "число" или "число(число)"
+		isValidFormat := false
+		mainNumberStr := ""
+
+		openParenIndex := strings.Index(folderName, "(")
+		closeParenIndex := strings.Index(folderName, ")")
+
+		if openParenIndex > 0 && closeParenIndex == len(folderName)-1 && closeParenIndex > openParenIndex {
+			// Формат "число(число)"
+			mainNumberStr = folderName[:openParenIndex]
+			// Дополнительно проверяем, что часть в скобках - это тоже число. (необязательно по условию, но хорошая практика)
+			subNumberStr := folderName[openParenIndex+1 : closeParenIndex]
+			if _, err := strconv.Atoi(subNumberStr); err == nil {
+				isValidFormat = true
+			}
+		} else if openParenIndex == -1 && closeParenIndex == -1 {
+			// Формат "число" (нет скобок)
+			mainNumberStr = folderName
+			isValidFormat = true
+		}
+
+		// Если формат кажется корректным, проверяем основное число и диапазон
+		if isValidFormat && mainNumberStr != "" {
+			mainNumber, err := strconv.Atoi(mainNumberStr)
+			if err != nil || mainNumber < 1 || mainNumber > 1000000 {
+				isValidFormat = false // Некорректное число или вне диапазона
+			}
+		} else {
+			isValidFormat = false // Некорректный формат
+		}
+
+		// Если формат невалидный после всех проверок, пропускаем папку
+		if !isValidFormat {
+			fmt.Printf("Пропускаем папку '%s': некорректный формат имени или номер вне диапазона (1-1000000)\n", folderName)
 			continue
 		}
 
-		csvPath := filepath.Join(dataDir, folder.Name(), "SB_CMPS.csv")
+		csvPath := filepath.Join(dataDir, folderName, "SB_CMPS.csv")
 
 		if _, err := os.Stat(csvPath); os.IsNotExist(err) {
-			fmt.Printf("Компас %s: файл не найден\n", folder.Name())
+			fmt.Printf("Компас %s: файл не найден\n", folderName)
 			result := models.CompassResult{
-				CompassNumber: folder.Name(),
+				CompassNumber: folderName,
 				Errors:        []string{fmt.Sprintf("Файл данных SB_CMPS.csv не найден: %s", csvPath)},
 			}
-			results.FailedCompasses[folder.Name()] = result
+			results.FailedCompasses[folderName] = result
 			continue
 		} else if err != nil {
 			// Handle other potential errors from os.Stat, like permission issues or file in use
-			fmt.Printf("Компас %s: ошибка доступа к файлу - %v\n", folder.Name(), err)
+			fmt.Printf("Компас %s: ошибка доступа к файлу - %v\n", folderName, err)
 			result := models.CompassResult{
-				CompassNumber: folder.Name(),
+				CompassNumber: folderName,
 				Errors:        []string{fmt.Sprintf("Ошибка доступа к файлу SB_CMPS.csv (%s): %v", csvPath, err)},
 			}
-			results.FailedCompasses[folder.Name()] = result
+			results.FailedCompasses[folderName] = result
 			continue
 		}
 
 		// Определяем путь к файлу лога для текущего компаса
 		logFilePath := ""
 		if analysisLogDir != "" {
-			logFileName := fmt.Sprintf("compass_%s_analysis.log", folder.Name())
+			logFileName := fmt.Sprintf("compass_%s_analysis.log", folderName)
 			logFilePath = filepath.Join(analysisLogDir, logFileName)
 		}
 
 		// Читаем и анализируем данные
 		data, err := parser.ReadCSVFile(csvPath)
 		if err != nil {
-			fmt.Printf("Компас %s: ошибка чтения данных - %v\n", folder.Name(), err)
+			fmt.Printf("Компас %s: ошибка чтения данных - %v\n", folderName, err)
 			result := models.CompassResult{
-				CompassNumber: folder.Name(),
+				CompassNumber: folderName,
 				Errors:        []string{fmt.Sprintf("Ошибка чтения файла данных (%s): %v", csvPath, err)},
 			}
-			results.FailedCompasses[folder.Name()] = result
+			results.FailedCompasses[folderName] = result
 			continue
 		}
 
 		result := analyzer.AnalyzeCompassData(data, logFilePath)
-		result.CompassNumber = folder.Name()
+		result.CompassNumber = folderName
 
 		// Сохраняем результаты (analysis errors are already in result.Errors from AnalyzeCompassData)
 		if result.IsValid {
-			results.SuccessfulCompasses[folder.Name()] = result
+			results.SuccessfulCompasses[folderName] = result
 		} else {
-			results.FailedCompasses[folder.Name()] = result
+			results.FailedCompasses[folderName] = result
 		}
 	}
 
