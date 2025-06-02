@@ -476,7 +476,8 @@ func main() {
 		// Ask user if they want to use previous directories
 		fmt.Printf("%s\n", cyan("Найдена предыдущая конфигурация с директориями:"))
 		fmt.Printf("  %s: %s\n", yellow("Директория входных данных"), config.DataDir)
-		fmt.Printf("  %s: %s\n", yellow("Директория выходных данных"), config.SuccessDir)
+		fmt.Printf("  %s: %s\n", yellow("Директория успешных результатов"), config.SuccessDir)
+		fmt.Printf("  %s: %s\n", yellow("Директория неуспешных результатов"), config.FailureDir)
 		fmt.Printf("  %s: %s\n", yellow("Директория для переименования"), config.RenameDir)
 		fmt.Printf("%s", cyan("Хотите использовать их? (да/нет): "))
 		var response string
@@ -491,7 +492,7 @@ func main() {
 	// Get directories from user or use config
 	if !usePrevious {
 		config.DataDir = askOrDefault(cyan("Введите директорию с файлами компасов"), config.DataDir)
-		config.SuccessDir = askOrDefault(cyan("Введите директорию для сохранения результатов"), config.SuccessDir)
+		config.SuccessDir = askOrDefault(cyan("Введите директорию для успешных результатов"), config.SuccessDir)
 		config.FailureDir = askOrDefault(cyan("Введите директорию для неуспешных результатов"), config.FailureDir)
 		config.RenameDir = askOrDefault(cyan("Введите директорию для переименования файлов"), config.RenameDir)
 	}
