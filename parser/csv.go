@@ -3,6 +3,7 @@ package parser
 import (
 	"encoding/csv"
 	"fmt"
+	"log"
 	"os"
 	"sort"
 	"strconv"
@@ -116,19 +117,24 @@ func ReadCSVFile(filePath string) ([]models.CompassData, error) {
 	var data []models.CompassData
 	for _, record := range records {
 		if len(record) < 10 {
+			log.Printf("некорректная строка в файле меньше 10 символов: %v", record)
 			continue
 		}
 
 		// Парсим время из столбца A
 		t, err := ParseUnixTime(record[0])
 		if err != nil {
+			log.Printf("ошибка парсинга времени: %v", err)
 			continue
 		}
 
 		// Парсим угол из столбца J
 		angleStr := strings.TrimSpace(record[9])
+		// Заменяем запятую на точку для корректного парсинга
+		angleStr = strings.Replace(angleStr, ",", ".", -1)
 		angle, err := strconv.ParseFloat(angleStr, 64)
 		if err != nil {
+			log.Printf("ошибка парсинга угла: %v", err)
 			continue
 		}
 
