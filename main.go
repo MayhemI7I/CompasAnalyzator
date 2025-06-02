@@ -13,6 +13,8 @@ import (
 	"compass_analyzer/analyzer"
 	"compass_analyzer/models"
 	"compass_analyzer/parser"
+
+	"github.com/fatih/color"
 )
 
 // Config хранит пути к директориям
@@ -36,17 +38,22 @@ type Config struct {
 //
 //	showResults(sessionResults)
 func showResults(results models.SessionResults) {
+	// Создаем цветные принтеры
+	cyan := color.New(color.FgCyan).SprintFunc()
+	yellow := color.New(color.FgYellow).SprintFunc()
+	green := color.New(color.FgGreen).SprintFunc()
+	red := color.New(color.FgRed).SprintFunc()
+
 	// Выводим итоговую статистику в начале
-	fmt.Printf("\nИтоги анализа:\n")
-	fmt.Printf("Успешно проанализировано: %d компасов\n", len(results.SuccessfulCompasses))
-	fmt.Printf("Ошибок анализа: %d компасов\n", len(results.FailedCompasses))
+	fmt.Printf("\n%s\n", cyan("Итоги анализа:"))
+	fmt.Printf("%s: %d компасов\n", green("Успешно проанализировано"), len(results.SuccessfulCompasses))
+	fmt.Printf("%s: %d компасов\n", red("Ошибок анализа"), len(results.FailedCompasses))
 
 	// Показываем успешные компасы (кратко)
-	fmt.Println("\nУспешные компасы:")
+	fmt.Printf("\n%s:\n", green("Успешные компасы"))
 	if len(results.SuccessfulCompasses) == 0 {
-		fmt.Println("Нет успешно проанализированных компасов")
+		fmt.Printf("%s\n", yellow("Нет успешно проанализированных компасов"))
 	} else {
-		// Сначала показываем краткую информацию (только номера)
 		for number := range results.SuccessfulCompasses {
 			fmt.Printf("%s ", number)
 		}
@@ -54,11 +61,10 @@ func showResults(results models.SessionResults) {
 	}
 
 	// Показываем неуспешные компасы (кратко)
-	fmt.Println("\nНеуспешные компасы:")
+	fmt.Printf("\n%s:\n", red("Неуспешные компасы"))
 	if len(results.FailedCompasses) == 0 {
-		fmt.Println("Нет неуспешных компасов")
+		fmt.Printf("%s\n", yellow("Нет неуспешных компасов"))
 	} else {
-		// Сначала показываем краткую информацию (только номера)
 		for number := range results.FailedCompasses {
 			fmt.Printf("%s ", number)
 		}
@@ -66,7 +72,7 @@ func showResults(results models.SessionResults) {
 	}
 
 	// Спрашиваем, нужно ли показать подробную информацию
-	fmt.Print("\nПоказать подробную информацию по компасам? (y/n): ")
+	fmt.Printf("\n%s", cyan("Показать подробную информацию по компасам? (y/n): "))
 	if getInput("") == "y" {
 		showDetailedResults(results)
 	}
@@ -74,10 +80,15 @@ func showResults(results models.SessionResults) {
 
 // showDetailedResults показывает подробную информацию по компасам
 func showDetailedResults(results models.SessionResults) {
-	fmt.Println("\nПодробная информация по компасам:")
+	cyan := color.New(color.FgCyan).SprintFunc()
+	yellow := color.New(color.FgYellow).SprintFunc()
+	green := color.New(color.FgGreen).SprintFunc()
+	red := color.New(color.FgRed).SprintFunc()
+
+	fmt.Printf("\n%s\n", cyan("Подробная информация по компасам:"))
 	for number, result := range results.SuccessfulCompasses {
-		fmt.Printf("\nКомпас %s:\n", number)
-		fmt.Println("Найденные повороты:")
+		fmt.Printf("\n%s %s:\n", green("Компас"), number)
+		fmt.Printf("%s\n", yellow("Найденные повороты:"))
 		for i := 0; i < len(result.Angles); i++ {
 			startAngle := 0.0
 			endAngle := 0.0
@@ -95,25 +106,28 @@ func showDetailedResults(results models.SessionResults) {
 				}
 			}
 
-			fmt.Printf("Поворот %d: Изменение: %.2f°, Начальный угол: %.2f°, Конечный угол: %.2f°\n",
-				i+1, result.Angles[i], startAngle, endAngle)
+			fmt.Printf("%s %d: %s %.2f°, %s %.2f°, %s %.2f°\n",
+				yellow("Поворот"), i+1,
+				cyan("Изменение:"), result.Angles[i],
+				cyan("Начальный угол:"), startAngle,
+				cyan("Конечный угол:"), endAngle)
 		}
-		fmt.Println("\nВсе записи углов:")
+		fmt.Printf("\n%s\n", yellow("Все записи углов:"))
 		for i, angle := range result.AllAngles {
 			fmt.Printf("%d: %.2f°\n", i+1, angle)
 		}
 	}
 
 	for number, result := range results.FailedCompasses {
-		fmt.Printf("\nКомпас %s:\n", number)
-		fmt.Println("Ошибки:")
+		fmt.Printf("\n%s %s:\n", red("Компас"), number)
+		fmt.Printf("%s\n", yellow("Ошибки:"))
 		for _, err := range result.Errors {
-			fmt.Printf("- %s\n", err)
+			fmt.Printf("- %s\n", red(err))
 		}
 		if len(result.Angles) > 0 {
-			fmt.Printf("Найденные повороты (изменения угла): %.2f°\n", result.Angles)
+			fmt.Printf("%s %.2f°\n", cyan("Найденные повороты (изменения угла):"), result.Angles)
 		}
-		fmt.Println("\nВсе записи углов:")
+		fmt.Printf("\n%s\n", yellow("Все записи углов:"))
 		for i, angle := range result.AllAngles {
 			fmt.Printf("%d: %.2f°\n", i+1, angle)
 		}
@@ -349,15 +363,20 @@ func askOrDefault(prompt, current string) string {
 
 // renameFiles переименовывает файлы в указанной директории, удаляя "tim" из названия
 func renameFiles(dir string) error {
+	cyan := color.New(color.FgCyan).SprintFunc()
+	yellow := color.New(color.FgYellow).SprintFunc()
+	green := color.New(color.FgGreen).SprintFunc()
+	red := color.New(color.FgRed).SprintFunc()
+
 	// Проверяем существование директории
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		return fmt.Errorf("директория не существует: %s", dir)
+		return fmt.Errorf("%s: %s", red("директория не существует"), dir)
 	}
 
 	// Читаем содержимое директории
 	files, err := os.ReadDir(dir)
 	if err != nil {
-		return fmt.Errorf("ошибка чтения директории: %v", err)
+		return fmt.Errorf("%s: %v", red("ошибка чтения директории"), err)
 	}
 
 	renamedCount := 0
@@ -379,62 +398,83 @@ func renameFiles(dir string) error {
 
 		// Переименовываем файл
 		if err := os.Rename(oldPath, newPath); err != nil {
-			fmt.Printf("Ошибка переименования файла %s: %v\n", oldName, err)
+			fmt.Printf("%s %s: %v\n", red("Ошибка переименования файла"), oldName, err)
 			continue
 		}
 		renamedCount++
-		fmt.Printf("Переименован файл: %s -> %s\n", oldName, newName)
+		fmt.Printf("%s: %s -> %s\n", green("Переименован файл"), yellow(oldName), yellow(newName))
 	}
 
-	fmt.Printf("\nВсего переименовано файлов: %d\n", renamedCount)
+	fmt.Printf("\n%s: %d\n", cyan("Всего переименовано файлов"), renamedCount)
 	return nil
 }
 
 // main — теперь с выбором операции
 func main() {
+	// Создаем цветные принтеры
+	cyan := color.New(color.FgCyan).SprintFunc()
+	yellow := color.New(color.FgYellow).SprintFunc()
+	green := color.New(color.FgGreen).SprintFunc()
+	red := color.New(color.FgRed).SprintFunc()
+	blue := color.New(color.FgBlue).SprintFunc()
+
+	// Показываем информацию об авторе
+	fmt.Printf("\n%s\n", cyan(`
+    ____                      ____      
+   / ___|___  _ __ ___  _ __ |  _ \ ___ 
+  | |   / _ \| '_ \ _ \| '_ \| |_) / __|
+  | |__| (_) | | | | | | |_) |  _ \__ \
+   \____\___/|_| |_| |_| .__/|_| \_\___/
+                       |_|             
+`))
+	fmt.Printf("%s\n", yellow("====================================="))
+	fmt.Printf("%s\n", green("Created by: Ульянов Александр Юрьевич"))
+	fmt.Printf("%s\n", blue("Version: 1.0.0"))
+	fmt.Printf("%s\n\n", yellow("====================================="))
+
 	// Load configuration
 	config, err := loadConfig()
 
 	usePrevious := true
 	if err != nil {
-		fmt.Println("Конфигурационный файл не найден или поврежден. Будут запрошены новые директории.")
+		fmt.Printf("%s\n", red("Конфигурационный файл не найден или поврежден. Будут запрошены новые директории."))
 		usePrevious = false
 	} else {
 		// Ask user if they want to use previous directories
-		fmt.Printf("Найдена предыдущая конфигурация с директориями:\n")
-		fmt.Printf("  Директория входных данных: %s\n", config.DataDir)
-		fmt.Printf("  Директория выходных данных: %s\n", config.SuccessDir)
-		fmt.Printf("  Директория для переименования: %s\n", config.RenameDir)
-		fmt.Print("Хотите использовать их? (да/нет): ")
+		fmt.Printf("%s\n", cyan("Найдена предыдущая конфигурация с директориями:"))
+		fmt.Printf("  %s: %s\n", yellow("Директория входных данных"), config.DataDir)
+		fmt.Printf("  %s: %s\n", yellow("Директория выходных данных"), config.SuccessDir)
+		fmt.Printf("  %s: %s\n", yellow("Директория для переименования"), config.RenameDir)
+		fmt.Printf("%s", cyan("Хотите использовать их? (да/нет): "))
 		var response string
 		fmt.Scanln(&response)
 
 		if strings.ToLower(strings.TrimSpace(response)) != "да" {
-			fmt.Println("Выбрана ручная настройка директорий.")
+			fmt.Printf("%s\n", yellow("Выбрана ручная настройка директорий."))
 			usePrevious = false
 		}
 	}
 
 	// Get directories from user or use config
 	if !usePrevious {
-		config.DataDir = askOrDefault("Введите директорию с файлами компасов", config.DataDir)
-		config.SuccessDir = askOrDefault("Введите директорию для сохранения результатов", config.SuccessDir)
-		config.FailureDir = askOrDefault("Введите директорию для неуспешных результатов", config.FailureDir)
-		config.RenameDir = askOrDefault("Введите директорию для переименования файлов", config.RenameDir)
+		config.DataDir = askOrDefault(cyan("Введите директорию с файлами компасов"), config.DataDir)
+		config.SuccessDir = askOrDefault(cyan("Введите директорию для сохранения результатов"), config.SuccessDir)
+		config.FailureDir = askOrDefault(cyan("Введите директорию для неуспешных результатов"), config.FailureDir)
+		config.RenameDir = askOrDefault(cyan("Введите директорию для переименования файлов"), config.RenameDir)
 	}
 
 	// Save the potentially updated config
 	if err := saveConfig(config); err != nil {
-		log.Fatalf("Ошибка сохранения конфигурации: %v", err)
+		log.Fatalf("%s: %v\n", red("Ошибка сохранения конфигурации"), err)
 	}
 
 	// Основной цикл программы
 	for {
-		fmt.Println("\nВыберите операцию:")
-		fmt.Println("1. Проверка компасов")
-		fmt.Println("2. Корректировка названий файлов")
-		fmt.Println("3. Выход")
-		fmt.Print("Ваш выбор (1-3): ")
+		fmt.Printf("\n%s\n", cyan("Выберите операцию:"))
+		fmt.Printf("%s\n", yellow("1. Проверка компасов"))
+		fmt.Printf("%s\n", yellow("2. Корректировка названий файлов"))
+		fmt.Printf("%s\n", yellow("3. Выход"))
+		fmt.Printf("%s", cyan("Ваш выбор (1-3): "))
 
 		choice := getInput("")
 		switch choice {
@@ -442,16 +482,16 @@ func main() {
 			results := runSession(config.DataDir, config.SuccessDir, config.FailureDir)
 			showResults(results)
 		case "2":
-			fmt.Printf("\nНачинаем переименование файлов в директории: %s\n", config.RenameDir)
+			fmt.Printf("\n%s: %s\n", cyan("Начинаем переименование файлов в директории"), yellow(config.RenameDir))
 			if err := renameFiles(config.RenameDir); err != nil {
-				fmt.Printf("Ошибка при переименовании файлов: %v\n", err)
+				fmt.Printf("%s: %v\n", red("Ошибка при переименовании файлов"), err)
 			}
 		case "3":
-			fmt.Println("\nПрограмма завершена. Нажмите Enter для выхода...")
+			fmt.Printf("\n%s\n", green("Программа завершена. Нажмите Enter для выхода..."))
 			bufio.NewReader(os.Stdin).ReadBytes('\n')
 			return
 		default:
-			fmt.Println("Неверный выбор. Пожалуйста, выберите 1, 2 или 3.")
+			fmt.Printf("%s\n", red("Неверный выбор. Пожалуйста, выберите 1, 2 или 3."))
 		}
 	}
 }
