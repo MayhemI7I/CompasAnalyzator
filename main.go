@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -35,21 +36,37 @@ func showResults(results models.SessionResults) {
 	fmt.Printf("%s: %d компасов\n", green("Успешно проанализировано"), len(results.SuccessfulCompasses))
 	fmt.Printf("%s: %d компасов\n", red("Ошибок анализа"), len(results.FailedCompasses))
 
+	// Создаем слайсы для сортировки номеров компасов
+	successfulNumbers := make([]string, 0, len(results.SuccessfulCompasses))
+	failedNumbers := make([]string, 0, len(results.FailedCompasses))
+
+	// Заполняем слайсы номерами компасов
+	for number := range results.SuccessfulCompasses {
+		successfulNumbers = append(successfulNumbers, number)
+	}
+	for number := range results.FailedCompasses {
+		failedNumbers = append(failedNumbers, number)
+	}
+
+	// Сортируем номера компасов
+	sort.Strings(successfulNumbers)
+	sort.Strings(failedNumbers)
+
 	fmt.Printf("\n%s:\n", green("Успешные компасы"))
-	if len(results.SuccessfulCompasses) == 0 {
+	if len(successfulNumbers) == 0 {
 		fmt.Printf("%s\n", yellow("Нет успешно проанализированных компасов"))
 	} else {
-		for number := range results.SuccessfulCompasses {
+		for _, number := range successfulNumbers {
 			fmt.Printf("%s ", number)
 		}
 		fmt.Println()
 	}
 
 	fmt.Printf("\n%s:\n", red("Неуспешные компасы"))
-	if len(results.FailedCompasses) == 0 {
+	if len(failedNumbers) == 0 {
 		fmt.Printf("%s\n", yellow("Нет неуспешных компасов"))
 	} else {
-		for number := range results.FailedCompasses {
+		for _, number := range failedNumbers {
 			fmt.Printf("%s ", number)
 		}
 		fmt.Println()
@@ -69,7 +86,25 @@ func showDetailedResults(results models.SessionResults) {
 
 	fmt.Printf("\n%s\n", cyan("Подробная информация по компасам:"))
 
-	for number, result := range results.SuccessfulCompasses {
+	// Создаем слайсы для сортировки номеров компасов
+	successfulNumbers := make([]string, 0, len(results.SuccessfulCompasses))
+	failedNumbers := make([]string, 0, len(results.FailedCompasses))
+
+	// Заполняем слайсы номерами компасов
+	for number := range results.SuccessfulCompasses {
+		successfulNumbers = append(successfulNumbers, number)
+	}
+	for number := range results.FailedCompasses {
+		failedNumbers = append(failedNumbers, number)
+	}
+
+	// Сортируем номера компасов
+	sort.Strings(successfulNumbers)
+	sort.Strings(failedNumbers)
+
+	// Выводим информацию по успешным компасам
+	for _, number := range successfulNumbers {
+		result := results.SuccessfulCompasses[number]
 		fmt.Printf("\n%s %s:\n", green("Компас"), number)
 		fmt.Printf("%s\n", yellow("Найденные повороты:"))
 		for i, turn := range result.Turns {
@@ -83,7 +118,9 @@ func showDetailedResults(results models.SessionResults) {
 		}
 	}
 
-	for number, result := range results.FailedCompasses {
+	// Выводим информацию по неуспешным компасам
+	for _, number := range failedNumbers {
+		result := results.FailedCompasses[number]
 		fmt.Printf("\n%s %s:\n", red("Компас"), number)
 		fmt.Printf("%s\n", yellow("Ошибки:"))
 		for _, err := range result.Errors {
@@ -224,14 +261,24 @@ func runSession(dataDir, successDir, failureDir string) models.SessionResults {
 			angles[i] = d.Angle
 		}
 
+		// Создаем файл лога для текущего компаса
+		logFilePath := filepath.Join(analysisLogDir, fmt.Sprintf("compass_%s.log", folderName))
+		logFile, err := os.Create(logFilePath)
+		if err != nil {
+			fmt.Printf("Компас %s: ошибка создания файла лога - %v\n", folderName, err)
+			logFile = nil
+		} else {
+			defer logFile.Close()
+		}
+
 		// Анализируем данные с помощью нового алгоритма
-		turns := analyzer.AnalyzeCompassData(angles)
+		isValid, turns := analyzer.AnalyzeCompassData(angles, logFile)
 
 		result := models.CompassResult{
 			CompassNumber: folderName,
 			AllAngles:     angles,
 			Turns:         turns,
-			IsValid:       len(turns) >= 4,
+			IsValid:       isValid,
 		}
 
 		if !result.IsValid {
