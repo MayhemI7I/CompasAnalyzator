@@ -124,9 +124,20 @@ func showDetailedResults(results models.SessionResults) {
 		for _, err := range result.Errors {
 			fmt.Printf("- %s\n", red(err))
 		}
+
 		if len(result.Angles) > 0 {
-			fmt.Printf("%s %.2f°\n", cyan("Найденные повороты (изменения угла):"), result.Angles)
+			fmt.Printf("\n%s\n", yellow("Найденные повороты:"))
+			for i := 0; i < len(result.Angles); i++ {
+				startAngle := result.TurnStartAngles[i]
+				endAngle := result.TurnEndAngles[i]
+				diff := result.Angles[i]
+				fmt.Printf("Поворот %d: %s %.2f° -> %.2f° (%s %.2f°)\n",
+					i+1,
+					cyan("Изменение:"), startAngle, endAngle,
+					cyan("разница:"), diff)
+			}
 		}
+
 		fmt.Printf("\n%s\n", yellow("Все записи углов:"))
 		for i, angle := range result.AllAngles {
 			fmt.Printf("%d: %.2f°\n", i+1, angle)

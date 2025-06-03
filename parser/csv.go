@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -115,16 +116,21 @@ func ReadCSVFile(filePath string) ([]models.CompassData, error) {
 	}
 
 	var data []models.CompassData
-	for _, record := range records {
+	ignoredCount := 0 // Счетчик пропущенных записей из-за ошибок парсинга
+
+	for i, record := range records {
 		if len(record) < 10 {
-			log.Printf("некорректная строка в файле меньше 10 символов: %v", record)
+			log.Printf("некорректная строка в файле меньше 10 символов в папке %s (строка %d): %v", filepath.Base(filepath.Dir(filePath)), i+2, record) // i+2 учитывает заголовок и 0-вой индекс записей
+			ignoredCount++
 			continue
 		}
 
-		// Парсим время из столбца A
-		t, err := ParseUnixTime(record[0])
+		// Парсим время
+		timestampStr := strings.TrimSpace(record[0])
+		timestamp, err := strconv.ParseInt(timestampStr, 10, 64)
 		if err != nil {
-			log.Printf("ошибка парсинга времени: %v", err)
+			log.Printf("ошибка парсинга времени в папке %s (строка %d, значение '%s'): %v", filepath.Base(filepath.Dir(filePath)), i+2, timestampStr, err)
+			ignoredCount++
 			continue
 		}
 
@@ -134,7 +140,8 @@ func ReadCSVFile(filePath string) ([]models.CompassData, error) {
 		angleStr = strings.Replace(angleStr, ",", ".", -1)
 		angle, err := strconv.ParseFloat(angleStr, 64)
 		if err != nil {
-			log.Printf("ошибка парсинга угла: %v", err)
+			log.Printf("ошибка парсинга угла в папке %s (строка %d, значение '%s'): %v", filepath.Base(filepath.Dir(filePath)), i+2, angleStr, err)
+			ignoredCount++
 			continue
 		}
 
@@ -145,14 +152,19 @@ func ReadCSVFile(filePath string) ([]models.CompassData, error) {
 		}
 
 		data = append(data, models.CompassData{
-			Time:       t,
+			Time:       time.Unix(timestamp, 0),
 			Angle:      angle,
 			TimeString: timeStringB,
 		})
 	}
 
+	// Логируем количество пропущенных записей
+	if ignoredCount > 0 {
+		log.Printf("Пропущено %d записей в папке %s из-за ошибок парсинга времени или угла.", ignoredCount, filepath.Base(filepath.Dir(filePath)))
+	}
+
 	if len(data) == 0 {
-		return nil, fmt.Errorf("не удалось прочитать ни одной записи из файла")
+		return nil, fmt.Errorf("не удалось прочитать ни одной валидной записи из файла")
 	}
 
 	return data, nil
