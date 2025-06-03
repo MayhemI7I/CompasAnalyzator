@@ -13,6 +13,15 @@ type CompassData struct {
 	TimeString string
 }
 
+// Turn представляет поворот компаса
+type Turn struct {
+	StartAngle float64 // Начальный угол
+	EndAngle   float64 // Конечный угол
+	Diff       float64 // Разница между углами
+	StartIndex int     // Индекс начального угла
+	EndIndex   int     // Индекс конечного угла
+}
+
 // CompassResult представляет результаты анализа одного компаса.
 // Структура содержит информацию о валидности измерений и найденных поворотах.
 type CompassResult struct {
@@ -20,18 +29,12 @@ type CompassResult struct {
 	CompassNumber string
 	// IsValid - флаг, указывающий на успешность анализа
 	IsValid bool
-	// Angles - массив найденных углов поворотов в градусах
-	Angles []float64
-	// Times - массив времен, когда были выполнены повороты
-	Times []time.Time
-	// Errors - список ошибок, обнаруженных при анализе
-	Errors []string
 	// AllAngles - все углы, записанные в процессе измерения
 	AllAngles []float64
-	// TurnStartAngles - начальные углы каждого из четырех найденных поворотов
-	TurnStartAngles []float64
-	// TurnEndAngles - конечные углы каждого из четырех найденных поворотов (конец стабильного участка после поворота)
-	TurnEndAngles []float64
+	// Turns - найденные повороты
+	Turns []Turn
+	// Errors - список ошибок, обнаруженных при анализе
+	Errors []string
 }
 
 // SessionResults хранит результаты сессии анализа.
