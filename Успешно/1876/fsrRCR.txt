@@ -1,0 +1,113 @@
+Record
+	- Actual:              yes
+	- Type:                record
+	- AB firmware version: 0x09002501
+	- SB firmware version: 0x00000015
+	- Node ID:             1876
+	Session
+		- Session name:       
+		- Comment:            
+		- Stage number:       0
+		- Stage name:         
+		- Control UP ID:      0
+		- Start UP ID:        0
+		- Template:              
+		- Session start time: unknown
+	Recording state from SB
+		- Time, s: 1747995299
+		Configuration
+			- SB ID:                   1876
+			- SB:MSD hardware version: 0x02
+			- SB:MSD firmware version: 0x15
+			- SB:MSD configuration:    SB-MCTL
+		Sensors
+			- Geophone X:   0
+			- Geophone Y:   0
+			- Geophone Z:   0
+			- Hydrophone H: 0
+		Параметры запуска
+			- Recordung mode:                common
+			- Testing type 1:                disabled
+			- Synchronization/checking mode: with synchronization and check
+			- Frequency, Hz:                 4000
+			- Preset start time:             unknown
+			- Preset recording length:       2147483647(???)
+			- ADC bit weight, V:             2,9802322E-07
+			- SB:CMPS calibration mode:      with calibration
+			- Power down allowed:            allowed
+			- Testing type 2:                laboratory
+			Channels settings
+				X
+					- Gain:	           1
+					- MUX code:        recording (sensors)
+					- Gain correction: 0
+				Y
+					- Gain:	           1
+					- MUX code:        recording (sensors)
+					- Gain correction: 0
+				Z
+					- Gain:	           1
+					- MUX code:        recording (sensors)
+					- Gain correction: 0
+				H
+					- Gain:	           1
+					- MUX code:        recording (sensors)
+					- Gain correction: 0
+			- Test DAC gain:                 not used
+			Recording mode polling settings
+				AB:ENV
+					- Polling period, s: 30
+					- Save period, s:    0
+				AB:DEPTH
+					- Polling period, s: 30
+					- Save period, s:    0
+				AB/SB:PWRU
+					- Polling period, s: 60
+					- Save period, s:    0
+				SB:CMPS
+					- Polling period, s: 30
+					- Save period, s:    0
+			- Bright LED duration, s:        60
+		Recording state
+			- State: recording
+			Status and errors
+				- SB:MSD status:          recording
+				- SB:MSD hardware errors: 0x0002 = 0-0-0-0-0-0-0-0-0-0-0-0-0-0-GK_NOT_TUNED-0
+				Channe errors
+					- X:                       no
+					- Y:                       no
+					- Z:                       no
+					- H:                       no
+			Time parameters
+				- Samples:                       0
+				- SB time:                       23.05.2025 10:14:59 (1747995299)
+				- Synchronization time:          23.05.2025 09:41:40 (1747993300)
+				- Checking time:                 23.05.2025 10:15:46 (1747995346)
+				- UTC-GPS difference, s:         18
+				- Synchronization/checking flag: 0x11
+				- SB internal ticks (ext):       14319577494362584
+				- Internal checking tick (ext):  0
+				- Drift, ns/s:                   622 / 76 мкс / 37,110 нс/с
+				- AB:APT event tick (ext):       0
+				- Time from DAC code change, s:  4785151913586032
+				- Time from SB powerup, s:       93552
+			Preprocessing
+				DC
+					- X: -2971
+					- Y: -2710
+					- Z: 745
+					- H: -756
+				RMS
+					- X: 1300419
+					- Y: 598184
+					- Z: 1022973
+					- H: 173233
+	Recording state from AB
+		- SB connection time, s: 91751
+		- Stop recording reason: Rack connected
+		- Record number:         0
+		- Record start time:     23.05.2025 09:42:00 (1747993320)
+		- Record stop time:      23.05.2025 10:14:59 (1747995299)
+		- First sector address:  102138
+		- Sectors count:         281484
+	- Non-seismic sectors: 29

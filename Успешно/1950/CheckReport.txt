@@ -1,0 +1,13 @@
+From the RCR:
+ - SyncTimePOSIX  [ RCR          ] = 1747028268 (0x000000006821892C)
+ - CheckTimePOSIX [ RCR          ] = 1747032039 (0x00000000682197E7)
+ - Drift          [ RCR          ] = -8 (0xFFFFFFFFFFFFFFF8)
+ - UTCGPSDiffSync [ RCR          ] = 18 (0x0000000000000012)
+
+The RCR data has been used for drift calculations
+Calculated drift (us/s) = -1/3771
+UTC-GPS difference from the RCR data: normal
+
+Processing results: 
+Calculated drift (us/s) = -1/3771
+The UTC-GPS difference (s) = 18

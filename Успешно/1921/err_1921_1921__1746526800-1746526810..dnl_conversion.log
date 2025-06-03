@@ -1,0 +1,176 @@
+Selected CPU core #10
+File RCR E:\MTCGeo\Калибровка\Коралл\1921\fsrRCR.txt has been created successfully.
+RCR produces data for the drift calculation
+RCR produces the UTC-GPS difference
+File E:\MTCGeo\Калибровка\Коралл\1921\CheckReport.txt has been created successfully.
+Directory for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x has been created successfully.
+File for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x\difference has been created successfully.
+File for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x\gain has been created successfully.
+File for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x\frequency has been created successfully.
+File for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x\gpstimediff has been created successfully.
+File for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x\length has been created successfully.
+File for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x\period has been created successfully.
+File for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x\synchronize has been created successfully.
+File for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x\time has been created successfully.
+File for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x\units has been created successfully.
+File for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x\yabsent has been created successfully.
+File for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x\samples has been created successfully.
+File for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x\xabsent has been created successfully.
+Directory for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y has been created successfully.
+File for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y\difference has been created successfully.
+File for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y\gain has been created successfully.
+File for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y\frequency has been created successfully.
+File for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y\gpstimediff has been created successfully.
+File for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y\length has been created successfully.
+File for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y\period has been created successfully.
+File for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y\synchronize has been created successfully.
+File for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y\time has been created successfully.
+File for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y\units has been created successfully.
+File for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y\yabsent has been created successfully.
+File for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y\samples has been created successfully.
+File for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y\xabsent has been created successfully.
+Directory for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z has been created successfully.
+File for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z\difference has been created successfully.
+File for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z\gain has been created successfully.
+File for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z\frequency has been created successfully.
+File for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z\gpstimediff has been created successfully.
+File for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z\length has been created successfully.
+File for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z\period has been created successfully.
+File for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z\synchronize has been created successfully.
+File for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z\time has been created successfully.
+File for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z\units has been created successfully.
+File for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z\yabsent has been created successfully.
+File for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z\samples has been created successfully.
+File for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z\xabsent has been created successfully.
+Directory for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h has been created successfully.
+File for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h\difference has been created successfully.
+File for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h\gain has been created successfully.
+File for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h\frequency has been created successfully.
+File for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h\gpstimediff has been created successfully.
+File for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h\length has been created successfully.
+File for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h\period has been created successfully.
+File for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h\synchronize has been created successfully.
+File for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h\time has been created successfully.
+File for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h\units has been created successfully.
+File for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h\yabsent has been created successfully.
+File for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h\samples has been created successfully.
+File for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h\xabsent has been created successfully.
+!!! Samples split error found! Source file position (bytes) 512. Calculated 0х0019CA21, received 0х00287331
+!!! Samples split error found! Source file position (bytes) 1024. Calculated 0х00287332, received 0х00287330
+!!! Samples split error found! Source file position (bytes) 1536. Calculated 0х00287331, received 0х0028732F
+!!! Samples split error found! Source file position (bytes) 2048. Calculated 0х00287330, received 0х0028732E
+!!! Samples split error found! Source file position (bytes) 2560. Calculated 0х0028732F, received 0х0028732D
+!!! Samples split error found! Source file position (bytes) 3072. Calculated 0х0028732E, received 0х002871EC
+!!! Samples split error found! Source file position (bytes) 3584. Calculated 0х002871ED, received 0х00282EEB
+!!! Samples split error found! Source file position (bytes) 4096. Calculated 0х00282EEC, received 0х0027EBCA
+!!! Samples split error found! Source file position (bytes) 4608. Calculated 0х0027EBCB, received 0х0027A8C9
+!!! Samples split error found! Source file position (bytes) 5120. Calculated 0х0027A8CA, received 0х00279218
+!!! Samples split error found! Source file position (bytes) 5632. Calculated 0х00279219, received 0х002765B7
+!!! Samples split error found! Source file position (bytes) 6144. Calculated 0х002765B8, received 0х002722B6
+!!! Samples split error found! Source file position (bytes) 6656. Calculated 0х002722B7, received 0х0026DF95
+!!! Samples split error found! Source file position (bytes) 7168. Calculated 0х0026DF96, received 0х0026D894
+!!! Samples split error found! Source file position (bytes) 7680. Calculated 0х0026D895, received 0х00269CA3
+!!! Samples split error found! Source file position (bytes) 8192. Calculated 0х00269CA4, received 0х002664B2
+!!! Samples split error found! Source file position (bytes) 8704. Calculated 0х002664B3, received 0х00265981
+!!! Samples split error found! Source file position (bytes) 9216. Calculated 0х00265982, received 0х00261690
+!!! Samples split error found! Source file position (bytes) 9728. Calculated 0х00261691, received 0х0025D35F
+!!! Samples split error found! Source file position (bytes) 10240. Calculated 0х0025D360, received 0х0025906E
+!!! Samples split error found! Source file position (bytes) 10752. Calculated 0х0025906F, received 0х00254D4D
+!!! Samples split error found! Source file position (bytes) 11264. Calculated 0х00254D4E, received 0х0025374C
+!!! Samples split error found! Source file position (bytes) 11776. Calculated 0х0025374D, received 0х00250A5B
+!!! Samples split error found! Source file position (bytes) 12288. Calculated 0х00250A5C, received 0х0024C73A
+!!! Samples split error found! Source file position (bytes) 12800. Calculated 0х0024C73B, received 0х00248439
+!!! Samples split error found! Source file position (bytes) 13312. Calculated 0х0024843A, received 0х00244118
+!!! Samples split error found! Source file position (bytes) 13824. Calculated 0х00244119, received 0х002409D7
+!!! Samples split error found! Source file position (bytes) 14336. Calculated 0х002409D8, received 0х0023FE26
+!!! Samples split error found! Source file position (bytes) 14848. Calculated 0х0023FE27, received 0х0023BB05
+!!! Samples split error found! Source file position (bytes) 15360. Calculated 0х0023BB06, received 0х00237804
+!!! Samples split error found! Source file position (bytes) 15872. Calculated 0х00237805, received 0х00233F53
+!!! Samples split error found! Source file position (bytes) 16384. Calculated 0х00233F54, received 0х002334E2
+!!! Samples split error found! Source file position (bytes) 16896. Calculated 0х002334E3, received 0х0022F1F1
+!!! Samples split error found! Source file position (bytes) 17408. Calculated 0х0022F1F2, received 0х0022DC90
+!!! Samples split error found! Source file position (bytes) 17920. Calculated 0х0022DC91, received 0х0022AECF
+!!! Samples split error found! Source file position (bytes) 18432. Calculated 0х0022AED0, received 0х00226BDE
+!!! Samples split error found! Source file position (bytes) 18944. Calculated 0х00226BDF, received 0х002228AD
+!!! Samples split error found! Source file position (bytes) 19456. Calculated 0х002228AE, received 0х0021E5BC
+!!! Samples split error found! Source file position (bytes) 19968. Calculated 0х0021E5BD, received 0х0021AF0B
+!!! Samples split error found! Source file position (bytes) 20480. Calculated 0х0021AF0C, received 0х0021A29A
+!!! Samples split error found! Source file position (bytes) 20992. Calculated 0х0021A29B, received 0х00215FA9
+!!! Samples split error found! Source file position (bytes) 21504. Calculated 0х00215FAA, received 0х00211C78
+!!! Samples split error found! Source file position (bytes) 22016. Calculated 0х00211C79, received 0х0020D987
+!!! Samples split error found! Source file position (bytes) 22528. Calculated 0х0020D988, received 0х00209666
+!!! Samples split error found! Source file position (bytes) 23040. Calculated 0х00209667, received 0х002081A5
+!!! Samples split error found! Source file position (bytes) 23552. Calculated 0х002081A6, received 0х00205374
+!!! Samples split error found! Source file position (bytes) 24064. Calculated 0х00205375, received 0х00201053
+!!! Samples split error found! Source file position (bytes) 24576. Calculated 0х00201054, received 0х001FCD52
+!!! Samples split error found! Source file position (bytes) 25088. Calculated 0х001FCD53, received 0х001FA621
+!!! Samples split error found! Source file position (bytes) 25600. Calculated 0х001FA622, received 0х001F8A30
+!!! Samples split error found! Source file position (bytes) 26112. Calculated 0х001F8A31, received 0х001F541F
+!!! Samples split error found! Source file position (bytes) 26624. Calculated 0х001F5420, received 0х001F471E
+!!! Samples split error found! Source file position (bytes) 27136. Calculated 0х001F471F, received 0х001F041D
+!!! Samples split error found! Source file position (bytes) 27648. Calculated 0х001F041E, received 0х001EC12C
+!!! Samples split error found! Source file position (bytes) 28160. Calculated 0х001EC12D, received 0х001E7DFB
+!!! Samples split error found! Source file position (bytes) 28672. Calculated 0х001E7DFC, received 0х001E3B0A
+!!! Samples split error found! Source file position (bytes) 29184. Calculated 0х001E3B0B, received 0х001E2659
+!!! Samples split error found! Source file position (bytes) 29696. Calculated 0х001E265A, received 0х001DF7E8
+!!! Samples split error found! Source file position (bytes) 30208. Calculated 0х001DF7E9, received 0х001DB4F7
+!!! Samples split error found! Source file position (bytes) 30720. Calculated 0х001DB4F8, received 0х001D71C6
+!!! Samples split error found! Source file position (bytes) 31232. Calculated 0х001D71C7, received 0х001D2ED5
+!!! Samples split error found! Source file position (bytes) 31744. Calculated 0х001D2ED6, received 0х001CF8E4
+!!! Samples split error found! Source file position (bytes) 32256. Calculated 0х001CF8E5, received 0х001CEBB3
+!!! Samples split error found! Source file position (bytes) 32768. Calculated 0х001CEBB4, received 0х001CC40F
+!!! Samples split error found! Source file position (bytes) 33280. Calculated 0х001CC410, received 0х001C811E
+!!! Samples split error found! Source file position (bytes) 33792. Calculated 0х001C811F, received 0х001C3DFD
+!!! Samples split error found! Source file position (bytes) 34304. Calculated 0х001C3DFE, received 0х001C1659
+!!! Samples split error found! Source file position (bytes) 34816. Calculated 0х001C165A, received 0х001C0C68
+!!! Samples split error found! Source file position (bytes) 35328. Calculated 0х001C0C69, received 0х001BD367
+!!! Samples split error found! Source file position (bytes) 35840. Calculated 0х001BD368, received 0х001BCB76
+!!! Samples split error found! Source file position (bytes) 36352. Calculated 0х001BCB77, received 0х001BB1C5
+!!! Samples split error found! Source file position (bytes) 36864. Calculated 0х001BB1C6, received 0х001B9E14
+!!! Samples split error found! Source file position (bytes) 37376. Calculated 0х001B9E15, received 0х001B5AF3
+!!! Samples split error found! Source file position (bytes) 37888. Calculated 0х001B5AF4, received 0х001B17F2
+!!! Samples split error found! Source file position (bytes) 38400. Calculated 0х001B17F3, received 0х001ADA81
+!!! Samples split error found! Source file position (bytes) 38912. Calculated 0х001ADA82, received 0х001A9F9D
+!!! Samples split error found! Source file position (bytes) 39424. Calculated 0х001A9F9E, received 0х001A9DEC
+!!! Samples split error found! Source file position (bytes) 39936. Calculated 0х001A9DED, received 0х001A6A48
+!!! Samples split error found! Source file position (bytes) 40448. Calculated 0х001A6A49, received 0х001A2717
+!!! Samples split error found! Source file position (bytes) 40960. Calculated 0х001A2718, received 0х0019E426
+!!! Samples split error found! Source file position (bytes) 41472. Calculated 0х0019E427, received 0х0019CA42
+!!! Samples split error found! Source file position (bytes) 41984. Calculated 0х0019CA43, received 0х0019CA41
+File for the channel x E:\MTCGeo\Калибровка\Коралл\1921\x\zero has been created successfully.
+File for the channel y E:\MTCGeo\Калибровка\Коралл\1921\y\zero has been created successfully.
+File for the channel z E:\MTCGeo\Калибровка\Коралл\1921\z\zero has been created successfully.
+File for the channel h E:\MTCGeo\Калибровка\Коралл\1921\h\zero has been created successfully.
+File of the Module  E:\MTCGeo\Калибровка\Коралл\1921\AB_PWRU.csv has been created successfully.
+File of the Module  E:\MTCGeo\Калибровка\Коралл\1921\AB_ENV.csv has been created successfully.
+File of the Module  E:\MTCGeo\Калибровка\Коралл\1921\SB_CMPS.csv has been created successfully.
+Conversion results. Processed:
+	- sectors fsrRCR: processed 1, rejected 0
+	- sectors Journal: processed 5, rejected 0
+	- sectors ESR: processed 0, rejected 0
+	- sectors DebugData: processed 0, rejected 0
+	- sectors AB_PWRU: processed 13, rejected 0
+	- sectors AB_FRAM: processed 0, rejected 0
+	- sectors AB_SD: processed 0, rejected 0
+	- sectors AB_ENV: processed 5, rejected 0
+	- sectors AB_EEPROM: processed 0, rejected 0
+	- sectors SB_PWRU: processed 0, rejected 0
+	- sectors AB_DEPTH: processed 0, rejected 0
+	- sectors AB_APT: processed 0, rejected 0
+	- sectors AB_RADIO: processed 0, rejected 0
+	- sectors AB_GPS: processed 1, rejected 0
+	- sectors SB_MSD: processed 0, rejected 0
+	- sectors SB_GEN: processed 0, rejected 0
+	- sectors SB_CMPS: processed 58, rejected 0
+	- sectors SB_TGEN: processed 0, rejected 0
+	- sectors SB_ENV: processed 0, rejected 0
+	- sectors SDR: processed 16080, rejected 14730
+	- sectors SDRAdd: processed 1072, rejected 982
+	- sectors unknown: processed 0, rejected 0
+Absent samples before record: 87
+Absent samples inside record (samples split): 0
+Absent samples after record: 413
+Time spent: 00:00:00.141
+Conversion speed (Mbps): 477,5
+File of the seismic conversion results E:\MTCGeo\Results\_ConvResults\000-   -0=000=1921-1746538368.convresult has been created successfully.
+Errors (total): 82

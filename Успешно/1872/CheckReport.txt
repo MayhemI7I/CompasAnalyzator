@@ -1,0 +1,26 @@
+From the RCR:
+ - SyncTimePOSIX  [ RCR          ] = 1747995180 (0x0000000068304A2C)
+ - CheckTimePOSIX [ RCR          ] = 0 (0x0000000000000000)
+ - Drift          [ RCR          ] = 130 (0x0000000000000082)
+ - UTCGPSDiffSync [ RCR          ] = 0 (0x0000000000000000)
+
+The RCR data is incorrect, trying to calculate the drift from the ".stp" file
+The RCR data is incorrect, trying to obtain the UTC-GPS difference from the ".stp" file
+
+Directory for the check's data: E:\MTCGeo\Dwnld\Test
+File with the check's data: E:\MTCGeo\Dwnld\Test\1872_1747995180.stp
+
+From the ".stp" file:
+ - SyncTimePOSIX  [ StatePack    ] = 1747995180 (0x0000000068304A2C)
+ - CheckTimePOSIX [ StatePack    ] = 1747998553 (0x0000000068305759)
+ - Drift          [ StatePack    ] = 1256 (0x00000000000004E8)
+ - LastSyncTime   [ Synchronizer ] = 1747998553 (0x0000000068305759)
+ - LastUTCGPSDiff [ Synchronizer ] = 18 (0x0000000000000012)
+
+Synchronizer's data has been used for the drift calculation
+Calculated drift (us/s) = 153/3373
+The UTC-GPS difference based on Synchronizer data: normal
+
+Processing results: 
+Calculated drift (us/s) = 153/3373
+The UTC-GPS difference (s) = 18

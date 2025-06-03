@@ -1,0 +1,1714 @@
+
+Анализ данных компаса
+--------------------
+Всего записей в файле: 156
+
+Статистика обработки данных:
+- Всего записей: 156
+- Валидных записей: 156
+- Записей с некорректным временем: 0
+- Записей с некорректным углом: 0
+
+Начало анализа углов
+--------------------
+Potential turn detected at index 117. Angle: 267.00°, Diff: 98.00°
+  Checking angle at index 118: 267.00°, Current diff: 0.00°, Accumulated diff: 98.00°
+Potential turn detected at index 126. Angle: 75.00°, Diff: 83.00°
+  Checking angle at index 127: 75.00°, Current diff: 0.00°, Accumulated diff: 83.00°
+Potential turn detected at index 130. Angle: 170.00°, Diff: 96.00°
+  Checking angle at index 131: 170.00°, Current diff: 0.00°, Accumulated diff: 96.00°
+
+Анализ данных компаса
+--------------------
+Всего записей в файле: 155
+
+Статистика обработки данных:
+- Всего записей: 155
+- Валидных записей: 155
+- Записей с некорректным временем: 0
+- Записей с некорректным углом: 0
+
+Начало анализа углов
+--------------------
+Potential turn detected at index 116. Angle: 267.00°, Diff: 98.00°
+  Checking angle at index 117: 267.00°, Current diff: 0.00°, Accumulated diff: 98.00°
+Potential turn detected at index 125. Angle: 75.00°, Diff: 83.00°
+  Checking angle at index 126: 75.00°, Current diff: 0.00°, Accumulated diff: 83.00°
+Potential turn detected at index 129. Angle: 170.00°, Diff: 96.00°
+  Checking angle at index 130: 170.00°, Current diff: 0.00°, Accumulated diff: 96.00°
+
+Найденные повороты:
+Поворот 1: 98.00°
+Поворот 2: 83.00°
+Поворот 3: 96.00°
+
+Анализ данных компаса
+--------------------
+Всего записей в файле: 154
+
+Статистика обработки данных:
+- Всего записей: 154
+- Валидных записей: 154
+- Записей с некорректным временем: 0
+- Записей с некорректным углом: 0
+
+Начало анализа углов
+--------------------
+Potential turn detected at index 115. Angle: 267.00°, Diff: 98.00°
+  Checking angle at index 116: 267.00°, Current diff: 0.00°
+  Checking angle at index 117: 268.00°, Current diff: 1.00°
+  Checking angle at index 118: 268.00°, Current diff: 1.00°
+  Checking angle at index 119: 273.00°, Current diff: 6.00°
+  Checking angle at index 120: 352.00°, Current diff: 85.00°
+Potential turn detected at index 124. Angle: 75.00°, Diff: 83.00°
+  Checking angle at index 125: 75.00°, Current diff: 0.00°
+  Checking angle at index 126: 75.00°, Current diff: 0.00°
+  Checking angle at index 127: 74.00°, Current diff: 1.00°
+  Checking angle at index 128: 170.00°, Current diff: 95.00°
+
+Найденные повороты:
+Поворот 1: 267.00° -> 352.00° (изменение: 85.00°)
+Поворот 2: 75.00° -> 170.00° (изменение: 95.00°)
+
+Начало анализа данных
+---------------------
+Potential turn detected at index 114. Angle: 267.00°, Diff: 98.00°
+  Stable angle found at index 115. Angle: 267.00°
+Potential turn detected at index 123. Angle: 75.00°, Diff: 83.00°
+  Stable angle found at index 124. Angle: 75.00°
+Potential turn detected at index 127. Angle: 170.00°, Diff: 96.00°
+  Stable angle found at index 128. Angle: 170.00°
+
+Начало анализа данных
+---------------------
+Potential turn detected at index 113. Angle: 267.00°, Diff: 98.00°
+  Stable angle found at index 114. Angle: 267.00°
+Potential turn detected at index 122. Angle: 75.00°, Diff: 83.00°
+  Stable angle found at index 123. Angle: 75.00°
+Potential turn detected at index 126. Angle: 170.00°, Diff: 96.00°
+  Stable angle found at index 127. Angle: 170.00°
+
+Начало анализа данных
+---------------------
+Potential turn detected at index 112. Angle: 267.00°, Diff: 98.00°
+  Stable angle found at index 113. Angle: 267.00°
+Potential turn detected at index 121. Angle: 75.00°, Diff: 83.00°
+  Stable angle found at index 122. Angle: 75.00°
+Potential turn detected at index 125. Angle: 170.00°, Diff: 96.00°
+  Stable angle found at index 126. Angle: 170.00°
+
+Начало анализа данных
+---------------------
+Potential turn detected at index 111. Angle: 267.00°, Diff: 98.00°
+  Stable angle found at index 112. Angle: 267.00°
+Potential turn detected at index 120. Angle: 75.00°, Diff: 83.00°
+  Stable angle found at index 121. Angle: 75.00°
+Potential turn detected at index 124. Angle: 170.00°, Diff: 96.00°
+  Stable angle found at index 125. Angle: 170.00°
+
+Начало анализа углов
+--------------------
+  Checking window from index 0 to 6. Current i: 0, Checking j: 1. Angle diff: 4.00°
+  Checking window from index 0 to 6. Current i: 0, Checking j: 2. Angle diff: 4.00°
+  Checking window from index 0 to 6. Current i: 0, Checking j: 3. Angle diff: 4.00°
+  Checking window from index 0 to 6. Current i: 0, Checking j: 4. Angle diff: 4.00°
+  Checking window from index 0 to 6. Current i: 0, Checking j: 5. Angle diff: 4.00°
+  Checking window from index 0 to 6. Current i: 0, Checking j: 6. Angle diff: 4.00°
+  Checking window from index 1 to 7. Current i: 1, Checking j: 2. Angle diff: 0.00°
+  Checking window from index 1 to 7. Current i: 1, Checking j: 3. Angle diff: 0.00°
+  Checking window from index 1 to 7. Current i: 1, Checking j: 4. Angle diff: 0.00°
+  Checking window from index 1 to 7. Current i: 1, Checking j: 5. Angle diff: 0.00°
+  Checking window from index 1 to 7. Current i: 1, Checking j: 6. Angle diff: 0.00°
+  Checking window from index 1 to 7. Current i: 1, Checking j: 7. Angle diff: 0.00°
+  Checking window from index 2 to 8. Current i: 2, Checking j: 3. Angle diff: 0.00°
+  Checking window from index 2 to 8. Current i: 2, Checking j: 4. Angle diff: 0.00°
+  Checking window from index 2 to 8. Current i: 2, Checking j: 5. Angle diff: 0.00°
+  Checking window from index 2 to 8. Current i: 2, Checking j: 6. Angle diff: 0.00°
+  Checking window from index 2 to 8. Current i: 2, Checking j: 7. Angle diff: 0.00°
+  Checking window from index 2 to 8. Current i: 2, Checking j: 8. Angle diff: 0.00°
+  Checking window from index 3 to 9. Current i: 3, Checking j: 4. Angle diff: 0.00°
+  Checking window from index 3 to 9. Current i: 3, Checking j: 5. Angle diff: 0.00°
+  Checking window from index 3 to 9. Current i: 3, Checking j: 6. Angle diff: 0.00°
+  Checking window from index 3 to 9. Current i: 3, Checking j: 7. Angle diff: 0.00°
+  Checking window from index 3 to 9. Current i: 3, Checking j: 8. Angle diff: 0.00°
+  Checking window from index 3 to 9. Current i: 3, Checking j: 9. Angle diff: 1.00°
+  Checking window from index 4 to 10. Current i: 4, Checking j: 5. Angle diff: 0.00°
+  Checking window from index 4 to 10. Current i: 4, Checking j: 6. Angle diff: 0.00°
+  Checking window from index 4 to 10. Current i: 4, Checking j: 7. Angle diff: 0.00°
+  Checking window from index 4 to 10. Current i: 4, Checking j: 8. Angle diff: 0.00°
+  Checking window from index 4 to 10. Current i: 4, Checking j: 9. Angle diff: 1.00°
+  Checking window from index 4 to 10. Current i: 4, Checking j: 10. Angle diff: 0.00°
+  Checking window from index 5 to 11. Current i: 5, Checking j: 6. Angle diff: 0.00°
+  Checking window from index 5 to 11. Current i: 5, Checking j: 7. Angle diff: 0.00°
+  Checking window from index 5 to 11. Current i: 5, Checking j: 8. Angle diff: 0.00°
+  Checking window from index 5 to 11. Current i: 5, Checking j: 9. Angle diff: 1.00°
+  Checking window from index 5 to 11. Current i: 5, Checking j: 10. Angle diff: 0.00°
+  Checking window from index 5 to 11. Current i: 5, Checking j: 11. Angle diff: 0.00°
+  Checking window from index 6 to 12. Current i: 6, Checking j: 7. Angle diff: 0.00°
+  Checking window from index 6 to 12. Current i: 6, Checking j: 8. Angle diff: 0.00°
+  Checking window from index 6 to 12. Current i: 6, Checking j: 9. Angle diff: 1.00°
+  Checking window from index 6 to 12. Current i: 6, Checking j: 10. Angle diff: 0.00°
+  Checking window from index 6 to 12. Current i: 6, Checking j: 11. Angle diff: 0.00°
+  Checking window from index 6 to 12. Current i: 6, Checking j: 12. Angle diff: 4.00°
+  Checking window from index 7 to 13. Current i: 7, Checking j: 8. Angle diff: 0.00°
+  Checking window from index 7 to 13. Current i: 7, Checking j: 9. Angle diff: 1.00°
+  Checking window from index 7 to 13. Current i: 7, Checking j: 10. Angle diff: 0.00°
+  Checking window from index 7 to 13. Current i: 7, Checking j: 11. Angle diff: 0.00°
+  Checking window from index 7 to 13. Current i: 7, Checking j: 12. Angle diff: 4.00°
+  Checking window from index 7 to 13. Current i: 7, Checking j: 13. Angle diff: 6.00°
+  Checking window from index 8 to 14. Current i: 8, Checking j: 9. Angle diff: 1.00°
+  Checking window from index 8 to 14. Current i: 8, Checking j: 10. Angle diff: 0.00°
+  Checking window from index 8 to 14. Current i: 8, Checking j: 11. Angle diff: 0.00°
+  Checking window from index 8 to 14. Current i: 8, Checking j: 12. Angle diff: 4.00°
+  Checking window from index 8 to 14. Current i: 8, Checking j: 13. Angle diff: 6.00°
+  Checking window from index 8 to 14. Current i: 8, Checking j: 14. Angle diff: 4.00°
+  Checking window from index 9 to 15. Current i: 9, Checking j: 10. Angle diff: 1.00°
+  Checking window from index 9 to 15. Current i: 9, Checking j: 11. Angle diff: 1.00°
+  Checking window from index 9 to 15. Current i: 9, Checking j: 12. Angle diff: 5.00°
+  Checking window from index 9 to 15. Current i: 9, Checking j: 13. Angle diff: 7.00°
+  Checking window from index 9 to 15. Current i: 9, Checking j: 14. Angle diff: 5.00°
+  Checking window from index 9 to 15. Current i: 9, Checking j: 15. Angle diff: 1.00°
+  Checking window from index 10 to 16. Current i: 10, Checking j: 11. Angle diff: 0.00°
+  Checking window from index 10 to 16. Current i: 10, Checking j: 12. Angle diff: 4.00°
+  Checking window from index 10 to 16. Current i: 10, Checking j: 13. Angle diff: 6.00°
+  Checking window from index 10 to 16. Current i: 10, Checking j: 14. Angle diff: 4.00°
+  Checking window from index 10 to 16. Current i: 10, Checking j: 15. Angle diff: 2.00°
+  Checking window from index 10 to 16. Current i: 10, Checking j: 16. Angle diff: 2.00°
+  Checking window from index 11 to 17. Current i: 11, Checking j: 12. Angle diff: 4.00°
+  Checking window from index 11 to 17. Current i: 11, Checking j: 13. Angle diff: 6.00°
+  Checking window from index 11 to 17. Current i: 11, Checking j: 14. Angle diff: 4.00°
+  Checking window from index 11 to 17. Current i: 11, Checking j: 15. Angle diff: 2.00°
+  Checking window from index 11 to 17. Current i: 11, Checking j: 16. Angle diff: 2.00°
+  Checking window from index 11 to 17. Current i: 11, Checking j: 17. Angle diff: 2.00°
+  Checking window from index 12 to 18. Current i: 12, Checking j: 13. Angle diff: 2.00°
+  Checking window from index 12 to 18. Current i: 12, Checking j: 14. Angle diff: 0.00°
+  Checking window from index 12 to 18. Current i: 12, Checking j: 15. Angle diff: 6.00°
+  Checking window from index 12 to 18. Current i: 12, Checking j: 16. Angle diff: 6.00°
+  Checking window from index 12 to 18. Current i: 12, Checking j: 17. Angle diff: 6.00°
+  Checking window from index 12 to 18. Current i: 12, Checking j: 18. Angle diff: 6.00°
+  Checking window from index 13 to 19. Current i: 13, Checking j: 14. Angle diff: 2.00°
+  Checking window from index 13 to 19. Current i: 13, Checking j: 15. Angle diff: 8.00°
+  Checking window from index 13 to 19. Current i: 13, Checking j: 16. Angle diff: 8.00°
+  Checking window from index 13 to 19. Current i: 13, Checking j: 17. Angle diff: 8.00°
+  Checking window from index 13 to 19. Current i: 13, Checking j: 18. Angle diff: 8.00°
+  Checking window from index 13 to 19. Current i: 13, Checking j: 19. Angle diff: 8.00°
+  Checking window from index 14 to 20. Current i: 14, Checking j: 15. Angle diff: 6.00°
+  Checking window from index 14 to 20. Current i: 14, Checking j: 16. Angle diff: 6.00°
+  Checking window from index 14 to 20. Current i: 14, Checking j: 17. Angle diff: 6.00°
+  Checking window from index 14 to 20. Current i: 14, Checking j: 18. Angle diff: 6.00°
+  Checking window from index 14 to 20. Current i: 14, Checking j: 19. Angle diff: 6.00°
+  Checking window from index 14 to 20. Current i: 14, Checking j: 20. Angle diff: 6.00°
+  Checking window from index 15 to 21. Current i: 15, Checking j: 16. Angle diff: 0.00°
+  Checking window from index 15 to 21. Current i: 15, Checking j: 17. Angle diff: 0.00°
+  Checking window from index 15 to 21. Current i: 15, Checking j: 18. Angle diff: 0.00°
+  Checking window from index 15 to 21. Current i: 15, Checking j: 19. Angle diff: 0.00°
+  Checking window from index 15 to 21. Current i: 15, Checking j: 20. Angle diff: 0.00°
+  Checking window from index 15 to 21. Current i: 15, Checking j: 21. Angle diff: 0.00°
+  Checking window from index 16 to 22. Current i: 16, Checking j: 17. Angle diff: 0.00°
+  Checking window from index 16 to 22. Current i: 16, Checking j: 18. Angle diff: 0.00°
+  Checking window from index 16 to 22. Current i: 16, Checking j: 19. Angle diff: 0.00°
+  Checking window from index 16 to 22. Current i: 16, Checking j: 20. Angle diff: 0.00°
+  Checking window from index 16 to 22. Current i: 16, Checking j: 21. Angle diff: 0.00°
+  Checking window from index 16 to 22. Current i: 16, Checking j: 22. Angle diff: 0.00°
+  Checking window from index 17 to 23. Current i: 17, Checking j: 18. Angle diff: 0.00°
+  Checking window from index 17 to 23. Current i: 17, Checking j: 19. Angle diff: 0.00°
+  Checking window from index 17 to 23. Current i: 17, Checking j: 20. Angle diff: 0.00°
+  Checking window from index 17 to 23. Current i: 17, Checking j: 21. Angle diff: 0.00°
+  Checking window from index 17 to 23. Current i: 17, Checking j: 22. Angle diff: 0.00°
+  Checking window from index 17 to 23. Current i: 17, Checking j: 23. Angle diff: 0.00°
+  Checking window from index 18 to 24. Current i: 18, Checking j: 19. Angle diff: 0.00°
+  Checking window from index 18 to 24. Current i: 18, Checking j: 20. Angle diff: 0.00°
+  Checking window from index 18 to 24. Current i: 18, Checking j: 21. Angle diff: 0.00°
+  Checking window from index 18 to 24. Current i: 18, Checking j: 22. Angle diff: 0.00°
+  Checking window from index 18 to 24. Current i: 18, Checking j: 23. Angle diff: 0.00°
+  Checking window from index 18 to 24. Current i: 18, Checking j: 24. Angle diff: 0.00°
+  Checking window from index 19 to 25. Current i: 19, Checking j: 20. Angle diff: 0.00°
+  Checking window from index 19 to 25. Current i: 19, Checking j: 21. Angle diff: 0.00°
+  Checking window from index 19 to 25. Current i: 19, Checking j: 22. Angle diff: 0.00°
+  Checking window from index 19 to 25. Current i: 19, Checking j: 23. Angle diff: 0.00°
+  Checking window from index 19 to 25. Current i: 19, Checking j: 24. Angle diff: 0.00°
+  Checking window from index 19 to 25. Current i: 19, Checking j: 25. Angle diff: 0.00°
+  Checking window from index 20 to 26. Current i: 20, Checking j: 21. Angle diff: 0.00°
+  Checking window from index 20 to 26. Current i: 20, Checking j: 22. Angle diff: 0.00°
+  Checking window from index 20 to 26. Current i: 20, Checking j: 23. Angle diff: 0.00°
+  Checking window from index 20 to 26. Current i: 20, Checking j: 24. Angle diff: 0.00°
+  Checking window from index 20 to 26. Current i: 20, Checking j: 25. Angle diff: 0.00°
+  Checking window from index 20 to 26. Current i: 20, Checking j: 26. Angle diff: 0.00°
+  Checking window from index 21 to 27. Current i: 21, Checking j: 22. Angle diff: 0.00°
+  Checking window from index 21 to 27. Current i: 21, Checking j: 23. Angle diff: 0.00°
+  Checking window from index 21 to 27. Current i: 21, Checking j: 24. Angle diff: 0.00°
+  Checking window from index 21 to 27. Current i: 21, Checking j: 25. Angle diff: 0.00°
+  Checking window from index 21 to 27. Current i: 21, Checking j: 26. Angle diff: 0.00°
+  Checking window from index 21 to 27. Current i: 21, Checking j: 27. Angle diff: 0.00°
+  Checking window from index 22 to 28. Current i: 22, Checking j: 23. Angle diff: 0.00°
+  Checking window from index 22 to 28. Current i: 22, Checking j: 24. Angle diff: 0.00°
+  Checking window from index 22 to 28. Current i: 22, Checking j: 25. Angle diff: 0.00°
+  Checking window from index 22 to 28. Current i: 22, Checking j: 26. Angle diff: 0.00°
+  Checking window from index 22 to 28. Current i: 22, Checking j: 27. Angle diff: 0.00°
+  Checking window from index 22 to 28. Current i: 22, Checking j: 28. Angle diff: 0.00°
+  Checking window from index 23 to 29. Current i: 23, Checking j: 24. Angle diff: 0.00°
+  Checking window from index 23 to 29. Current i: 23, Checking j: 25. Angle diff: 0.00°
+  Checking window from index 23 to 29. Current i: 23, Checking j: 26. Angle diff: 0.00°
+  Checking window from index 23 to 29. Current i: 23, Checking j: 27. Angle diff: 0.00°
+  Checking window from index 23 to 29. Current i: 23, Checking j: 28. Angle diff: 0.00°
+  Checking window from index 23 to 29. Current i: 23, Checking j: 29. Angle diff: 0.00°
+  Checking window from index 24 to 30. Current i: 24, Checking j: 25. Angle diff: 0.00°
+  Checking window from index 24 to 30. Current i: 24, Checking j: 26. Angle diff: 0.00°
+  Checking window from index 24 to 30. Current i: 24, Checking j: 27. Angle diff: 0.00°
+  Checking window from index 24 to 30. Current i: 24, Checking j: 28. Angle diff: 0.00°
+  Checking window from index 24 to 30. Current i: 24, Checking j: 29. Angle diff: 0.00°
+  Checking window from index 24 to 30. Current i: 24, Checking j: 30. Angle diff: 0.00°
+  Checking window from index 25 to 31. Current i: 25, Checking j: 26. Angle diff: 0.00°
+  Checking window from index 25 to 31. Current i: 25, Checking j: 27. Angle diff: 0.00°
+  Checking window from index 25 to 31. Current i: 25, Checking j: 28. Angle diff: 0.00°
+  Checking window from index 25 to 31. Current i: 25, Checking j: 29. Angle diff: 0.00°
+  Checking window from index 25 to 31. Current i: 25, Checking j: 30. Angle diff: 0.00°
+  Checking window from index 25 to 31. Current i: 25, Checking j: 31. Angle diff: 0.00°
+  Checking window from index 26 to 32. Current i: 26, Checking j: 27. Angle diff: 0.00°
+  Checking window from index 26 to 32. Current i: 26, Checking j: 28. Angle diff: 0.00°
+  Checking window from index 26 to 32. Current i: 26, Checking j: 29. Angle diff: 0.00°
+  Checking window from index 26 to 32. Current i: 26, Checking j: 30. Angle diff: 0.00°
+  Checking window from index 26 to 32. Current i: 26, Checking j: 31. Angle diff: 0.00°
+  Checking window from index 26 to 32. Current i: 26, Checking j: 32. Angle diff: 0.00°
+  Checking window from index 27 to 33. Current i: 27, Checking j: 28. Angle diff: 0.00°
+  Checking window from index 27 to 33. Current i: 27, Checking j: 29. Angle diff: 0.00°
+  Checking window from index 27 to 33. Current i: 27, Checking j: 30. Angle diff: 0.00°
+  Checking window from index 27 to 33. Current i: 27, Checking j: 31. Angle diff: 0.00°
+  Checking window from index 27 to 33. Current i: 27, Checking j: 32. Angle diff: 0.00°
+  Checking window from index 27 to 33. Current i: 27, Checking j: 33. Angle diff: 0.00°
+  Checking window from index 28 to 34. Current i: 28, Checking j: 29. Angle diff: 0.00°
+  Checking window from index 28 to 34. Current i: 28, Checking j: 30. Angle diff: 0.00°
+  Checking window from index 28 to 34. Current i: 28, Checking j: 31. Angle diff: 0.00°
+  Checking window from index 28 to 34. Current i: 28, Checking j: 32. Angle diff: 0.00°
+  Checking window from index 28 to 34. Current i: 28, Checking j: 33. Angle diff: 0.00°
+  Checking window from index 28 to 34. Current i: 28, Checking j: 34. Angle diff: 0.00°
+  Checking window from index 29 to 35. Current i: 29, Checking j: 30. Angle diff: 0.00°
+  Checking window from index 29 to 35. Current i: 29, Checking j: 31. Angle diff: 0.00°
+  Checking window from index 29 to 35. Current i: 29, Checking j: 32. Angle diff: 0.00°
+  Checking window from index 29 to 35. Current i: 29, Checking j: 33. Angle diff: 0.00°
+  Checking window from index 29 to 35. Current i: 29, Checking j: 34. Angle diff: 0.00°
+  Checking window from index 29 to 35. Current i: 29, Checking j: 35. Angle diff: 0.00°
+  Checking window from index 30 to 36. Current i: 30, Checking j: 31. Angle diff: 0.00°
+  Checking window from index 30 to 36. Current i: 30, Checking j: 32. Angle diff: 0.00°
+  Checking window from index 30 to 36. Current i: 30, Checking j: 33. Angle diff: 0.00°
+  Checking window from index 30 to 36. Current i: 30, Checking j: 34. Angle diff: 0.00°
+  Checking window from index 30 to 36. Current i: 30, Checking j: 35. Angle diff: 0.00°
+  Checking window from index 30 to 36. Current i: 30, Checking j: 36. Angle diff: 0.00°
+  Checking window from index 31 to 37. Current i: 31, Checking j: 32. Angle diff: 0.00°
+  Checking window from index 31 to 37. Current i: 31, Checking j: 33. Angle diff: 0.00°
+  Checking window from index 31 to 37. Current i: 31, Checking j: 34. Angle diff: 0.00°
+  Checking window from index 31 to 37. Current i: 31, Checking j: 35. Angle diff: 0.00°
+  Checking window from index 31 to 37. Current i: 31, Checking j: 36. Angle diff: 0.00°
+  Checking window from index 31 to 37. Current i: 31, Checking j: 37. Angle diff: 157.00°
+  Checking window from index 32 to 38. Current i: 32, Checking j: 33. Angle diff: 0.00°
+  Checking window from index 32 to 38. Current i: 32, Checking j: 34. Angle diff: 0.00°
+  Checking window from index 32 to 38. Current i: 32, Checking j: 35. Angle diff: 0.00°
+  Checking window from index 32 to 38. Current i: 32, Checking j: 36. Angle diff: 0.00°
+  Checking window from index 32 to 38. Current i: 32, Checking j: 37. Angle diff: 157.00°
+  Checking window from index 32 to 38. Current i: 32, Checking j: 38. Angle diff: 118.00°
+  Checking window from index 33 to 39. Current i: 33, Checking j: 34. Angle diff: 0.00°
+  Checking window from index 33 to 39. Current i: 33, Checking j: 35. Angle diff: 0.00°
+  Checking window from index 33 to 39. Current i: 33, Checking j: 36. Angle diff: 0.00°
+  Checking window from index 33 to 39. Current i: 33, Checking j: 37. Angle diff: 157.00°
+  Checking window from index 33 to 39. Current i: 33, Checking j: 38. Angle diff: 118.00°
+  Checking window from index 33 to 39. Current i: 33, Checking j: 39. Angle diff: 76.00°
+  Checking window from index 34 to 40. Current i: 34, Checking j: 35. Angle diff: 0.00°
+  Checking window from index 34 to 40. Current i: 34, Checking j: 36. Angle diff: 0.00°
+  Checking window from index 34 to 40. Current i: 34, Checking j: 37. Angle diff: 157.00°
+  Checking window from index 34 to 40. Current i: 34, Checking j: 38. Angle diff: 118.00°
+  Checking window from index 34 to 40. Current i: 34, Checking j: 39. Angle diff: 76.00°
+  Checking window from index 34 to 40. Current i: 34, Checking j: 40. Angle diff: 32.00°
+  Checking window from index 35 to 41. Current i: 35, Checking j: 36. Angle diff: 0.00°
+  Checking window from index 35 to 41. Current i: 35, Checking j: 37. Angle diff: 157.00°
+  Checking window from index 35 to 41. Current i: 35, Checking j: 38. Angle diff: 118.00°
+  Checking window from index 35 to 41. Current i: 35, Checking j: 39. Angle diff: 76.00°
+  Checking window from index 35 to 41. Current i: 35, Checking j: 40. Angle diff: 32.00°
+  Checking window from index 35 to 41. Current i: 35, Checking j: 41. Angle diff: 8.00°
+  Checking window from index 36 to 42. Current i: 36, Checking j: 37. Angle diff: 157.00°
+  Checking window from index 36 to 42. Current i: 36, Checking j: 38. Angle diff: 118.00°
+  Checking window from index 36 to 42. Current i: 36, Checking j: 39. Angle diff: 76.00°
+  Checking window from index 36 to 42. Current i: 36, Checking j: 40. Angle diff: 32.00°
+  Checking window from index 36 to 42. Current i: 36, Checking j: 41. Angle diff: 8.00°
+  Checking window from index 36 to 42. Current i: 36, Checking j: 42. Angle diff: 45.00°
+  Checking window from index 37 to 43. Current i: 37, Checking j: 38. Angle diff: 39.00°
+  Checking window from index 37 to 43. Current i: 37, Checking j: 39. Angle diff: 81.00°
+  Turn detected from index 37 (351.00°) to index 39 (72.00°). Diff: 81.00°
+  Checking window from index 40 to 46. Current i: 40, Checking j: 41. Angle diff: 40.00°
+  Checking window from index 40 to 46. Current i: 40, Checking j: 42. Angle diff: 77.00°
+  Checking window from index 40 to 46. Current i: 40, Checking j: 43. Angle diff: 115.00°
+  Checking window from index 40 to 46. Current i: 40, Checking j: 44. Angle diff: 152.00°
+  Checking window from index 40 to 46. Current i: 40, Checking j: 45. Angle diff: 172.00°
+  Checking window from index 40 to 46. Current i: 40, Checking j: 46. Angle diff: 135.00°
+  Checking window from index 41 to 47. Current i: 41, Checking j: 42. Angle diff: 37.00°
+  Checking window from index 41 to 47. Current i: 41, Checking j: 43. Angle diff: 75.00°
+  Checking window from index 41 to 47. Current i: 41, Checking j: 44. Angle diff: 112.00°
+  Checking window from index 41 to 47. Current i: 41, Checking j: 45. Angle diff: 148.00°
+  Checking window from index 41 to 47. Current i: 41, Checking j: 46. Angle diff: 175.00°
+  Checking window from index 41 to 47. Current i: 41, Checking j: 47. Angle diff: 139.00°
+  Checking window from index 42 to 48. Current i: 42, Checking j: 43. Angle diff: 38.00°
+  Checking window from index 42 to 48. Current i: 42, Checking j: 44. Angle diff: 75.00°
+  Checking window from index 42 to 48. Current i: 42, Checking j: 45. Angle diff: 111.00°
+  Checking window from index 42 to 48. Current i: 42, Checking j: 46. Angle diff: 148.00°
+  Checking window from index 42 to 48. Current i: 42, Checking j: 47. Angle diff: 176.00°
+  Checking window from index 42 to 48. Current i: 42, Checking j: 48. Angle diff: 134.00°
+  Checking window from index 43 to 49. Current i: 43, Checking j: 44. Angle diff: 37.00°
+  Checking window from index 43 to 49. Current i: 43, Checking j: 45. Angle diff: 73.00°
+  Checking window from index 43 to 49. Current i: 43, Checking j: 46. Angle diff: 110.00°
+  Checking window from index 43 to 49. Current i: 43, Checking j: 47. Angle diff: 146.00°
+  Checking window from index 43 to 49. Current i: 43, Checking j: 48. Angle diff: 172.00°
+  Checking window from index 43 to 49. Current i: 43, Checking j: 49. Angle diff: 67.00°
+  Checking window from index 44 to 50. Current i: 44, Checking j: 45. Angle diff: 36.00°
+  Checking window from index 44 to 50. Current i: 44, Checking j: 46. Angle diff: 73.00°
+  Checking window from index 44 to 50. Current i: 44, Checking j: 47. Angle diff: 109.00°
+  Checking window from index 44 to 50. Current i: 44, Checking j: 48. Angle diff: 151.00°
+  Checking window from index 44 to 50. Current i: 44, Checking j: 49. Angle diff: 104.00°
+  Checking window from index 44 to 50. Current i: 44, Checking j: 50. Angle diff: 103.00°
+  Checking window from index 45 to 51. Current i: 45, Checking j: 46. Angle diff: 37.00°
+  Checking window from index 45 to 51. Current i: 45, Checking j: 47. Angle diff: 73.00°
+  Checking window from index 45 to 51. Current i: 45, Checking j: 48. Angle diff: 115.00°
+  Checking window from index 45 to 51. Current i: 45, Checking j: 49. Angle diff: 140.00°
+  Checking window from index 45 to 51. Current i: 45, Checking j: 50. Angle diff: 139.00°
+  Checking window from index 45 to 51. Current i: 45, Checking j: 51. Angle diff: 140.00°
+  Checking window from index 46 to 52. Current i: 46, Checking j: 47. Angle diff: 36.00°
+  Checking window from index 46 to 52. Current i: 46, Checking j: 48. Angle diff: 78.00°
+  Checking window from index 46 to 52. Current i: 46, Checking j: 49. Angle diff: 177.00°
+  Checking window from index 46 to 52. Current i: 46, Checking j: 50. Angle diff: 176.00°
+  Checking window from index 46 to 52. Current i: 46, Checking j: 51. Angle diff: 177.00°
+  Checking window from index 46 to 52. Current i: 46, Checking j: 52. Angle diff: 176.00°
+  Checking window from index 47 to 53. Current i: 47, Checking j: 48. Angle diff: 42.00°
+  Checking window from index 47 to 53. Current i: 47, Checking j: 49. Angle diff: 147.00°
+  Checking window from index 47 to 53. Current i: 47, Checking j: 50. Angle diff: 148.00°
+  Checking window from index 47 to 53. Current i: 47, Checking j: 51. Angle diff: 147.00°
+  Checking window from index 47 to 53. Current i: 47, Checking j: 52. Angle diff: 148.00°
+  Checking window from index 47 to 53. Current i: 47, Checking j: 53. Angle diff: 148.00°
+  Checking window from index 48 to 54. Current i: 48, Checking j: 49. Angle diff: 105.00°
+  Checking window from index 48 to 54. Current i: 48, Checking j: 50. Angle diff: 106.00°
+  Checking window from index 48 to 54. Current i: 48, Checking j: 51. Angle diff: 105.00°
+  Checking window from index 48 to 54. Current i: 48, Checking j: 52. Angle diff: 106.00°
+  Checking window from index 48 to 54. Current i: 48, Checking j: 53. Angle diff: 106.00°
+  Checking window from index 48 to 54. Current i: 48, Checking j: 54. Angle diff: 106.00°
+  Checking window from index 49 to 55. Current i: 49, Checking j: 50. Angle diff: 1.00°
+  Checking window from index 49 to 55. Current i: 49, Checking j: 51. Angle diff: 0.00°
+  Checking window from index 49 to 55. Current i: 49, Checking j: 52. Angle diff: 1.00°
+  Checking window from index 49 to 55. Current i: 49, Checking j: 53. Angle diff: 1.00°
+  Checking window from index 49 to 55. Current i: 49, Checking j: 54. Angle diff: 1.00°
+  Checking window from index 49 to 55. Current i: 49, Checking j: 55. Angle diff: 1.00°
+  Checking window from index 50 to 56. Current i: 50, Checking j: 51. Angle diff: 1.00°
+  Checking window from index 50 to 56. Current i: 50, Checking j: 52. Angle diff: 0.00°
+  Checking window from index 50 to 56. Current i: 50, Checking j: 53. Angle diff: 0.00°
+  Checking window from index 50 to 56. Current i: 50, Checking j: 54. Angle diff: 0.00°
+  Checking window from index 50 to 56. Current i: 50, Checking j: 55. Angle diff: 0.00°
+  Checking window from index 50 to 56. Current i: 50, Checking j: 56. Angle diff: 0.00°
+  Checking window from index 51 to 57. Current i: 51, Checking j: 52. Angle diff: 1.00°
+  Checking window from index 51 to 57. Current i: 51, Checking j: 53. Angle diff: 1.00°
+  Checking window from index 51 to 57. Current i: 51, Checking j: 54. Angle diff: 1.00°
+  Checking window from index 51 to 57. Current i: 51, Checking j: 55. Angle diff: 1.00°
+  Checking window from index 51 to 57. Current i: 51, Checking j: 56. Angle diff: 1.00°
+  Checking window from index 51 to 57. Current i: 51, Checking j: 57. Angle diff: 1.00°
+  Checking window from index 52 to 58. Current i: 52, Checking j: 53. Angle diff: 0.00°
+  Checking window from index 52 to 58. Current i: 52, Checking j: 54. Angle diff: 0.00°
+  Checking window from index 52 to 58. Current i: 52, Checking j: 55. Angle diff: 0.00°
+  Checking window from index 52 to 58. Current i: 52, Checking j: 56. Angle diff: 0.00°
+  Checking window from index 52 to 58. Current i: 52, Checking j: 57. Angle diff: 0.00°
+  Checking window from index 52 to 58. Current i: 52, Checking j: 58. Angle diff: 0.00°
+  Checking window from index 53 to 59. Current i: 53, Checking j: 54. Angle diff: 0.00°
+  Checking window from index 53 to 59. Current i: 53, Checking j: 55. Angle diff: 0.00°
+  Checking window from index 53 to 59. Current i: 53, Checking j: 56. Angle diff: 0.00°
+  Checking window from index 53 to 59. Current i: 53, Checking j: 57. Angle diff: 0.00°
+  Checking window from index 53 to 59. Current i: 53, Checking j: 58. Angle diff: 0.00°
+  Checking window from index 53 to 59. Current i: 53, Checking j: 59. Angle diff: 1.00°
+  Checking window from index 54 to 60. Current i: 54, Checking j: 55. Angle diff: 0.00°
+  Checking window from index 54 to 60. Current i: 54, Checking j: 56. Angle diff: 0.00°
+  Checking window from index 54 to 60. Current i: 54, Checking j: 57. Angle diff: 0.00°
+  Checking window from index 54 to 60. Current i: 54, Checking j: 58. Angle diff: 0.00°
+  Checking window from index 54 to 60. Current i: 54, Checking j: 59. Angle diff: 1.00°
+  Checking window from index 54 to 60. Current i: 54, Checking j: 60. Angle diff: 1.00°
+  Checking window from index 55 to 61. Current i: 55, Checking j: 56. Angle diff: 0.00°
+  Checking window from index 55 to 61. Current i: 55, Checking j: 57. Angle diff: 0.00°
+  Checking window from index 55 to 61. Current i: 55, Checking j: 58. Angle diff: 0.00°
+  Checking window from index 55 to 61. Current i: 55, Checking j: 59. Angle diff: 1.00°
+  Checking window from index 55 to 61. Current i: 55, Checking j: 60. Angle diff: 1.00°
+  Checking window from index 55 to 61. Current i: 55, Checking j: 61. Angle diff: 0.00°
+  Checking window from index 56 to 62. Current i: 56, Checking j: 57. Angle diff: 0.00°
+  Checking window from index 56 to 62. Current i: 56, Checking j: 58. Angle diff: 0.00°
+  Checking window from index 56 to 62. Current i: 56, Checking j: 59. Angle diff: 1.00°
+  Checking window from index 56 to 62. Current i: 56, Checking j: 60. Angle diff: 1.00°
+  Checking window from index 56 to 62. Current i: 56, Checking j: 61. Angle diff: 0.00°
+  Checking window from index 56 to 62. Current i: 56, Checking j: 62. Angle diff: 1.00°
+  Checking window from index 57 to 63. Current i: 57, Checking j: 58. Angle diff: 0.00°
+  Checking window from index 57 to 63. Current i: 57, Checking j: 59. Angle diff: 1.00°
+  Checking window from index 57 to 63. Current i: 57, Checking j: 60. Angle diff: 1.00°
+  Checking window from index 57 to 63. Current i: 57, Checking j: 61. Angle diff: 0.00°
+  Checking window from index 57 to 63. Current i: 57, Checking j: 62. Angle diff: 1.00°
+  Checking window from index 57 to 63. Current i: 57, Checking j: 63. Angle diff: 1.00°
+  Checking window from index 58 to 64. Current i: 58, Checking j: 59. Angle diff: 1.00°
+  Checking window from index 58 to 64. Current i: 58, Checking j: 60. Angle diff: 1.00°
+  Checking window from index 58 to 64. Current i: 58, Checking j: 61. Angle diff: 0.00°
+  Checking window from index 58 to 64. Current i: 58, Checking j: 62. Angle diff: 1.00°
+  Checking window from index 58 to 64. Current i: 58, Checking j: 63. Angle diff: 1.00°
+  Checking window from index 58 to 64. Current i: 58, Checking j: 64. Angle diff: 0.00°
+  Checking window from index 59 to 65. Current i: 59, Checking j: 60. Angle diff: 0.00°
+  Checking window from index 59 to 65. Current i: 59, Checking j: 61. Angle diff: 1.00°
+  Checking window from index 59 to 65. Current i: 59, Checking j: 62. Angle diff: 0.00°
+  Checking window from index 59 to 65. Current i: 59, Checking j: 63. Angle diff: 0.00°
+  Checking window from index 59 to 65. Current i: 59, Checking j: 64. Angle diff: 1.00°
+  Checking window from index 59 to 65. Current i: 59, Checking j: 65. Angle diff: 1.00°
+  Checking window from index 60 to 66. Current i: 60, Checking j: 61. Angle diff: 1.00°
+  Checking window from index 60 to 66. Current i: 60, Checking j: 62. Angle diff: 0.00°
+  Checking window from index 60 to 66. Current i: 60, Checking j: 63. Angle diff: 0.00°
+  Checking window from index 60 to 66. Current i: 60, Checking j: 64. Angle diff: 1.00°
+  Checking window from index 60 to 66. Current i: 60, Checking j: 65. Angle diff: 1.00°
+  Checking window from index 60 to 66. Current i: 60, Checking j: 66. Angle diff: 0.00°
+  Checking window from index 61 to 67. Current i: 61, Checking j: 62. Angle diff: 1.00°
+  Checking window from index 61 to 67. Current i: 61, Checking j: 63. Angle diff: 1.00°
+  Checking window from index 61 to 67. Current i: 61, Checking j: 64. Angle diff: 0.00°
+  Checking window from index 61 to 67. Current i: 61, Checking j: 65. Angle diff: 0.00°
+  Checking window from index 61 to 67. Current i: 61, Checking j: 66. Angle diff: 1.00°
+  Checking window from index 61 to 67. Current i: 61, Checking j: 67. Angle diff: 0.00°
+  Checking window from index 62 to 68. Current i: 62, Checking j: 63. Angle diff: 0.00°
+  Checking window from index 62 to 68. Current i: 62, Checking j: 64. Angle diff: 1.00°
+  Checking window from index 62 to 68. Current i: 62, Checking j: 65. Angle diff: 1.00°
+  Checking window from index 62 to 68. Current i: 62, Checking j: 66. Angle diff: 0.00°
+  Checking window from index 62 to 68. Current i: 62, Checking j: 67. Angle diff: 1.00°
+  Checking window from index 62 to 68. Current i: 62, Checking j: 68. Angle diff: 1.00°
+  Checking window from index 63 to 69. Current i: 63, Checking j: 64. Angle diff: 1.00°
+  Checking window from index 63 to 69. Current i: 63, Checking j: 65. Angle diff: 1.00°
+  Checking window from index 63 to 69. Current i: 63, Checking j: 66. Angle diff: 0.00°
+  Checking window from index 63 to 69. Current i: 63, Checking j: 67. Angle diff: 1.00°
+  Checking window from index 63 to 69. Current i: 63, Checking j: 68. Angle diff: 1.00°
+  Checking window from index 63 to 69. Current i: 63, Checking j: 69. Angle diff: 1.00°
+  Checking window from index 64 to 70. Current i: 64, Checking j: 65. Angle diff: 0.00°
+  Checking window from index 64 to 70. Current i: 64, Checking j: 66. Angle diff: 1.00°
+  Checking window from index 64 to 70. Current i: 64, Checking j: 67. Angle diff: 0.00°
+  Checking window from index 64 to 70. Current i: 64, Checking j: 68. Angle diff: 0.00°
+  Checking window from index 64 to 70. Current i: 64, Checking j: 69. Angle diff: 0.00°
+  Checking window from index 64 to 70. Current i: 64, Checking j: 70. Angle diff: 0.00°
+  Checking window from index 65 to 71. Current i: 65, Checking j: 66. Angle diff: 1.00°
+  Checking window from index 65 to 71. Current i: 65, Checking j: 67. Angle diff: 0.00°
+  Checking window from index 65 to 71. Current i: 65, Checking j: 68. Angle diff: 0.00°
+  Checking window from index 65 to 71. Current i: 65, Checking j: 69. Angle diff: 0.00°
+  Checking window from index 65 to 71. Current i: 65, Checking j: 70. Angle diff: 0.00°
+  Checking window from index 65 to 71. Current i: 65, Checking j: 71. Angle diff: 1.00°
+  Checking window from index 66 to 72. Current i: 66, Checking j: 67. Angle diff: 1.00°
+  Checking window from index 66 to 72. Current i: 66, Checking j: 68. Angle diff: 1.00°
+  Checking window from index 66 to 72. Current i: 66, Checking j: 69. Angle diff: 1.00°
+  Checking window from index 66 to 72. Current i: 66, Checking j: 70. Angle diff: 1.00°
+  Checking window from index 66 to 72. Current i: 66, Checking j: 71. Angle diff: 0.00°
+  Checking window from index 66 to 72. Current i: 66, Checking j: 72. Angle diff: 0.00°
+  Checking window from index 67 to 73. Current i: 67, Checking j: 68. Angle diff: 0.00°
+  Checking window from index 67 to 73. Current i: 67, Checking j: 69. Angle diff: 0.00°
+  Checking window from index 67 to 73. Current i: 67, Checking j: 70. Angle diff: 0.00°
+  Checking window from index 67 to 73. Current i: 67, Checking j: 71. Angle diff: 1.00°
+  Checking window from index 67 to 73. Current i: 67, Checking j: 72. Angle diff: 1.00°
+  Checking window from index 67 to 73. Current i: 67, Checking j: 73. Angle diff: 0.00°
+  Checking window from index 68 to 74. Current i: 68, Checking j: 69. Angle diff: 0.00°
+  Checking window from index 68 to 74. Current i: 68, Checking j: 70. Angle diff: 0.00°
+  Checking window from index 68 to 74. Current i: 68, Checking j: 71. Angle diff: 1.00°
+  Checking window from index 68 to 74. Current i: 68, Checking j: 72. Angle diff: 1.00°
+  Checking window from index 68 to 74. Current i: 68, Checking j: 73. Angle diff: 0.00°
+  Checking window from index 68 to 74. Current i: 68, Checking j: 74. Angle diff: 0.00°
+  Checking window from index 69 to 75. Current i: 69, Checking j: 70. Angle diff: 0.00°
+  Checking window from index 69 to 75. Current i: 69, Checking j: 71. Angle diff: 1.00°
+  Checking window from index 69 to 75. Current i: 69, Checking j: 72. Angle diff: 1.00°
+  Checking window from index 69 to 75. Current i: 69, Checking j: 73. Angle diff: 0.00°
+  Checking window from index 69 to 75. Current i: 69, Checking j: 74. Angle diff: 0.00°
+  Checking window from index 69 to 75. Current i: 69, Checking j: 75. Angle diff: 0.00°
+  Checking window from index 70 to 76. Current i: 70, Checking j: 71. Angle diff: 1.00°
+  Checking window from index 70 to 76. Current i: 70, Checking j: 72. Angle diff: 1.00°
+  Checking window from index 70 to 76. Current i: 70, Checking j: 73. Angle diff: 0.00°
+  Checking window from index 70 to 76. Current i: 70, Checking j: 74. Angle diff: 0.00°
+  Checking window from index 70 to 76. Current i: 70, Checking j: 75. Angle diff: 0.00°
+  Checking window from index 70 to 76. Current i: 70, Checking j: 76. Angle diff: 0.00°
+  Checking window from index 71 to 77. Current i: 71, Checking j: 72. Angle diff: 0.00°
+  Checking window from index 71 to 77. Current i: 71, Checking j: 73. Angle diff: 1.00°
+  Checking window from index 71 to 77. Current i: 71, Checking j: 74. Angle diff: 1.00°
+  Checking window from index 71 to 77. Current i: 71, Checking j: 75. Angle diff: 1.00°
+  Checking window from index 71 to 77. Current i: 71, Checking j: 76. Angle diff: 1.00°
+  Checking window from index 71 to 77. Current i: 71, Checking j: 77. Angle diff: 1.00°
+  Checking window from index 72 to 78. Current i: 72, Checking j: 73. Angle diff: 1.00°
+  Checking window from index 72 to 78. Current i: 72, Checking j: 74. Angle diff: 1.00°
+  Checking window from index 72 to 78. Current i: 72, Checking j: 75. Angle diff: 1.00°
+  Checking window from index 72 to 78. Current i: 72, Checking j: 76. Angle diff: 1.00°
+  Checking window from index 72 to 78. Current i: 72, Checking j: 77. Angle diff: 1.00°
+  Checking window from index 72 to 78. Current i: 72, Checking j: 78. Angle diff: 1.00°
+  Checking window from index 73 to 79. Current i: 73, Checking j: 74. Angle diff: 0.00°
+  Checking window from index 73 to 79. Current i: 73, Checking j: 75. Angle diff: 0.00°
+  Checking window from index 73 to 79. Current i: 73, Checking j: 76. Angle diff: 0.00°
+  Checking window from index 73 to 79. Current i: 73, Checking j: 77. Angle diff: 0.00°
+  Checking window from index 73 to 79. Current i: 73, Checking j: 78. Angle diff: 0.00°
+  Checking window from index 73 to 79. Current i: 73, Checking j: 79. Angle diff: 0.00°
+  Checking window from index 74 to 80. Current i: 74, Checking j: 75. Angle diff: 0.00°
+  Checking window from index 74 to 80. Current i: 74, Checking j: 76. Angle diff: 0.00°
+  Checking window from index 74 to 80. Current i: 74, Checking j: 77. Angle diff: 0.00°
+  Checking window from index 74 to 80. Current i: 74, Checking j: 78. Angle diff: 0.00°
+  Checking window from index 74 to 80. Current i: 74, Checking j: 79. Angle diff: 0.00°
+  Checking window from index 74 to 80. Current i: 74, Checking j: 80. Angle diff: 1.00°
+  Checking window from index 75 to 81. Current i: 75, Checking j: 76. Angle diff: 0.00°
+  Checking window from index 75 to 81. Current i: 75, Checking j: 77. Angle diff: 0.00°
+  Checking window from index 75 to 81. Current i: 75, Checking j: 78. Angle diff: 0.00°
+  Checking window from index 75 to 81. Current i: 75, Checking j: 79. Angle diff: 0.00°
+  Checking window from index 75 to 81. Current i: 75, Checking j: 80. Angle diff: 1.00°
+  Checking window from index 75 to 81. Current i: 75, Checking j: 81. Angle diff: 1.00°
+  Checking window from index 76 to 82. Current i: 76, Checking j: 77. Angle diff: 0.00°
+  Checking window from index 76 to 82. Current i: 76, Checking j: 78. Angle diff: 0.00°
+  Checking window from index 76 to 82. Current i: 76, Checking j: 79. Angle diff: 0.00°
+  Checking window from index 76 to 82. Current i: 76, Checking j: 80. Angle diff: 1.00°
+  Checking window from index 76 to 82. Current i: 76, Checking j: 81. Angle diff: 1.00°
+  Checking window from index 76 to 82. Current i: 76, Checking j: 82. Angle diff: 0.00°
+  Checking window from index 77 to 83. Current i: 77, Checking j: 78. Angle diff: 0.00°
+  Checking window from index 77 to 83. Current i: 77, Checking j: 79. Angle diff: 0.00°
+  Checking window from index 77 to 83. Current i: 77, Checking j: 80. Angle diff: 1.00°
+  Checking window from index 77 to 83. Current i: 77, Checking j: 81. Angle diff: 1.00°
+  Checking window from index 77 to 83. Current i: 77, Checking j: 82. Angle diff: 0.00°
+  Checking window from index 77 to 83. Current i: 77, Checking j: 83. Angle diff: 0.00°
+  Checking window from index 78 to 84. Current i: 78, Checking j: 79. Angle diff: 0.00°
+  Checking window from index 78 to 84. Current i: 78, Checking j: 80. Angle diff: 1.00°
+  Checking window from index 78 to 84. Current i: 78, Checking j: 81. Angle diff: 1.00°
+  Checking window from index 78 to 84. Current i: 78, Checking j: 82. Angle diff: 0.00°
+  Checking window from index 78 to 84. Current i: 78, Checking j: 83. Angle diff: 0.00°
+  Checking window from index 78 to 84. Current i: 78, Checking j: 84. Angle diff: 0.00°
+  Checking window from index 79 to 85. Current i: 79, Checking j: 80. Angle diff: 1.00°
+  Checking window from index 79 to 85. Current i: 79, Checking j: 81. Angle diff: 1.00°
+  Checking window from index 79 to 85. Current i: 79, Checking j: 82. Angle diff: 0.00°
+  Checking window from index 79 to 85. Current i: 79, Checking j: 83. Angle diff: 0.00°
+  Checking window from index 79 to 85. Current i: 79, Checking j: 84. Angle diff: 0.00°
+  Checking window from index 79 to 85. Current i: 79, Checking j: 85. Angle diff: 0.00°
+  Checking window from index 80 to 86. Current i: 80, Checking j: 81. Angle diff: 0.00°
+  Checking window from index 80 to 86. Current i: 80, Checking j: 82. Angle diff: 1.00°
+  Checking window from index 80 to 86. Current i: 80, Checking j: 83. Angle diff: 1.00°
+  Checking window from index 80 to 86. Current i: 80, Checking j: 84. Angle diff: 1.00°
+  Checking window from index 80 to 86. Current i: 80, Checking j: 85. Angle diff: 1.00°
+  Checking window from index 80 to 86. Current i: 80, Checking j: 86. Angle diff: 1.00°
+  Checking window from index 81 to 87. Current i: 81, Checking j: 82. Angle diff: 1.00°
+  Checking window from index 81 to 87. Current i: 81, Checking j: 83. Angle diff: 1.00°
+  Checking window from index 81 to 87. Current i: 81, Checking j: 84. Angle diff: 1.00°
+  Checking window from index 81 to 87. Current i: 81, Checking j: 85. Angle diff: 1.00°
+  Checking window from index 81 to 87. Current i: 81, Checking j: 86. Angle diff: 1.00°
+  Checking window from index 81 to 87. Current i: 81, Checking j: 87. Angle diff: 1.00°
+  Checking window from index 82 to 88. Current i: 82, Checking j: 83. Angle diff: 0.00°
+  Checking window from index 82 to 88. Current i: 82, Checking j: 84. Angle diff: 0.00°
+  Checking window from index 82 to 88. Current i: 82, Checking j: 85. Angle diff: 0.00°
+  Checking window from index 82 to 88. Current i: 82, Checking j: 86. Angle diff: 0.00°
+  Checking window from index 82 to 88. Current i: 82, Checking j: 87. Angle diff: 0.00°
+  Checking window from index 82 to 88. Current i: 82, Checking j: 88. Angle diff: 0.00°
+  Checking window from index 83 to 89. Current i: 83, Checking j: 84. Angle diff: 0.00°
+  Checking window from index 83 to 89. Current i: 83, Checking j: 85. Angle diff: 0.00°
+  Checking window from index 83 to 89. Current i: 83, Checking j: 86. Angle diff: 0.00°
+  Checking window from index 83 to 89. Current i: 83, Checking j: 87. Angle diff: 0.00°
+  Checking window from index 83 to 89. Current i: 83, Checking j: 88. Angle diff: 0.00°
+  Checking window from index 83 to 89. Current i: 83, Checking j: 89. Angle diff: 1.00°
+  Checking window from index 84 to 90. Current i: 84, Checking j: 85. Angle diff: 0.00°
+  Checking window from index 84 to 90. Current i: 84, Checking j: 86. Angle diff: 0.00°
+  Checking window from index 84 to 90. Current i: 84, Checking j: 87. Angle diff: 0.00°
+  Checking window from index 84 to 90. Current i: 84, Checking j: 88. Angle diff: 0.00°
+  Checking window from index 84 to 90. Current i: 84, Checking j: 89. Angle diff: 1.00°
+  Checking window from index 84 to 90. Current i: 84, Checking j: 90. Angle diff: 13.00°
+  Checking window from index 85 to 91. Current i: 85, Checking j: 86. Angle diff: 0.00°
+  Checking window from index 85 to 91. Current i: 85, Checking j: 87. Angle diff: 0.00°
+  Checking window from index 85 to 91. Current i: 85, Checking j: 88. Angle diff: 0.00°
+  Checking window from index 85 to 91. Current i: 85, Checking j: 89. Angle diff: 1.00°
+  Checking window from index 85 to 91. Current i: 85, Checking j: 90. Angle diff: 13.00°
+  Checking window from index 85 to 91. Current i: 85, Checking j: 91. Angle diff: 15.00°
+  Checking window from index 86 to 92. Current i: 86, Checking j: 87. Angle diff: 0.00°
+  Checking window from index 86 to 92. Current i: 86, Checking j: 88. Angle diff: 0.00°
+  Checking window from index 86 to 92. Current i: 86, Checking j: 89. Angle diff: 1.00°
+  Checking window from index 86 to 92. Current i: 86, Checking j: 90. Angle diff: 13.00°
+  Checking window from index 86 to 92. Current i: 86, Checking j: 91. Angle diff: 15.00°
+  Checking window from index 86 to 92. Current i: 86, Checking j: 92. Angle diff: 13.00°
+  Checking window from index 87 to 93. Current i: 87, Checking j: 88. Angle diff: 0.00°
+  Checking window from index 87 to 93. Current i: 87, Checking j: 89. Angle diff: 1.00°
+  Checking window from index 87 to 93. Current i: 87, Checking j: 90. Angle diff: 13.00°
+  Checking window from index 87 to 93. Current i: 87, Checking j: 91. Angle diff: 15.00°
+  Checking window from index 87 to 93. Current i: 87, Checking j: 92. Angle diff: 13.00°
+  Checking window from index 87 to 93. Current i: 87, Checking j: 93. Angle diff: 17.00°
+  Checking window from index 88 to 94. Current i: 88, Checking j: 89. Angle diff: 1.00°
+  Checking window from index 88 to 94. Current i: 88, Checking j: 90. Angle diff: 13.00°
+  Checking window from index 88 to 94. Current i: 88, Checking j: 91. Angle diff: 15.00°
+  Checking window from index 88 to 94. Current i: 88, Checking j: 92. Angle diff: 13.00°
+  Checking window from index 88 to 94. Current i: 88, Checking j: 93. Angle diff: 17.00°
+  Checking window from index 88 to 94. Current i: 88, Checking j: 94. Angle diff: 16.00°
+  Checking window from index 89 to 95. Current i: 89, Checking j: 90. Angle diff: 12.00°
+  Checking window from index 89 to 95. Current i: 89, Checking j: 91. Angle diff: 14.00°
+  Checking window from index 89 to 95. Current i: 89, Checking j: 92. Angle diff: 12.00°
+  Checking window from index 89 to 95. Current i: 89, Checking j: 93. Angle diff: 16.00°
+  Checking window from index 89 to 95. Current i: 89, Checking j: 94. Angle diff: 15.00°
+  Checking window from index 89 to 95. Current i: 89, Checking j: 95. Angle diff: 15.00°
+  Checking window from index 90 to 96. Current i: 90, Checking j: 91. Angle diff: 2.00°
+  Checking window from index 90 to 96. Current i: 90, Checking j: 92. Angle diff: 0.00°
+  Checking window from index 90 to 96. Current i: 90, Checking j: 93. Angle diff: 4.00°
+  Checking window from index 90 to 96. Current i: 90, Checking j: 94. Angle diff: 3.00°
+  Checking window from index 90 to 96. Current i: 90, Checking j: 95. Angle diff: 3.00°
+  Checking window from index 90 to 96. Current i: 90, Checking j: 96. Angle diff: 3.00°
+  Checking window from index 91 to 97. Current i: 91, Checking j: 92. Angle diff: 2.00°
+  Checking window from index 91 to 97. Current i: 91, Checking j: 93. Angle diff: 2.00°
+  Checking window from index 91 to 97. Current i: 91, Checking j: 94. Angle diff: 1.00°
+  Checking window from index 91 to 97. Current i: 91, Checking j: 95. Angle diff: 1.00°
+  Checking window from index 91 to 97. Current i: 91, Checking j: 96. Angle diff: 1.00°
+  Checking window from index 91 to 97. Current i: 91, Checking j: 97. Angle diff: 1.00°
+  Checking window from index 92 to 98. Current i: 92, Checking j: 93. Angle diff: 4.00°
+  Checking window from index 92 to 98. Current i: 92, Checking j: 94. Angle diff: 3.00°
+  Checking window from index 92 to 98. Current i: 92, Checking j: 95. Angle diff: 3.00°
+  Checking window from index 92 to 98. Current i: 92, Checking j: 96. Angle diff: 3.00°
+  Checking window from index 92 to 98. Current i: 92, Checking j: 97. Angle diff: 3.00°
+  Checking window from index 92 to 98. Current i: 92, Checking j: 98. Angle diff: 3.00°
+  Checking window from index 93 to 99. Current i: 93, Checking j: 94. Angle diff: 1.00°
+  Checking window from index 93 to 99. Current i: 93, Checking j: 95. Angle diff: 1.00°
+  Checking window from index 93 to 99. Current i: 93, Checking j: 96. Angle diff: 1.00°
+  Checking window from index 93 to 99. Current i: 93, Checking j: 97. Angle diff: 1.00°
+  Checking window from index 93 to 99. Current i: 93, Checking j: 98. Angle diff: 1.00°
+  Checking window from index 93 to 99. Current i: 93, Checking j: 99. Angle diff: 0.00°
+  Checking window from index 94 to 100. Current i: 94, Checking j: 95. Angle diff: 0.00°
+  Checking window from index 94 to 100. Current i: 94, Checking j: 96. Angle diff: 0.00°
+  Checking window from index 94 to 100. Current i: 94, Checking j: 97. Angle diff: 0.00°
+  Checking window from index 94 to 100. Current i: 94, Checking j: 98. Angle diff: 0.00°
+  Checking window from index 94 to 100. Current i: 94, Checking j: 99. Angle diff: 1.00°
+  Checking window from index 94 to 100. Current i: 94, Checking j: 100. Angle diff: 2.00°
+  Checking window from index 95 to 101. Current i: 95, Checking j: 96. Angle diff: 0.00°
+  Checking window from index 95 to 101. Current i: 95, Checking j: 97. Angle diff: 0.00°
+  Checking window from index 95 to 101. Current i: 95, Checking j: 98. Angle diff: 0.00°
+  Checking window from index 95 to 101. Current i: 95, Checking j: 99. Angle diff: 1.00°
+  Checking window from index 95 to 101. Current i: 95, Checking j: 100. Angle diff: 2.00°
+  Checking window from index 95 to 101. Current i: 95, Checking j: 101. Angle diff: 2.00°
+  Checking window from index 96 to 102. Current i: 96, Checking j: 97. Angle diff: 0.00°
+  Checking window from index 96 to 102. Current i: 96, Checking j: 98. Angle diff: 0.00°
+  Checking window from index 96 to 102. Current i: 96, Checking j: 99. Angle diff: 1.00°
+  Checking window from index 96 to 102. Current i: 96, Checking j: 100. Angle diff: 2.00°
+  Checking window from index 96 to 102. Current i: 96, Checking j: 101. Angle diff: 2.00°
+  Checking window from index 96 to 102. Current i: 96, Checking j: 102. Angle diff: 2.00°
+  Checking window from index 97 to 103. Current i: 97, Checking j: 98. Angle diff: 0.00°
+  Checking window from index 97 to 103. Current i: 97, Checking j: 99. Angle diff: 1.00°
+  Checking window from index 97 to 103. Current i: 97, Checking j: 100. Angle diff: 2.00°
+  Checking window from index 97 to 103. Current i: 97, Checking j: 101. Angle diff: 2.00°
+  Checking window from index 97 to 103. Current i: 97, Checking j: 102. Angle diff: 2.00°
+  Checking window from index 97 to 103. Current i: 97, Checking j: 103. Angle diff: 21.00°
+  Checking window from index 98 to 104. Current i: 98, Checking j: 99. Angle diff: 1.00°
+  Checking window from index 98 to 104. Current i: 98, Checking j: 100. Angle diff: 2.00°
+  Checking window from index 98 to 104. Current i: 98, Checking j: 101. Angle diff: 2.00°
+  Checking window from index 98 to 104. Current i: 98, Checking j: 102. Angle diff: 2.00°
+  Checking window from index 98 to 104. Current i: 98, Checking j: 103. Angle diff: 21.00°
+  Checking window from index 98 to 104. Current i: 98, Checking j: 104. Angle diff: 20.00°
+  Checking window from index 99 to 105. Current i: 99, Checking j: 100. Angle diff: 1.00°
+  Checking window from index 99 to 105. Current i: 99, Checking j: 101. Angle diff: 1.00°
+  Checking window from index 99 to 105. Current i: 99, Checking j: 102. Angle diff: 1.00°
+  Checking window from index 99 to 105. Current i: 99, Checking j: 103. Angle diff: 22.00°
+  Checking window from index 99 to 105. Current i: 99, Checking j: 104. Angle diff: 21.00°
+  Checking window from index 99 to 105. Current i: 99, Checking j: 105. Angle diff: 22.00°
+  Checking window from index 100 to 106. Current i: 100, Checking j: 101. Angle diff: 0.00°
+  Checking window from index 100 to 106. Current i: 100, Checking j: 102. Angle diff: 0.00°
+  Checking window from index 100 to 106. Current i: 100, Checking j: 103. Angle diff: 23.00°
+  Checking window from index 100 to 106. Current i: 100, Checking j: 104. Angle diff: 22.00°
+  Checking window from index 100 to 106. Current i: 100, Checking j: 105. Angle diff: 23.00°
+  Checking window from index 100 to 106. Current i: 100, Checking j: 106. Angle diff: 23.00°
+  Checking window from index 101 to 107. Current i: 101, Checking j: 102. Angle diff: 0.00°
+  Checking window from index 101 to 107. Current i: 101, Checking j: 103. Angle diff: 23.00°
+  Checking window from index 101 to 107. Current i: 101, Checking j: 104. Angle diff: 22.00°
+  Checking window from index 101 to 107. Current i: 101, Checking j: 105. Angle diff: 23.00°
+  Checking window from index 101 to 107. Current i: 101, Checking j: 106. Angle diff: 23.00°
+  Checking window from index 101 to 107. Current i: 101, Checking j: 107. Angle diff: 23.00°
+  Checking window from index 102 to 108. Current i: 102, Checking j: 103. Angle diff: 23.00°
+  Checking window from index 102 to 108. Current i: 102, Checking j: 104. Angle diff: 22.00°
+  Checking window from index 102 to 108. Current i: 102, Checking j: 105. Angle diff: 23.00°
+  Checking window from index 102 to 108. Current i: 102, Checking j: 106. Angle diff: 23.00°
+  Checking window from index 102 to 108. Current i: 102, Checking j: 107. Angle diff: 23.00°
+  Checking window from index 102 to 108. Current i: 102, Checking j: 108. Angle diff: 23.00°
+  Checking window from index 103 to 109. Current i: 103, Checking j: 104. Angle diff: 1.00°
+  Checking window from index 103 to 109. Current i: 103, Checking j: 105. Angle diff: 0.00°
+  Checking window from index 103 to 109. Current i: 103, Checking j: 106. Angle diff: 0.00°
+  Checking window from index 103 to 109. Current i: 103, Checking j: 107. Angle diff: 0.00°
+  Checking window from index 103 to 109. Current i: 103, Checking j: 108. Angle diff: 0.00°
+  Checking window from index 103 to 109. Current i: 103, Checking j: 109. Angle diff: 1.00°
+  Checking window from index 104 to 110. Current i: 104, Checking j: 105. Angle diff: 1.00°
+  Checking window from index 104 to 110. Current i: 104, Checking j: 106. Angle diff: 1.00°
+  Checking window from index 104 to 110. Current i: 104, Checking j: 107. Angle diff: 1.00°
+  Checking window from index 104 to 110. Current i: 104, Checking j: 108. Angle diff: 1.00°
+  Checking window from index 104 to 110. Current i: 104, Checking j: 109. Angle diff: 0.00°
+  Checking window from index 104 to 110. Current i: 104, Checking j: 110. Angle diff: 98.00°
+  Turn detected from index 104 (169.00°) to index 110 (267.00°). Diff: 98.00°
+  Checking window from index 111 to 117. Current i: 111, Checking j: 112. Angle diff: 1.00°
+  Checking window from index 111 to 117. Current i: 111, Checking j: 113. Angle diff: 1.00°
+  Checking window from index 111 to 117. Current i: 111, Checking j: 114. Angle diff: 6.00°
+  Checking window from index 111 to 117. Current i: 111, Checking j: 115. Angle diff: 85.00°
+  Turn detected from index 111 (267.00°) to index 115 (352.00°). Diff: 85.00°
+  Checking window from index 116 to 122. Current i: 116, Checking j: 117. Angle diff: 0.00°
+  Checking window from index 116 to 122. Current i: 116, Checking j: 118. Angle diff: 0.00°
+  Checking window from index 116 to 122. Current i: 116, Checking j: 119. Angle diff: 83.00°
+  Turn detected from index 116 (352.00°) to index 119 (75.00°). Diff: 83.00°
+  Checking window from index 120 to 126. Current i: 120, Checking j: 121. Angle diff: 0.00°
+  Checking window from index 120 to 126. Current i: 120, Checking j: 122. Angle diff: 1.00°
+  Checking window from index 120 to 126. Current i: 120, Checking j: 123. Angle diff: 95.00°
+  Turn detected from index 120 (75.00°) to index 123 (170.00°). Diff: 95.00°
+  Checking window from index 124 to 130. Current i: 124, Checking j: 125. Angle diff: 0.00°
+  Checking window from index 124 to 130. Current i: 124, Checking j: 126. Angle diff: 0.00°
+  Checking window from index 124 to 130. Current i: 124, Checking j: 127. Angle diff: 0.00°
+  Checking window from index 124 to 130. Current i: 124, Checking j: 128. Angle diff: 0.00°
+  Checking window from index 124 to 130. Current i: 124, Checking j: 129. Angle diff: 0.00°
+  Checking window from index 124 to 130. Current i: 124, Checking j: 130. Angle diff: 0.00°
+  Checking window from index 125 to 131. Current i: 125, Checking j: 126. Angle diff: 0.00°
+  Checking window from index 125 to 131. Current i: 125, Checking j: 127. Angle diff: 0.00°
+  Checking window from index 125 to 131. Current i: 125, Checking j: 128. Angle diff: 0.00°
+  Checking window from index 125 to 131. Current i: 125, Checking j: 129. Angle diff: 0.00°
+  Checking window from index 125 to 131. Current i: 125, Checking j: 130. Angle diff: 0.00°
+  Checking window from index 125 to 131. Current i: 125, Checking j: 131. Angle diff: 0.00°
+  Checking window from index 126 to 132. Current i: 126, Checking j: 127. Angle diff: 0.00°
+  Checking window from index 126 to 132. Current i: 126, Checking j: 128. Angle diff: 0.00°
+  Checking window from index 126 to 132. Current i: 126, Checking j: 129. Angle diff: 0.00°
+  Checking window from index 126 to 132. Current i: 126, Checking j: 130. Angle diff: 0.00°
+  Checking window from index 126 to 132. Current i: 126, Checking j: 131. Angle diff: 0.00°
+  Checking window from index 126 to 132. Current i: 126, Checking j: 132. Angle diff: 0.00°
+  Checking window from index 127 to 133. Current i: 127, Checking j: 128. Angle diff: 0.00°
+  Checking window from index 127 to 133. Current i: 127, Checking j: 129. Angle diff: 0.00°
+  Checking window from index 127 to 133. Current i: 127, Checking j: 130. Angle diff: 0.00°
+  Checking window from index 127 to 133. Current i: 127, Checking j: 131. Angle diff: 0.00°
+  Checking window from index 127 to 133. Current i: 127, Checking j: 132. Angle diff: 0.00°
+  Checking window from index 127 to 133. Current i: 127, Checking j: 133. Angle diff: 0.00°
+  Checking window from index 128 to 134. Current i: 128, Checking j: 129. Angle diff: 0.00°
+  Checking window from index 128 to 134. Current i: 128, Checking j: 130. Angle diff: 0.00°
+  Checking window from index 128 to 134. Current i: 128, Checking j: 131. Angle diff: 0.00°
+  Checking window from index 128 to 134. Current i: 128, Checking j: 132. Angle diff: 0.00°
+  Checking window from index 128 to 134. Current i: 128, Checking j: 133. Angle diff: 0.00°
+  Checking window from index 128 to 134. Current i: 128, Checking j: 134. Angle diff: 1.00°
+  Checking window from index 129 to 135. Current i: 129, Checking j: 130. Angle diff: 0.00°
+  Checking window from index 129 to 135. Current i: 129, Checking j: 131. Angle diff: 0.00°
+  Checking window from index 129 to 135. Current i: 129, Checking j: 132. Angle diff: 0.00°
+  Checking window from index 129 to 135. Current i: 129, Checking j: 133. Angle diff: 0.00°
+  Checking window from index 129 to 135. Current i: 129, Checking j: 134. Angle diff: 1.00°
+  Checking window from index 129 to 135. Current i: 129, Checking j: 135. Angle diff: 0.00°
+  Checking window from index 130 to 136. Current i: 130, Checking j: 131. Angle diff: 0.00°
+  Checking window from index 130 to 136. Current i: 130, Checking j: 132. Angle diff: 0.00°
+  Checking window from index 130 to 136. Current i: 130, Checking j: 133. Angle diff: 0.00°
+  Checking window from index 130 to 136. Current i: 130, Checking j: 134. Angle diff: 1.00°
+  Checking window from index 130 to 136. Current i: 130, Checking j: 135. Angle diff: 0.00°
+  Checking window from index 130 to 136. Current i: 130, Checking j: 136. Angle diff: 1.00°
+  Checking window from index 131 to 137. Current i: 131, Checking j: 132. Angle diff: 0.00°
+  Checking window from index 131 to 137. Current i: 131, Checking j: 133. Angle diff: 0.00°
+  Checking window from index 131 to 137. Current i: 131, Checking j: 134. Angle diff: 1.00°
+  Checking window from index 131 to 137. Current i: 131, Checking j: 135. Angle diff: 0.00°
+  Checking window from index 131 to 137. Current i: 131, Checking j: 136. Angle diff: 1.00°
+  Checking window from index 131 to 137. Current i: 131, Checking j: 137. Angle diff: 0.00°
+  Checking window from index 132 to 138. Current i: 132, Checking j: 133. Angle diff: 0.00°
+  Checking window from index 132 to 138. Current i: 132, Checking j: 134. Angle diff: 1.00°
+  Checking window from index 132 to 138. Current i: 132, Checking j: 135. Angle diff: 0.00°
+  Checking window from index 132 to 138. Current i: 132, Checking j: 136. Angle diff: 1.00°
+  Checking window from index 132 to 138. Current i: 132, Checking j: 137. Angle diff: 0.00°
+  Checking window from index 132 to 138. Current i: 132, Checking j: 138. Angle diff: 0.00°
+  Checking window from index 133 to 139. Current i: 133, Checking j: 134. Angle diff: 1.00°
+  Checking window from index 133 to 139. Current i: 133, Checking j: 135. Angle diff: 0.00°
+  Checking window from index 133 to 139. Current i: 133, Checking j: 136. Angle diff: 1.00°
+  Checking window from index 133 to 139. Current i: 133, Checking j: 137. Angle diff: 0.00°
+  Checking window from index 133 to 139. Current i: 133, Checking j: 138. Angle diff: 0.00°
+  Checking window from index 133 to 139. Current i: 133, Checking j: 139. Angle diff: 0.00°
+  Checking window from index 134 to 140. Current i: 134, Checking j: 135. Angle diff: 1.00°
+  Checking window from index 134 to 140. Current i: 134, Checking j: 136. Angle diff: 2.00°
+  Checking window from index 134 to 140. Current i: 134, Checking j: 137. Angle diff: 1.00°
+  Checking window from index 134 to 140. Current i: 134, Checking j: 138. Angle diff: 1.00°
+  Checking window from index 134 to 140. Current i: 134, Checking j: 139. Angle diff: 1.00°
+  Checking window from index 134 to 140. Current i: 134, Checking j: 140. Angle diff: 1.00°
+  Checking window from index 135 to 141. Current i: 135, Checking j: 136. Angle diff: 1.00°
+  Checking window from index 135 to 141. Current i: 135, Checking j: 137. Angle diff: 0.00°
+  Checking window from index 135 to 141. Current i: 135, Checking j: 138. Angle diff: 0.00°
+  Checking window from index 135 to 141. Current i: 135, Checking j: 139. Angle diff: 0.00°
+  Checking window from index 135 to 141. Current i: 135, Checking j: 140. Angle diff: 0.00°
+  Checking window from index 135 to 141. Current i: 135, Checking j: 141. Angle diff: 1.00°
+  Checking window from index 136 to 142. Current i: 136, Checking j: 137. Angle diff: 1.00°
+  Checking window from index 136 to 142. Current i: 136, Checking j: 138. Angle diff: 1.00°
+  Checking window from index 136 to 142. Current i: 136, Checking j: 139. Angle diff: 1.00°
+  Checking window from index 136 to 142. Current i: 136, Checking j: 140. Angle diff: 1.00°
+  Checking window from index 136 to 142. Current i: 136, Checking j: 141. Angle diff: 0.00°
+  Checking window from index 136 to 142. Current i: 136, Checking j: 142. Angle diff: 36.00°
+  Checking window from index 137 to 143. Current i: 137, Checking j: 138. Angle diff: 0.00°
+  Checking window from index 137 to 143. Current i: 137, Checking j: 139. Angle diff: 0.00°
+  Checking window from index 137 to 143. Current i: 137, Checking j: 140. Angle diff: 0.00°
+  Checking window from index 137 to 143. Current i: 137, Checking j: 141. Angle diff: 1.00°
+  Checking window from index 137 to 143. Current i: 137, Checking j: 142. Angle diff: 35.00°
+  Checking window from index 137 to 143. Current i: 137, Checking j: 143. Angle diff: 32.00°
+  Checking window from index 138 to 144. Current i: 138, Checking j: 139. Angle diff: 0.00°
+  Checking window from index 138 to 144. Current i: 138, Checking j: 140. Angle diff: 0.00°
+  Checking window from index 138 to 144. Current i: 138, Checking j: 141. Angle diff: 1.00°
+  Checking window from index 138 to 144. Current i: 138, Checking j: 142. Angle diff: 35.00°
+  Checking window from index 138 to 144. Current i: 138, Checking j: 143. Angle diff: 32.00°
+  Checking window from index 138 to 144. Current i: 138, Checking j: 144. Angle diff: 49.00°
+  Checking window from index 139 to 145. Current i: 139, Checking j: 140. Angle diff: 0.00°
+  Checking window from index 139 to 145. Current i: 139, Checking j: 141. Angle diff: 1.00°
+  Checking window from index 139 to 145. Current i: 139, Checking j: 142. Angle diff: 35.00°
+  Checking window from index 139 to 145. Current i: 139, Checking j: 143. Angle diff: 32.00°
+  Checking window from index 139 to 145. Current i: 139, Checking j: 144. Angle diff: 49.00°
+  Checking window from index 139 to 145. Current i: 139, Checking j: 145. Angle diff: 46.00°
+  Checking window from index 140 to 146. Current i: 140, Checking j: 141. Angle diff: 1.00°
+  Checking window from index 140 to 146. Current i: 140, Checking j: 142. Angle diff: 35.00°
+  Checking window from index 140 to 146. Current i: 140, Checking j: 143. Angle diff: 32.00°
+  Checking window from index 140 to 146. Current i: 140, Checking j: 144. Angle diff: 49.00°
+  Checking window from index 140 to 146. Current i: 140, Checking j: 145. Angle diff: 46.00°
+  Checking window from index 140 to 146. Current i: 140, Checking j: 146. Angle diff: 46.00°
+  Checking window from index 141 to 147. Current i: 141, Checking j: 142. Angle diff: 36.00°
+  Checking window from index 141 to 147. Current i: 141, Checking j: 143. Angle diff: 33.00°
+  Checking window from index 141 to 147. Current i: 141, Checking j: 144. Angle diff: 50.00°
+  Checking window from index 141 to 147. Current i: 141, Checking j: 145. Angle diff: 47.00°
+  Checking window from index 141 to 147. Current i: 141, Checking j: 146. Angle diff: 47.00°
+  Checking window from index 141 to 147. Current i: 141, Checking j: 147. Angle diff: 49.00°
+  Checking window from index 142 to 148. Current i: 142, Checking j: 143. Angle diff: 3.00°
+  Checking window from index 142 to 148. Current i: 142, Checking j: 144. Angle diff: 14.00°
+  Checking window from index 142 to 148. Current i: 142, Checking j: 145. Angle diff: 11.00°
+  Checking window from index 142 to 148. Current i: 142, Checking j: 146. Angle diff: 11.00°
+  Checking window from index 142 to 148. Current i: 142, Checking j: 147. Angle diff: 13.00°
+  Checking window from index 142 to 148. Current i: 142, Checking j: 148. Angle diff: 12.00°
+  Checking window from index 143 to 148. Current i: 143, Checking j: 144. Angle diff: 17.00°
+  Checking window from index 143 to 148. Current i: 143, Checking j: 145. Angle diff: 14.00°
+  Checking window from index 143 to 148. Current i: 143, Checking j: 146. Angle diff: 14.00°
+  Checking window from index 143 to 148. Current i: 143, Checking j: 147. Angle diff: 16.00°
+  Checking window from index 143 to 148. Current i: 143, Checking j: 148. Angle diff: 15.00°
+  Checking window from index 144 to 148. Current i: 144, Checking j: 145. Angle diff: 3.00°
+  Checking window from index 144 to 148. Current i: 144, Checking j: 146. Angle diff: 3.00°
+  Checking window from index 144 to 148. Current i: 144, Checking j: 147. Angle diff: 1.00°
+  Checking window from index 144 to 148. Current i: 144, Checking j: 148. Angle diff: 2.00°
+  Checking window from index 145 to 148. Current i: 145, Checking j: 146. Angle diff: 0.00°
+  Checking window from index 145 to 148. Current i: 145, Checking j: 147. Angle diff: 2.00°
+  Checking window from index 145 to 148. Current i: 145, Checking j: 148. Angle diff: 1.00°
+  Checking window from index 146 to 148. Current i: 146, Checking j: 147. Angle diff: 2.00°
+  Checking window from index 146 to 148. Current i: 146, Checking j: 148. Angle diff: 1.00°
+  Checking window from index 147 to 148. Current i: 147, Checking j: 148. Angle diff: 1.00°
+
+Найденные повороты:
+Поворот 1: 351.00° -> 72.00° (изменение: 81.00°)
+Поворот 2: 169.00° -> 267.00° (изменение: 98.00°)
+Поворот 3: 267.00° -> 352.00° (изменение: 85.00°)
+Поворот 4: 352.00° -> 75.00° (изменение: 83.00°)
+Поворот 5: 75.00° -> 170.00° (изменение: 95.00°)
+
+Начало анализа углов (поиск стабильных участков)
+----------------------------------------------
+Потенциальное начало стабильного участка A найдено в индексе 0 (Угол: 150.00°)
+Стабильный участок A найден: индексы 0 - 11 (Длительность: 12 записей)
+  Средний угол участка A: 150.25°
+  Поиск следующего стабильного участка B в окне: индексы 12 - 20
+  Потенциальное начало стабильного участка B найдено в индексе 14 (Угол: 148.00°)
+  Стабильный участок B найден: индексы 14 - 35 (Длительность: 22 записей)
+  Средний угол участка B: 148.00°
+  Разница средних углов A и B: 2.25°
+  Переход от A к B не является поворотом на ~90 градусов.
+  Продолжаем поиск следующего участка A с индекса 12
+Потенциальное начало стабильного участка A найдено в индексе 14 (Угол: 148.00°)
+Стабильный участок A найден: индексы 14 - 35 (Длительность: 22 записей)
+  Средний угол участка A: 148.00°
+  Поиск следующего стабильного участка B в окне: индексы 36 - 44
+  Не найдено начало стабильного участка B в окне. Продолжаем поиск следующего участка A.
+Потенциальное начало стабильного участка A найдено в индексе 48 (Угол: 164.00°)
+Стабильный участок A найден: индексы 48 - 88 (Длительность: 41 записей)
+  Средний угол участка A: 164.71°
+  Поиск следующего стабильного участка B в окне: индексы 89 - 97
+  Потенциальное начало стабильного участка B найдено в индексе 89 (Угол: 152.00°)
+  Стабильный участок B найден: индексы 89 - 101 (Длительность: 13 записей)
+  Средний угол участка B: 148.92°
+  Разница средних углов A и B: 15.78°
+  Переход от A к B не является поворотом на ~90 градусов.
+  Продолжаем поиск следующего участка A с индекса 89
+Потенциальное начало стабильного участка A найдено в индексе 89 (Угол: 152.00°)
+Стабильный участок A найден: индексы 89 - 101 (Длительность: 13 записей)
+  Средний угол участка A: 148.92°
+  Поиск следующего стабильного участка B в окне: индексы 102 - 110
+  Потенциальное начало стабильного участка B найдено в индексе 102 (Угол: 170.00°)
+  Стабильный участок B найден: индексы 102 - 108 (Длительность: 7 записей)
+  Средний угол участка B: 169.71°
+  Разница средних углов A и B: 20.79°
+  Переход от A к B не является поворотом на ~90 градусов.
+  Продолжаем поиск следующего участка A с индекса 102
+Потенциальное начало стабильного участка A найдено в индексе 102 (Угол: 170.00°)
+Стабильный участок A найден: индексы 102 - 108 (Длительность: 7 записей)
+  Средний угол участка A: 169.71°
+  Поиск следующего стабильного участка B в окне: индексы 109 - 117
+  Потенциальное начало стабильного участка B найдено в индексе 109 (Угол: 267.00°)
+  Стабильный участок B найден: индексы 109 - 112 (Длительность: 4 записей)
+  Средний угол участка B: 267.50°
+  Разница средних углов A и B: 97.79°
+  Поворот на ~90 градусов найден!
+  Продолжаем поиск с индекса 113
+Потенциальное начало стабильного участка A найдено в индексе 114 (Угол: 352.00°)
+Стабильный участок A найден: индексы 114 - 117 (Длительность: 4 записей)
+  Средний угол участка A: 352.00°
+  Поиск следующего стабильного участка B в окне: индексы 118 - 126
+  Потенциальное начало стабильного участка B найдено в индексе 118 (Угол: 75.00°)
+  Стабильный участок B найден: индексы 118 - 121 (Длительность: 4 записей)
+  Средний угол участка B: 74.75°
+  Разница средних углов A и B: 82.75°
+  Поворот на ~90 градусов найден!
+  Продолжаем поиск с индекса 122
+Потенциальное начало стабильного участка A найдено в индексе 122 (Угол: 170.00°)
+Стабильный участок A найден: индексы 122 - 140 (Длительность: 19 записей)
+  Средний угол участка A: 169.95°
+  Поиск следующего стабильного участка B в окне: индексы 141 - 147
+  Потенциальное начало стабильного участка B найдено в индексе 143 (Угол: 219.00°)
+  Стабильный участок B найден: индексы 143 - 147 (Длительность: 5 записей)
+  Средний угол участка B: 217.20°
+  Разница средних углов A и B: 47.25°
+  Переход от A к B не является поворотом на ~90 градусов.
+  Продолжаем поиск следующего участка A с индекса 141
+Потенциальное начало стабильного участка A найдено в индексе 143 (Угол: 219.00°)
+Стабильный участок A найден: индексы 143 - 147 (Длительность: 5 записей)
+  Средний угол участка A: 217.20°
+  Поиск следующего стабильного участка B в окне: индексы 148 - 147
+  Не найдено начало стабильного участка B в окне. Продолжаем поиск следующего участка A.
+
+Найденные повороты:
+Поворот 1: 169.71° -> 267.50° (изменение: 97.79°)
+Поворот 2: 352.00° -> 74.75° (изменение: 82.75°)
+
+Начало анализа данных
+---------------------
+Potential turn detected at index 108. Angle: 267.00°, Diff: 98.00°
+  Stable angle found at index 109. Angle: 267.00°
+Potential turn detected at index 117. Angle: 75.00°, Diff: 83.00°
+  Stable angle found at index 118. Angle: 75.00°
+Potential turn detected at index 121. Angle: 170.00°, Diff: 96.00°
+  Stable angle found at index 122. Angle: 170.00°
+
+Начало анализа данных
+---------------------
+Potential turn detected at index 107. Angle: 267.00°, Diff: 98.00°
+  Stable angle found at index 108. Angle: 267.00°
+Potential turn detected at index 116. Angle: 75.00°, Diff: 83.00°
+  Stable angle found at index 117. Angle: 75.00°
+Potential turn detected at index 120. Angle: 170.00°, Diff: 96.00°
+  Stable angle found at index 121. Angle: 170.00°
+
+Начало анализа данных
+---------------------
+Initial lastAngle: 150.00°
+
+Processing index 1. Current Angle: 150.00°, Last Angle: 150.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 1.
+Updating Last Angle to current angle: 150.00°
+
+Processing index 2. Current Angle: 150.00°, Last Angle: 150.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 2.
+Updating Last Angle to current angle: 150.00°
+
+Processing index 3. Current Angle: 150.00°, Last Angle: 150.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 3.
+Updating Last Angle to current angle: 150.00°
+
+Processing index 4. Current Angle: 150.00°, Last Angle: 150.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 4.
+Updating Last Angle to current angle: 150.00°
+
+Processing index 5. Current Angle: 149.00°, Last Angle: 150.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 5.
+Updating Last Angle to current angle: 149.00°
+
+Processing index 6. Current Angle: 150.00°, Last Angle: 149.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 6.
+Updating Last Angle to current angle: 150.00°
+
+Processing index 7. Current Angle: 150.00°, Last Angle: 150.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 7.
+Updating Last Angle to current angle: 150.00°
+
+Processing index 8. Current Angle: 154.00°, Last Angle: 150.00°
+Angle Difference (normalized): 4.00°
+No potential turn detected at index 8.
+Updating Last Angle to current angle: 154.00°
+
+Processing index 9. Current Angle: 156.00°, Last Angle: 154.00°
+Angle Difference (normalized): 2.00°
+No potential turn detected at index 9.
+Updating Last Angle to current angle: 156.00°
+
+Processing index 10. Current Angle: 154.00°, Last Angle: 156.00°
+Angle Difference (normalized): 2.00°
+No potential turn detected at index 10.
+Updating Last Angle to current angle: 154.00°
+
+Processing index 11. Current Angle: 148.00°, Last Angle: 154.00°
+Angle Difference (normalized): 6.00°
+No potential turn detected at index 11.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 12. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 12.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 13. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 13.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 14. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 14.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 15. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 15.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 16. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 16.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 17. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 17.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 18. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 18.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 19. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 19.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 20. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 20.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 21. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 21.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 22. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 22.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 23. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 23.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 24. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 24.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 25. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 25.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 26. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 26.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 27. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 27.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 28. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 28.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 29. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 29.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 30. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 30.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 31. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 31.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 32. Current Angle: 148.00°, Last Angle: 148.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 32.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 33. Current Angle: 351.00°, Last Angle: 148.00°
+Angle Difference (normalized): 157.00°
+No potential turn detected at index 33.
+Updating Last Angle to current angle: 351.00°
+
+Processing index 34. Current Angle: 30.00°, Last Angle: 351.00°
+Angle Difference (normalized): 39.00°
+No potential turn detected at index 34.
+Updating Last Angle to current angle: 30.00°
+
+Processing index 35. Current Angle: 72.00°, Last Angle: 30.00°
+Angle Difference (normalized): 42.00°
+No potential turn detected at index 35.
+Updating Last Angle to current angle: 72.00°
+
+Processing index 36. Current Angle: 116.00°, Last Angle: 72.00°
+Angle Difference (normalized): 44.00°
+No potential turn detected at index 36.
+Updating Last Angle to current angle: 116.00°
+
+Processing index 37. Current Angle: 156.00°, Last Angle: 116.00°
+Angle Difference (normalized): 40.00°
+No potential turn detected at index 37.
+Updating Last Angle to current angle: 156.00°
+
+Processing index 38. Current Angle: 193.00°, Last Angle: 156.00°
+Angle Difference (normalized): 37.00°
+No potential turn detected at index 38.
+Updating Last Angle to current angle: 193.00°
+
+Processing index 39. Current Angle: 231.00°, Last Angle: 193.00°
+Angle Difference (normalized): 38.00°
+No potential turn detected at index 39.
+Updating Last Angle to current angle: 231.00°
+
+Processing index 40. Current Angle: 268.00°, Last Angle: 231.00°
+Angle Difference (normalized): 37.00°
+No potential turn detected at index 40.
+Updating Last Angle to current angle: 268.00°
+
+Processing index 41. Current Angle: 304.00°, Last Angle: 268.00°
+Angle Difference (normalized): 36.00°
+No potential turn detected at index 41.
+Updating Last Angle to current angle: 304.00°
+
+Processing index 42. Current Angle: 341.00°, Last Angle: 304.00°
+Angle Difference (normalized): 37.00°
+No potential turn detected at index 42.
+Updating Last Angle to current angle: 341.00°
+
+Processing index 43. Current Angle: 17.00°, Last Angle: 341.00°
+Angle Difference (normalized): 36.00°
+No potential turn detected at index 43.
+Updating Last Angle to current angle: 17.00°
+
+Processing index 44. Current Angle: 59.00°, Last Angle: 17.00°
+Angle Difference (normalized): 42.00°
+No potential turn detected at index 44.
+Updating Last Angle to current angle: 59.00°
+
+Processing index 45. Current Angle: 164.00°, Last Angle: 59.00°
+Angle Difference (normalized): 105.00°
+No potential turn detected at index 45.
+Updating Last Angle to current angle: 164.00°
+
+Processing index 46. Current Angle: 165.00°, Last Angle: 164.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 46.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 47. Current Angle: 164.00°, Last Angle: 165.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 47.
+Updating Last Angle to current angle: 164.00°
+
+Processing index 48. Current Angle: 165.00°, Last Angle: 164.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 48.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 49. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 49.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 50. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 50.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 51. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 51.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 52. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 52.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 53. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 53.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 54. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 54.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 55. Current Angle: 164.00°, Last Angle: 165.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 55.
+Updating Last Angle to current angle: 164.00°
+
+Processing index 56. Current Angle: 164.00°, Last Angle: 164.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 56.
+Updating Last Angle to current angle: 164.00°
+
+Processing index 57. Current Angle: 165.00°, Last Angle: 164.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 57.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 58. Current Angle: 164.00°, Last Angle: 165.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 58.
+Updating Last Angle to current angle: 164.00°
+
+Processing index 59. Current Angle: 164.00°, Last Angle: 164.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 59.
+Updating Last Angle to current angle: 164.00°
+
+Processing index 60. Current Angle: 165.00°, Last Angle: 164.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 60.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 61. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 61.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 62. Current Angle: 164.00°, Last Angle: 165.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 62.
+Updating Last Angle to current angle: 164.00°
+
+Processing index 63. Current Angle: 165.00°, Last Angle: 164.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 63.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 64. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 64.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 65. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 65.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 66. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 66.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 67. Current Angle: 164.00°, Last Angle: 165.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 67.
+Updating Last Angle to current angle: 164.00°
+
+Processing index 68. Current Angle: 164.00°, Last Angle: 164.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 68.
+Updating Last Angle to current angle: 164.00°
+
+Processing index 69. Current Angle: 165.00°, Last Angle: 164.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 69.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 70. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 70.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 71. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 71.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 72. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 72.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 73. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 73.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 74. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 74.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 75. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 75.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 76. Current Angle: 164.00°, Last Angle: 165.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 76.
+Updating Last Angle to current angle: 164.00°
+
+Processing index 77. Current Angle: 164.00°, Last Angle: 164.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 77.
+Updating Last Angle to current angle: 164.00°
+
+Processing index 78. Current Angle: 165.00°, Last Angle: 164.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 78.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 79. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 79.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 80. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 80.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 81. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 81.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 82. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 82.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 83. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 83.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 84. Current Angle: 165.00°, Last Angle: 165.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 84.
+Updating Last Angle to current angle: 165.00°
+
+Processing index 85. Current Angle: 164.00°, Last Angle: 165.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 85.
+Updating Last Angle to current angle: 164.00°
+
+Processing index 86. Current Angle: 152.00°, Last Angle: 164.00°
+Angle Difference (normalized): 12.00°
+No potential turn detected at index 86.
+Updating Last Angle to current angle: 152.00°
+
+Processing index 87. Current Angle: 150.00°, Last Angle: 152.00°
+Angle Difference (normalized): 2.00°
+No potential turn detected at index 87.
+Updating Last Angle to current angle: 150.00°
+
+Processing index 88. Current Angle: 152.00°, Last Angle: 150.00°
+Angle Difference (normalized): 2.00°
+No potential turn detected at index 88.
+Updating Last Angle to current angle: 152.00°
+
+Processing index 89. Current Angle: 148.00°, Last Angle: 152.00°
+Angle Difference (normalized): 4.00°
+No potential turn detected at index 89.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 90. Current Angle: 149.00°, Last Angle: 148.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 90.
+Updating Last Angle to current angle: 149.00°
+
+Processing index 91. Current Angle: 149.00°, Last Angle: 149.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 91.
+Updating Last Angle to current angle: 149.00°
+
+Processing index 92. Current Angle: 149.00°, Last Angle: 149.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 92.
+Updating Last Angle to current angle: 149.00°
+
+Processing index 93. Current Angle: 149.00°, Last Angle: 149.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 93.
+Updating Last Angle to current angle: 149.00°
+
+Processing index 94. Current Angle: 149.00°, Last Angle: 149.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 94.
+Updating Last Angle to current angle: 149.00°
+
+Processing index 95. Current Angle: 148.00°, Last Angle: 149.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 95.
+Updating Last Angle to current angle: 148.00°
+
+Processing index 96. Current Angle: 147.00°, Last Angle: 148.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 96.
+Updating Last Angle to current angle: 147.00°
+
+Processing index 97. Current Angle: 147.00°, Last Angle: 147.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 97.
+Updating Last Angle to current angle: 147.00°
+
+Processing index 98. Current Angle: 147.00°, Last Angle: 147.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 98.
+Updating Last Angle to current angle: 147.00°
+
+Processing index 99. Current Angle: 170.00°, Last Angle: 147.00°
+Angle Difference (normalized): 23.00°
+No potential turn detected at index 99.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 100. Current Angle: 169.00°, Last Angle: 170.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 100.
+Updating Last Angle to current angle: 169.00°
+
+Processing index 101. Current Angle: 170.00°, Last Angle: 169.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 101.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 102. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 102.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 103. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 103.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 104. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 104.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 105. Current Angle: 169.00°, Last Angle: 170.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 105.
+Updating Last Angle to current angle: 169.00°
+
+Processing index 106. Current Angle: 267.00°, Last Angle: 169.00°
+Angle Difference (normalized): 98.00°
+Potential turn detected at index 106. Angle: 267.00°, Diff: 98.00°
+  Checking for stable segment after turn from index 106 (Angle 267.00°), stableTolerance: 5.00°
+    Checking index 107 (Angle 267.00°). Diff from stableAngleAfterTurn: 0.00°
+    Stable angle found at index 107. Angle: 267.00°, Stable Count: 1
+    Stable segment found ending at index 107. New Last Angle: 267.00°, Turn Count: 1
+
+Processing index 108. Current Angle: 268.00°, Last Angle: 267.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 108.
+Updating Last Angle to current angle: 268.00°
+
+Processing index 109. Current Angle: 268.00°, Last Angle: 268.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 109.
+Updating Last Angle to current angle: 268.00°
+
+Processing index 110. Current Angle: 273.00°, Last Angle: 268.00°
+Angle Difference (normalized): 5.00°
+No potential turn detected at index 110.
+Updating Last Angle to current angle: 273.00°
+
+Processing index 111. Current Angle: 352.00°, Last Angle: 273.00°
+Angle Difference (normalized): 79.00°
+No potential turn detected at index 111.
+Updating Last Angle to current angle: 352.00°
+
+Processing index 112. Current Angle: 352.00°, Last Angle: 352.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 112.
+Updating Last Angle to current angle: 352.00°
+
+Processing index 113. Current Angle: 352.00°, Last Angle: 352.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 113.
+Updating Last Angle to current angle: 352.00°
+
+Processing index 114. Current Angle: 352.00°, Last Angle: 352.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 114.
+Updating Last Angle to current angle: 352.00°
+
+Processing index 115. Current Angle: 75.00°, Last Angle: 352.00°
+Angle Difference (normalized): 83.00°
+Potential turn detected at index 115. Angle: 75.00°, Diff: 83.00°
+  Checking for stable segment after turn from index 115 (Angle 75.00°), stableTolerance: 5.00°
+    Checking index 116 (Angle 75.00°). Diff from stableAngleAfterTurn: 0.00°
+    Stable angle found at index 116. Angle: 75.00°, Stable Count: 1
+    Stable segment found ending at index 116. New Last Angle: 75.00°, Turn Count: 2
+
+Processing index 117. Current Angle: 75.00°, Last Angle: 75.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 117.
+Updating Last Angle to current angle: 75.00°
+
+Processing index 118. Current Angle: 74.00°, Last Angle: 75.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 118.
+Updating Last Angle to current angle: 74.00°
+
+Processing index 119. Current Angle: 170.00°, Last Angle: 74.00°
+Angle Difference (normalized): 96.00°
+Potential turn detected at index 119. Angle: 170.00°, Diff: 96.00°
+  Checking for stable segment after turn from index 119 (Angle 170.00°), stableTolerance: 5.00°
+    Checking index 120 (Angle 170.00°). Diff from stableAngleAfterTurn: 0.00°
+    Stable angle found at index 120. Angle: 170.00°, Stable Count: 1
+    Stable segment found ending at index 120. New Last Angle: 170.00°, Turn Count: 3
+
+Processing index 121. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 121.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 122. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 122.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 123. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 123.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 124. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 124.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 125. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 125.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 126. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 126.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 127. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 127.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 128. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 128.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 129. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 129.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 130. Current Angle: 171.00°, Last Angle: 170.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 130.
+Updating Last Angle to current angle: 171.00°
+
+Processing index 131. Current Angle: 170.00°, Last Angle: 171.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 131.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 132. Current Angle: 169.00°, Last Angle: 170.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 132.
+Updating Last Angle to current angle: 169.00°
+
+Processing index 133. Current Angle: 170.00°, Last Angle: 169.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 133.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 134. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 134.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 135. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 135.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 136. Current Angle: 170.00°, Last Angle: 170.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 136.
+Updating Last Angle to current angle: 170.00°
+
+Processing index 137. Current Angle: 169.00°, Last Angle: 170.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 137.
+Updating Last Angle to current angle: 169.00°
+
+Processing index 138. Current Angle: 205.00°, Last Angle: 169.00°
+Angle Difference (normalized): 36.00°
+No potential turn detected at index 138.
+Updating Last Angle to current angle: 205.00°
+
+Processing index 139. Current Angle: 202.00°, Last Angle: 205.00°
+Angle Difference (normalized): 3.00°
+No potential turn detected at index 139.
+Updating Last Angle to current angle: 202.00°
+
+Processing index 140. Current Angle: 219.00°, Last Angle: 202.00°
+Angle Difference (normalized): 17.00°
+No potential turn detected at index 140.
+Updating Last Angle to current angle: 219.00°
+
+Processing index 141. Current Angle: 216.00°, Last Angle: 219.00°
+Angle Difference (normalized): 3.00°
+No potential turn detected at index 141.
+Updating Last Angle to current angle: 216.00°
+
+Processing index 142. Current Angle: 216.00°, Last Angle: 216.00°
+Angle Difference (normalized): 0.00°
+No potential turn detected at index 142.
+Updating Last Angle to current angle: 216.00°
+
+Processing index 143. Current Angle: 218.00°, Last Angle: 216.00°
+Angle Difference (normalized): 2.00°
+No potential turn detected at index 143.
+Updating Last Angle to current angle: 218.00°
+
+Processing index 144. Current Angle: 217.00°, Last Angle: 218.00°
+Angle Difference (normalized): 1.00°
+No potential turn detected at index 144.
+Updating Last Angle to current angle: 217.00°
+---------------------
+Analysis finished. Total turns found: 3
+Analysis failed: Not enough turns found (3)
+Final Result IsValid: false
+---------------------
+=== Начало анализа данных компаса ===
+Время начала: 2025-06-03 11:05:46
+Количество записей: 144
+----------------------------------------
+
+Начало анализа данных
+
+---------------------
+
+Potential turn detected at index 105. Angle: 267.00°, Diff: 98.00°
+
+  Stable angle found at index 106. Angle: 267.00°
+
+Potential turn detected at index 114. Angle: 75.00°, Diff: 83.00°
+
+  Stable angle found at index 115. Angle: 75.00°
+
+Potential turn detected at index 118. Angle: 170.00°, Diff: 96.00°
+
+  Stable angle found at index 119. Angle: 170.00°
+
