@@ -357,6 +357,10 @@ func (s *Server) handleConfig(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "MaxOutliers должен быть от 0 до 10", http.StatusBadRequest)
 			return
 		}
+		if config.SumTolerance < 0 || config.SumTolerance > 50 {
+			http.Error(w, "SumTolerance должен быть от 0 до 50", http.StatusBadRequest)
+			return
+		}
 
 		// Возвращаем валидированную конфигурацию
 		json.NewEncoder(w).Encode(config)

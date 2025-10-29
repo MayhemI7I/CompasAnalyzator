@@ -16,6 +16,7 @@ type AnalysisConfig struct {
 	TurnTolerance      float64 `json:"turnTolerance"`      // Допуск для определения поворота на 90° (90±X градусов)
 	MinStableLen       int     `json:"minStableLen"`       // Минимальная длина стабильного сегмента
 	MaxOutliers        int     `json:"maxOutliers"`        // Максимум выбросов (гистерезис)
+	SumTolerance       float64 `json:"sumTolerance"`       // Допуск для суммы 4-х поворотов (должна быть ≈360° ± SumTolerance)
 }
 
 // DefaultConfig возвращает конфигурацию по умолчанию
@@ -25,6 +26,7 @@ func DefaultConfig() AnalysisConfig {
 		TurnTolerance:      10.0, // Допуск поворота (градусы) - по стандарту 10°
 		MinStableLen:       2,    // Минимальная длина сегмента
 		MaxOutliers:        0,    // Максимум выбросов (гистерезис)
+		SumTolerance:       20.0, // Допуск суммы поворотов (градусы) - по стандарту 20°
 	}
 }
 
@@ -364,7 +366,8 @@ func find90DegreeTurns(segments []AngleSegment, turnTolerance float64, logFile *
 }
 
 // findBestTurnSequence находит лучшую последовательность из 4 непрерывных поворотов
-// Ищет все возможные последовательности и выбирает ту, где сумма ближе к 360°
+// ВАЖНО: Возвращает ПЕРВУЮ непрерывную последовательность, даже если она не прошла валидацию
+// Это позволяет показать пользователю, где именно проблема
 func findBestTurnSequence(allTurns []models.Turn, logFile *os.File) []models.Turn {
 	if len(allTurns) < 4 {
 		return allTurns // Если меньше 4 поворотов, возвращаем как есть
@@ -375,14 +378,12 @@ func findBestTurnSequence(allTurns []models.Turn, logFile *os.File) []models.Tur
 		fmt.Fprintf(logFile, "Всего найдено поворотов: %d\n", len(allTurns))
 	}
 
-	bestSequence := allTurns[:4]
-	bestDeviation := 1000.0 // Большое значение для начала
-
-	// Проходим по всем возможным последовательностям из 4 подряд идущих поворотов
+	// Ищем первую НЕПРЕРЫВНУЮ последовательность из 4 поворотов
+	// Непрерывность означает: FromSegment следующего = ToSegment предыдущего
 	for i := 0; i <= len(allTurns)-4; i++ {
 		sequence := allTurns[i : i+4]
 
-		// Проверяем непрерывность: конец каждого = начало следующего
+		// Проверяем непрерывность по сегментам
 		isContinuous := true
 		for j := 1; j < 4; j++ {
 			if sequence[j].FromSegment != sequence[j-1].ToSegment {
@@ -392,16 +393,33 @@ func findBestTurnSequence(allTurns []models.Turn, logFile *os.File) []models.Tur
 		}
 
 		if !isContinuous {
-			continue // Пропускаем непоследовательные цепочки
+			continue
 		}
 
-		// Вычисляем сумму углов
+		// Проверяем также непрерывность по углам (EndAngle ≈ StartAngle следующего)
+		hasLargeAngleGaps := false
+		for j := 1; j < 4; j++ {
+			gap := normalizeAngleDifference(sequence[j-1].EndAngle, sequence[j].StartAngle)
+			if gap > 30.0 { // Допускаем небольшой разрыв из-за переходных зон
+				hasLargeAngleGaps = true
+				if logFile != nil {
+					fmt.Fprintf(logFile, "  ⚠ Последовательность [%d:%d] имеет большой разрыв в углах: %.2f° между поворотами %d и %d\n",
+						i+1, i+4, gap, j, j+1)
+				}
+				break
+			}
+		}
+
+		if hasLargeAngleGaps {
+			continue // Пропускаем последовательности с большими разрывами
+		}
+
+		// Нашли первую непрерывную последовательность - возвращаем её
 		var totalDiff float64
 		for _, turn := range sequence {
 			totalDiff += turn.Diff
 		}
 
-		// Вычисляем отклонение от 360°
 		deviation := math.Abs(totalDiff - 360)
 		if deviation > 180 {
 			deviation = 360 - deviation
@@ -410,33 +428,27 @@ func findBestTurnSequence(allTurns []models.Turn, logFile *os.File) []models.Tur
 		if logFile != nil {
 			fmt.Fprintf(logFile, "Последовательность [%d:%d]: сумма=%.2f°, отклонение=%.2f°\n",
 				i+1, i+4, totalDiff, deviation)
+			fmt.Fprintf(logFile, "✓ Выбрана первая непрерывная последовательность (отклонение %.2f° от 360°)\n", deviation)
 		}
 
-		// Если эта последовательность лучше, сохраняем её
-		if deviation < bestDeviation {
-			bestDeviation = deviation
-			bestSequence = sequence
-			if logFile != nil {
-				fmt.Fprintf(logFile, "  ✓ Новая лучшая последовательность!\n")
-			}
-		}
+		return sequence
 	}
 
+	// Если не нашли непрерывной последовательности, возвращаем первые 4
 	if logFile != nil {
-		fmt.Fprintf(logFile, "✓ Выбрана последовательность с отклонением %.2f° от 360°\n", bestDeviation)
+		fmt.Fprintf(logFile, "⚠ Не найдено непрерывной последовательности, возвращаем первые 4 поворота\n")
 	}
-
-	return bestSequence
+	return allTurns[:4]
 }
 
 // validateTurnSequence проверяет последовательность поворотов на корректность
 // Требования:
 // 1. Ровно 4 поворота на ~90°
 // 2. ВСЕ повороты в ОДНОМ направлении (по часовой стрелке)
-// 3. Сумма всех поворотов ≈ 360° (±15°)
+// 3. Сумма всех поворотов ≈ 360° (±sumTolerance)
 // 4. Повороты идут последовательно (без наложений)
 // 5. Повороты образуют непрерывную цепочку
-func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string) {
+func validateTurnSequence(turns []models.Turn, turnTolerance float64, sumTolerance float64, logFile *os.File) (bool, []string) {
 	var errors []string
 
 	if logFile != nil {
@@ -567,7 +579,6 @@ func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string
 		fmt.Fprintf(logFile, "Отклонение от 360°: %.2f°\n", deviation)
 	}
 
-	const sumTolerance = 15.0 // Допуск ±15° на сумму
 	if deviation > sumTolerance {
 		msg := fmt.Sprintf("Сумма поворотов (%.2f°) слишком отличается от 360° (отклонение: %.2f° > %.2f°)",
 			totalDiff, deviation, sumTolerance)
@@ -583,15 +594,23 @@ func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string
 
 	// Проверка 6: Детальная информация о каждом повороте
 	if logFile != nil {
-		fmt.Fprintf(logFile, "\nДетали поворотов:\n")
+		fmt.Fprintf(logFile, "\nДетали поворотов (допуск ±%.2f°):\n", turnTolerance)
 		for i, turn := range turns {
 			dev := math.Abs(turn.Diff - 90)
 			direction := "по часовой ✓"
 			if !turn.IsClockwise {
 				direction = "против часовой ✗"
 			}
-			fmt.Fprintf(logFile, "Поворот %d: %.2f° → %.2f° (Δ=%.2f°, знак=%.2f°, отклонение от 90°: %.2f°, %s)\n",
-				i+1, turn.StartAngle, turn.EndAngle, turn.Diff, turn.SignedDiff, dev, direction)
+
+			// Проверяем, в допуске ли поворот
+			inTolerance := dev <= turnTolerance
+			toleranceStatus := "✓"
+			if !inTolerance {
+				toleranceStatus = "✗ ВНЕ ДОПУСКА"
+			}
+
+			fmt.Fprintf(logFile, "Поворот %d: %.2f° → %.2f° (Δ=%.2f°, знак=%.2f°, отклонение от 90°: %.2f°, %s) %s\n",
+				i+1, turn.StartAngle, turn.EndAngle, turn.Diff, turn.SignedDiff, dev, direction, toleranceStatus)
 		}
 	}
 
@@ -627,7 +646,7 @@ func AnalyzeCompassData(angles []float64, config AnalysisConfig, logFile *os.Fil
 	turns := findBestTurnSequence(allTurns, logFile)
 
 	// Этап 3: Валидация последовательности поворотов
-	isValid, validationErrors := validateTurnSequence(turns, logFile)
+	isValid, validationErrors := validateTurnSequence(turns, config.TurnTolerance, config.SumTolerance, logFile)
 
 	// Итоговый отчёт
 	if logFile != nil {

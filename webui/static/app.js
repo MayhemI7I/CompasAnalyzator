@@ -7,15 +7,17 @@ const state = {
     currentDetailData: null,
     historyViewData: null,
     chart: null,
+    modalChart: null,
     settings: null
 };
 
 // Default settings
 const DEFAULT_SETTINGS = {
     stabilityThreshold: 5.0,      // Порог стабильности (градусы)
-    turnTolerance: 10.0,          // Допуск поворота (градусы)
-    minSegmentLength: 3,          // Минимальная длина сегмента
-    maxOutliers: 2                // Максимум выбросов (гистерезис)
+    turnTolerance: 10.0,          // Допуск поворота (градусы) - по стандарту 10°
+    minSegmentLength: 2,          // Минимальная длина сегмента (2 для коротких переходов)
+    maxOutliers: 0,               // Максимум выбросов (гистерезис) - 0 для строгой проверки
+    sumTolerance: 20.0            // Допуск суммы поворотов (градусы) - по стандарту 20°
 };
 
 // Load settings from localStorage
@@ -231,7 +233,8 @@ async function analyzeSingleFolder(folderPath) {
             stabilityThreshold: state.settings.stabilityThreshold,
             turnTolerance: state.settings.turnTolerance,
             minStableLen: state.settings.minSegmentLength,
-            maxOutliers: state.settings.maxOutliers
+            maxOutliers: state.settings.maxOutliers,
+            sumTolerance: state.settings.sumTolerance
         };
         
         console.log('📤 Отправка анализа с настройками:', config);
@@ -327,7 +330,8 @@ async function handleBatchAnalyzeStream(dataDir) {
             stabilityThreshold: state.settings.stabilityThreshold,
             turnTolerance: state.settings.turnTolerance,
             minStableLen: state.settings.minSegmentLength,
-            maxOutliers: state.settings.maxOutliers
+            maxOutliers: state.settings.maxOutliers,
+            sumTolerance: state.settings.sumTolerance
         };
         
         console.log('📤 Запуск пакетного анализа с настройками:', config);
@@ -1311,23 +1315,48 @@ function displayTurnsTable(turns) {
         const endAngle = turn.endAngle != null ? turn.endAngle : 0;
         const diff = turn.diff != null ? turn.diff : 0;
         
-        const isValid = Math.abs(diff - 90) <= 10;
+        // Получаем текущий допуск из настроек (по умолчанию 10°)
+        const tolerance = state.settings ? state.settings.turnTolerance : 10.0;
+        const minAngle = 90 - tolerance; // например, 80°
+        const maxAngle = 90 + tolerance; // например, 100°
         
-        console.log(`Turn ${index + 1}:`, { startAngle, endAngle, diff, original: turn });
+        // Определяем статус поворота
+        let badgeClass, iconName, iconColor, statusText;
+        if (diff >= minAngle && diff <= maxAngle) {
+            // В пределах допуска - УСПЕХ
+            badgeClass = 'success';
+            iconName = 'check_circle';
+            iconColor = 'var(--success)';
+            statusText = `В допуске (${minAngle.toFixed(0)}-${maxAngle.toFixed(0)}°)`;
+        } else if (diff >= minAngle - 5 && diff <= maxAngle + 5) {
+            // Близко к допуску - ПРЕДУПРЕЖДЕНИЕ
+            badgeClass = 'warning';
+            iconName = 'warning';
+            iconColor = 'var(--warning)';
+            statusText = `Близко к границе (${minAngle.toFixed(0)}-${maxAngle.toFixed(0)}°)`;
+        } else {
+            // Далеко от допуска - ОШИБКА
+            badgeClass = 'error';
+            iconName = 'cancel';
+            iconColor = 'var(--error)';
+            statusText = `БРАК! Вне допуска (${minAngle.toFixed(0)}-${maxAngle.toFixed(0)}°)`;
+        }
+        
+        console.log(`Turn ${index + 1}:`, { startAngle, endAngle, diff, tolerance, status: statusText });
         
         return `
-            <tr>
+            <tr style="${badgeClass === 'error' ? 'background: rgba(239, 68, 68, 0.1);' : ''}">
                 <td><strong>#${index + 1}</strong></td>
                 <td>${startAngle.toFixed(2)}°</td>
                 <td>${endAngle.toFixed(2)}°</td>
                 <td>
-                    <span class="badge ${isValid ? 'success' : 'warning'}">
+                    <span class="badge ${badgeClass}">
                         ${diff.toFixed(2)}°
                     </span>
                 </td>
                 <td>
-                    <span class="material-icons" style="color: ${isValid ? 'var(--success)' : 'var(--warning)'}">
-                        ${isValid ? 'check_circle' : 'warning'}
+                    <span class="material-icons" style="color: ${iconColor}" title="${statusText}">
+                        ${iconName}
                     </span>
                 </td>
             </tr>
@@ -1408,6 +1437,21 @@ function displayPolarChart(data) {
             responsive: true,
             maintainAspectRatio: true,
             plugins: {
+                zoom: {
+                    pan: {
+                        enabled: true,
+                        mode: 'xy'
+                    },
+                    zoom: {
+                        wheel: {
+                            enabled: true,
+                        },
+                        pinch: {
+                            enabled: true
+                        },
+                        mode: 'xy',
+                    }
+                },
                 legend: {
                     display: true,
                     labels: {
@@ -1632,8 +1676,14 @@ function createDetailModalHTML(data, index) {
                 <div class="card" style="margin-bottom: 20px;">
                     <div class="card-header">
                         <h3>Визуализация углов</h3>
+                        <button class="btn-icon" onclick="resetModalChartZoom()" title="Сбросить масштаб">
+                            <span class="material-icons">zoom_out_map</span>
+                        </button>
                     </div>
                     <div class="card-body">
+                        <div style="background: rgba(59, 130, 246, 0.1); padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; font-size: 13px;">
+                            <strong>💡 Интерактивный график:</strong> Колесо мыши для zoom, перетаскивание для перемещения
+                        </div>
                         <canvas id="modalChart"></canvas>
                     </div>
                 </div>
@@ -1657,27 +1707,47 @@ function createDetailModalHTML(data, index) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${data.turns && data.turns.length > 0 ? 
+                                            ${data.turns && data.turns.length > 0 ? 
                                         data.turns.map((turn, i) => {
                                             // Безопасное получение значений с проверкой на undefined
                                             const startAngle = turn.startAngle != null ? turn.startAngle : 0;
                                             const endAngle = turn.endAngle != null ? turn.endAngle : 0;
                                             const diff = turn.diff != null ? turn.diff : 0;
-                                            const isValid = Math.abs(diff - 90) <= 10;
+                                            
+                                            // Получаем текущий допуск из настроек (по умолчанию 10°)
+                                            const tolerance = state.settings ? state.settings.turnTolerance : 10.0;
+                                            const minAngle = 90 - tolerance;
+                                            const maxAngle = 90 + tolerance;
+                                            
+                                            // Определяем статус
+                                            let badgeClass, iconName, iconColor;
+                                            if (diff >= minAngle && diff <= maxAngle) {
+                                                badgeClass = 'success';
+                                                iconName = 'check_circle';
+                                                iconColor = 'var(--success)';
+                                            } else if (diff >= minAngle - 5 && diff <= maxAngle + 5) {
+                                                badgeClass = 'warning';
+                                                iconName = 'warning';
+                                                iconColor = 'var(--warning)';
+                                            } else {
+                                                badgeClass = 'error';
+                                                iconName = 'cancel';
+                                                iconColor = 'var(--error)';
+                                            }
                                             
                                             return `
-                                                <tr>
+                                                <tr style="${badgeClass === 'error' ? 'background: rgba(239, 68, 68, 0.1);' : ''}">
                                                     <td><strong>#${i + 1}</strong></td>
                                                     <td>${startAngle.toFixed(2)}°</td>
                                                     <td>${endAngle.toFixed(2)}°</td>
                                                     <td>
-                                                        <span class="badge ${isValid ? 'success' : 'warning'}">
+                                                        <span class="badge ${badgeClass}">
                                                             ${diff.toFixed(2)}°
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <span class="material-icons" style="color: ${isValid ? 'var(--success)' : 'var(--warning)'}">
-                                                            ${isValid ? 'check_circle' : 'warning'}
+                                                        <span class="material-icons" style="color: ${iconColor}">
+                                                            ${iconName}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -1789,7 +1859,7 @@ function displayModalChart(data) {
         };
     });
     
-    new Chart(ctx, {
+    state.modalChart = new Chart(ctx, {
         type: 'scatter',
         data: {
             datasets: [{
@@ -1819,6 +1889,21 @@ function displayModalChart(data) {
             responsive: true,
             maintainAspectRatio: true,
             plugins: {
+                zoom: {
+                    pan: {
+                        enabled: true,
+                        mode: 'xy'
+                    },
+                    zoom: {
+                        wheel: {
+                            enabled: true,
+                        },
+                        pinch: {
+                            enabled: true
+                        },
+                        mode: 'xy',
+                    }
+                },
                 legend: {
                     display: true,
                     labels: {
@@ -1900,6 +1985,22 @@ window.copyModalLog = function() {
     });
 }
 
+// Функция сброса масштаба графика
+window.resetChartZoom = function() {
+    if (state.chart) {
+        state.chart.resetZoom();
+        showToast('Масштаб графика сброшен', 'info');
+    }
+}
+
+// Функция сброса масштаба в модальном окне
+window.resetModalChartZoom = function() {
+    if (state.modalChart) {
+        state.modalChart.resetZoom();
+        showToast('Масштаб графика сброшен', 'info');
+    }
+}
+
 window.exportBatchDetail = function(index) {
     if (!state.batchResults || !state.batchResults[index]) {
         showToast('Данные не найдены', 'error');
@@ -1934,7 +2035,8 @@ function initSettingsPage() {
             stabilityThreshold: parseFloat(document.getElementById('setting-stability').value),
             turnTolerance: parseFloat(document.getElementById('setting-tolerance').value),
             minSegmentLength: parseInt(document.getElementById('setting-minLength').value),
-            maxOutliers: parseInt(document.getElementById('setting-outliers').value)
+            maxOutliers: parseInt(document.getElementById('setting-outliers').value),
+            sumTolerance: parseFloat(document.getElementById('setting-sumTolerance').value)
         };
         
         // Валидация
@@ -1954,6 +2056,10 @@ function initSettingsPage() {
             showToast('Максимум выбросов должен быть от 0 до 10', 'error');
             return;
         }
+        if (newSettings.sumTolerance < 0 || newSettings.sumTolerance > 50) {
+            showToast('Допуск суммы должен быть от 0 до 50', 'error');
+            return;
+        }
         
         saveSettings(newSettings);
         updateSettingsPreview();
@@ -1971,7 +2077,7 @@ function initSettingsPage() {
     });
     
     // Обработчики изменения значений для живого preview
-    const inputs = ['setting-stability', 'setting-tolerance', 'setting-minLength', 'setting-outliers'];
+    const inputs = ['setting-stability', 'setting-tolerance', 'setting-minLength', 'setting-outliers', 'setting-sumTolerance'];
     inputs.forEach(id => {
         const input = document.getElementById(id);
         if (input) {
@@ -1987,6 +2093,7 @@ function updateSettingsFields() {
     document.getElementById('setting-tolerance').value = settings.turnTolerance;
     document.getElementById('setting-minLength').value = settings.minSegmentLength;
     document.getElementById('setting-outliers').value = settings.maxOutliers;
+    document.getElementById('setting-sumTolerance').value = settings.sumTolerance || 20.0;
     
     updateSettingsPreview();
 }
@@ -2000,6 +2107,8 @@ function updateSettingsPreview() {
         document.getElementById('setting-minLength').value;
     document.getElementById('preview-outliers').textContent = 
         document.getElementById('setting-outliers').value;
+    document.getElementById('preview-sumTolerance').textContent = 
+        '±' + document.getElementById('setting-sumTolerance').value + '°';
 }
 
 // Add CSS animation for slide out and modal styles
@@ -2241,6 +2350,13 @@ style.textContent = `
         color: var(--primary);
         font-weight: 600;
         font-size: 16px;
+    }
+    
+    /* Badge error style */
+    .badge.error {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.4);
     }
 `;
 document.head.appendChild(style);

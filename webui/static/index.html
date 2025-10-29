@@ -379,8 +379,8 @@
                                 Минимальная длина сегмента
                             </label>
                             <input type="number" id="setting-minLength" class="form-control" 
-                                   value="3" step="1" min="1" max="10">
-                            <small>Минимальное количество записей для стабильного сегмента. Рекомендуется: 3 - 5</small>
+                                   value="2" step="1" min="1" max="10">
+                            <small>Минимальное количество записей для стабильного сегмента. Рекомендуется: 2 для коротких переходов, 3-5 для стабильных данных</small>
                         </div>
 
                         <div class="form-group">
@@ -389,8 +389,18 @@
                                 Максимум выбросов (гистерезис)
                             </label>
                             <input type="number" id="setting-outliers" class="form-control" 
-                                   value="2" step="1" min="0" max="10">
-                            <small>Допустимое количество "шумных" точек в сегменте. Рекомендуется: 2 - 3</small>
+                                   value="0" step="1" min="0" max="10">
+                            <small>Допустимое количество "шумных" точек в сегменте. Рекомендуется: 0 для строгой проверки, 2-3 для зашумленных данных</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <span class="material-icons" style="font-size: 18px; vertical-align: middle;">sync</span>
+                                Допуск суммы поворотов (градусы)
+                            </label>
+                            <input type="number" id="setting-sumTolerance" class="form-control" 
+                                   value="20.0" step="0.1" min="0" max="50">
+                            <small>Допустимое отклонение суммы 4-х поворотов от 360°. Рекомендуется: 15.0 - 25.0. Стандарт: 20.0°</small>
                         </div>
 
                         <div class="settings-actions">
@@ -420,11 +430,15 @@
                                 </div>
                                 <div class="preview-item">
                                     <span class="preview-label">Мин. длина сегмента:</span>
-                                    <span class="preview-value" id="preview-minLength">3</span>
+                                    <span class="preview-value" id="preview-minLength">2</span>
                                 </div>
                                 <div class="preview-item">
                                     <span class="preview-label">Макс. выбросов:</span>
-                                    <span class="preview-value" id="preview-outliers">2</span>
+                                    <span class="preview-value" id="preview-outliers">0</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span class="preview-label">Допуск суммы:</span>
+                                    <span class="preview-value" id="preview-sumTolerance">±20.0°</span>
                                 </div>
                             </div>
                         </div>
