@@ -302,8 +302,10 @@ func (at *AnalysisTab) analyzeCompass(folderPath, folderName string) (bool, []mo
 
 	at.mainWindow.AppendLog(fmt.Sprintf("  ✓ Прочитано записей: %d\n", len(angles)))
 
+	// Используем конфигурацию по умолчанию
+	config := analyzer.DefaultConfig()
 	// Анализируем (без лог-файла для GUI)
-	isValid, turns := analyzer.AnalyzeCompassData(angles, nil)
+	isValid, turns := analyzer.AnalyzeCompassData(angles, config, nil)
 
 	at.mainWindow.AppendLog(fmt.Sprintf("  • Найдено поворотов: %d/4\n", len(turns)))
 

@@ -10,6 +10,24 @@ import (
 	"compass_analyzer/models"
 )
 
+// AnalysisConfig содержит настройки для алгоритма анализа
+type AnalysisConfig struct {
+	StabilityThreshold float64 `json:"stabilityThreshold"` // Порог стабильности в градусах
+	TurnTolerance      float64 `json:"turnTolerance"`      // Допуск для определения поворота на 90° (90±X градусов)
+	MinStableLen       int     `json:"minStableLen"`       // Минимальная длина стабильного сегмента
+	MaxOutliers        int     `json:"maxOutliers"`        // Максимум выбросов (гистерезис)
+}
+
+// DefaultConfig возвращает конфигурацию по умолчанию
+func DefaultConfig() AnalysisConfig {
+	return AnalysisConfig{
+		StabilityThreshold: 5.0,  // Порог стабильности (градусы)
+		TurnTolerance:      10.0, // Допуск поворота (градусы) - по стандарту 10°
+		MinStableLen:       2,    // Минимальная длина сегмента
+		MaxOutliers:        0,    // Максимум выбросов (гистерезис)
+	}
+}
+
 // AngleSegment представляет стабильный сегмент углов
 type AngleSegment struct {
 	StartIndex int       // Начальный индекс сегмента
@@ -57,14 +75,14 @@ func circularMean(angles []float64) float64 {
 	if len(angles) == 0 {
 		return 0
 	}
-	
+
 	var sumSin, sumCos float64
 	for _, angle := range angles {
 		rad := angle * math.Pi / 180
 		sumSin += math.Sin(rad)
 		sumCos += math.Cos(rad)
 	}
-	
+
 	meanRad := math.Atan2(sumSin, sumCos)
 	meanAngle := meanRad * 180 / math.Pi
 	return normalizeAngle(meanAngle)
@@ -75,11 +93,11 @@ func medianAngle(angles []float64) float64 {
 	if len(angles) == 0 {
 		return 0
 	}
-	
+
 	sorted := make([]float64, len(angles))
 	copy(sorted, angles)
 	sort.Float64s(sorted)
-	
+
 	mid := len(sorted) / 2
 	if len(sorted)%2 == 0 {
 		return (sorted[mid-1] + sorted[mid]) / 2
@@ -97,7 +115,7 @@ func findStableSegments(angles []float64, stabilityThreshold float64, minStableL
 
 	if logFile != nil {
 		fmt.Fprintf(logFile, "\n=== Начало поиска стабильных сегментов (новая логика) ===\n")
-		fmt.Fprintf(logFile, "Параметры: stabilityThreshold=%.2f°, minStableLen=%d, maxOutliers=%d\n", 
+		fmt.Fprintf(logFile, "Параметры: stabilityThreshold=%.2f°, minStableLen=%d, maxOutliers=%d\n",
 			stabilityThreshold, minStableLen, maxOutliers)
 		fmt.Fprintf(logFile, "Всего углов для анализа: %d\n", len(angles))
 	}
@@ -108,68 +126,68 @@ func findStableSegments(angles []float64, stabilityThreshold float64, minStableL
 		segmentAngles := []float64{angles[i]}
 		startIdx := i
 		outlierCount := 0
-		
+
 		if logFile != nil {
 			fmt.Fprintf(logFile, "\n--- Новый сегмент с индекса %d (угол: %.2f°) ---\n", i, angles[i])
 		}
-		
-	// Расширяем сегмент, пока углы остаются стабильными
-	j := i + 1
-	firstOutlierIdx := -1 // Запоминаем индекс первого выброса
-	lastStableIdx := i     // Последний индекс стабильного угла
-	
-	for j < len(angles) {
-		// Вычисляем репрезентативный угол текущего сегмента
-		currentAvg := circularMean(segmentAngles)
-		diff := normalizeAngleDifference(angles[j], currentAvg)
-		
-		if logFile != nil {
-			fmt.Fprintf(logFile, "  Индекс %d: угол %.2f°, разница с avg %.2f° = %.2f°\n", 
-				j, angles[j], currentAvg, diff)
+
+		// Расширяем сегмент, пока углы остаются стабильными
+		j := i + 1
+		firstOutlierIdx := -1 // Запоминаем индекс первого выброса
+		lastStableIdx := i    // Последний индекс стабильного угла
+
+		for j < len(angles) {
+			// Вычисляем репрезентативный угол текущего сегмента
+			currentAvg := circularMean(segmentAngles)
+			diff := normalizeAngleDifference(angles[j], currentAvg)
+
+			if logFile != nil {
+				fmt.Fprintf(logFile, "  Индекс %d: угол %.2f°, разница с avg %.2f° = %.2f°\n",
+					j, angles[j], currentAvg, diff)
+			}
+
+			if diff <= stabilityThreshold {
+				// Угол стабилен - добавляем в сегмент
+				segmentAngles = append(segmentAngles, angles[j])
+				lastStableIdx = j    // Обновляем индекс последнего стабильного угла
+				outlierCount = 0     // Сбрасываем счётчик выбросов
+				firstOutlierIdx = -1 // Сбрасываем индекс первого выброса
+				if logFile != nil {
+					fmt.Fprintf(logFile, "    ✓ Угол стабилен, добавлен в сегмент\n")
+				}
+				j++
+			} else if outlierCount < maxOutliers {
+				// Выброс, но в пределах допустимого - пропускаем, но продолжаем сегмент
+				if firstOutlierIdx == -1 {
+					firstOutlierIdx = j // Запоминаем первый выброс
+				}
+				outlierCount++
+				if logFile != nil {
+					fmt.Fprintf(logFile, "    ! Выброс %d/%d, пропускаем и продолжаем\n", outlierCount, maxOutliers)
+				}
+				j++
+			} else {
+				// Слишком много выбросов или большая разница - конец сегмента
+				if logFile != nil {
+					fmt.Fprintf(logFile, "    ✗ Превышен лимит выбросов или большая разница, конец сегмента\n")
+				}
+				break
+			}
 		}
-		
-		if diff <= stabilityThreshold {
-			// Угол стабилен - добавляем в сегмент
-			segmentAngles = append(segmentAngles, angles[j])
-			lastStableIdx = j  // Обновляем индекс последнего стабильного угла
-			outlierCount = 0 // Сбрасываем счётчик выбросов
-			firstOutlierIdx = -1 // Сбрасываем индекс первого выброса
-			if logFile != nil {
-				fmt.Fprintf(logFile, "    ✓ Угол стабилен, добавлен в сегмент\n")
-			}
-			j++
-		} else if outlierCount < maxOutliers {
-			// Выброс, но в пределах допустимого - пропускаем, но продолжаем сегмент
-			if firstOutlierIdx == -1 {
-				firstOutlierIdx = j // Запоминаем первый выброс
-			}
-			outlierCount++
-			if logFile != nil {
-				fmt.Fprintf(logFile, "    ! Выброс %d/%d, пропускаем и продолжаем\n", outlierCount, maxOutliers)
-			}
-			j++
-		} else {
-			// Слишком много выбросов или большая разница - конец сегмента
-			if logFile != nil {
-				fmt.Fprintf(logFile, "    ✗ Превышен лимит выбросов или большая разница, конец сегмента\n")
-			}
-			break
-		}
-	}
-	
-	// Конец сегмента - используем индекс последнего стабильного угла
-	endIdx := lastStableIdx
-		
+
+		// Конец сегмента - используем индекс последнего стабильного угла
+		endIdx := lastStableIdx
+
 		// Проверяем, достаточно ли длинный сегмент
 		segmentLength := len(segmentAngles)
 		if segmentLength >= minStableLen {
 			avgAngle := circularMean(segmentAngles)
-			
+
 			if logFile != nil {
-				fmt.Fprintf(logFile, "  ✓ Сегмент [%d:%d] принят: длина=%d, avg=%.2f°, outliers=%d\n", 
+				fmt.Fprintf(logFile, "  ✓ Сегмент [%d:%d] принят: длина=%d, avg=%.2f°, outliers=%d\n",
 					startIdx, endIdx, segmentLength, avgAngle, outlierCount)
 			}
-			
+
 			segments = append(segments, AngleSegment{
 				StartIndex: startIdx,
 				EndIndex:   endIdx,
@@ -178,7 +196,7 @@ func findStableSegments(angles []float64, stabilityThreshold float64, minStableL
 				IsStable:   true,
 				Outliers:   outlierCount,
 			})
-			
+
 			// Переходим к следующему индексу
 			// Если были выбросы, начинаем следующий сегмент с первого выброса
 			if firstOutlierIdx != -1 && firstOutlierIdx <= endIdx+1 {
@@ -188,7 +206,7 @@ func findStableSegments(angles []float64, stabilityThreshold float64, minStableL
 			}
 		} else {
 			if logFile != nil {
-				fmt.Fprintf(logFile, "  ✗ Сегмент [%d:%d] отклонён: длина=%d < min=%d\n", 
+				fmt.Fprintf(logFile, "  ✗ Сегмент [%d:%d] отклонён: длина=%d < min=%d\n",
 					startIdx, endIdx, segmentLength, minStableLen)
 			}
 			i++ // Пропускаем один индекс и пробуем с следующего
@@ -221,18 +239,18 @@ func mergeCloseSegments(segments []AngleSegment, threshold float64, logFile *os.
 	}
 
 	merged := []AngleSegment{segments[0]}
-	
+
 	for i := 1; i < len(segments); i++ {
 		lastMerged := &merged[len(merged)-1]
 		current := segments[i]
-		
+
 		diff := normalizeAngleDifference(lastMerged.AvgAngle, current.AvgAngle)
-		
+
 		if logFile != nil {
 			fmt.Fprintf(logFile, "Сравнение сег %d (%.2f°) и сег %d (%.2f°): разница=%.2f°\n",
 				len(merged), lastMerged.AvgAngle, i+1, current.AvgAngle, diff)
 		}
-		
+
 		// Если сегменты близки по углу, сливаем их
 		if diff <= threshold {
 			// Объединяем углы
@@ -241,7 +259,7 @@ func mergeCloseSegments(segments []AngleSegment, threshold float64, logFile *os.
 			lastMerged.EndIndex = current.EndIndex
 			lastMerged.AvgAngle = circularMean(allAngles)
 			lastMerged.Outliers += current.Outliers
-			
+
 			if logFile != nil {
 				fmt.Fprintf(logFile, "  ✓ Слиты в один: новый avg=%.2f°, индексы %d-%d\n",
 					lastMerged.AvgAngle, lastMerged.StartIndex, lastMerged.EndIndex)
@@ -265,7 +283,7 @@ func find90DegreeTurns(segments []AngleSegment, turnTolerance float64, logFile *
 		segment AngleSegment
 		index   int
 	}, 0)
-	
+
 	for i, seg := range segments {
 		if seg.IsStable {
 			stableSegments = append(stableSegments, struct {
@@ -287,18 +305,18 @@ func find90DegreeTurns(segments []AngleSegment, turnTolerance float64, logFile *
 	for i := 1; i < len(stableSegments); i++ {
 		prev := stableSegments[i-1]
 		curr := stableSegments[i]
-		
+
 		prevAngle := prev.segment.AvgAngle
 		currAngle := curr.segment.AvgAngle
-		
+
 		// Вычисляем знаковую разницу углов (учитывает направление)
 		// Положительное значение = поворот по часовой стрелке
 		// Отрицательное значение = поворот против часовой стрелки
 		signedDiff := signedAngleDifference(prevAngle, currAngle)
-		
+
 		// Берем абсолютное значение для проверки близости к 90°
 		absDiff := math.Abs(signedDiff)
-		
+
 		// Определяем направление поворота
 		isClockwise := signedDiff > 0
 
@@ -309,7 +327,7 @@ func find90DegreeTurns(segments []AngleSegment, turnTolerance float64, logFile *
 			}
 			fmt.Fprintf(logFile, "\nСтаб. сегмент %d (индекс %d) -> стаб. сегмент %d (индекс %d): %.2f° -> %.2f°\n",
 				i, prev.index+1, i+1, curr.index+1, prevAngle, currAngle)
-			fmt.Fprintf(logFile, "  Знаковая разница: %.2f° (абс: %.2f°), направление: %s\n", 
+			fmt.Fprintf(logFile, "  Знаковая разница: %.2f° (абс: %.2f°), направление: %s\n",
 				signedDiff, absDiff, direction)
 		}
 
@@ -328,7 +346,7 @@ func find90DegreeTurns(segments []AngleSegment, turnTolerance float64, logFile *
 				ToSegment:   curr.index,
 			}
 			turns = append(turns, turn)
-			
+
 			if logFile != nil {
 				fmt.Fprintf(logFile, "  ✓ Поворот найден! Diff=%.2f° (цель: 90±%.2f°), направление: по часовой ✓\n", absDiff, turnTolerance)
 			}
@@ -336,7 +354,7 @@ func find90DegreeTurns(segments []AngleSegment, turnTolerance float64, logFile *
 			if math.Abs(absDiff-90) <= turnTolerance && !isClockwise {
 				fmt.Fprintf(logFile, "  ✗ Отклонен: разница подходит (%.2f°), но направление ПРОТИВ часовой ✗\n", absDiff)
 			} else {
-				fmt.Fprintf(logFile, "  ✗ Не поворот на 90°: |%.2f° - 90°| = %.2f° > %.2f°\n", 
+				fmt.Fprintf(logFile, "  ✗ Не поворот на 90°: |%.2f° - 90°| = %.2f° > %.2f°\n",
 					absDiff, math.Abs(absDiff-90), turnTolerance)
 			}
 		}
@@ -351,19 +369,19 @@ func findBestTurnSequence(allTurns []models.Turn, logFile *os.File) []models.Tur
 	if len(allTurns) < 4 {
 		return allTurns // Если меньше 4 поворотов, возвращаем как есть
 	}
-	
+
 	if logFile != nil {
 		fmt.Fprintf(logFile, "\n=== Поиск лучшей последовательности из 4 поворотов ===\n")
 		fmt.Fprintf(logFile, "Всего найдено поворотов: %d\n", len(allTurns))
 	}
-	
+
 	bestSequence := allTurns[:4]
 	bestDeviation := 1000.0 // Большое значение для начала
-	
+
 	// Проходим по всем возможным последовательностям из 4 подряд идущих поворотов
 	for i := 0; i <= len(allTurns)-4; i++ {
 		sequence := allTurns[i : i+4]
-		
+
 		// Проверяем непрерывность: конец каждого = начало следующего
 		isContinuous := true
 		for j := 1; j < 4; j++ {
@@ -372,28 +390,28 @@ func findBestTurnSequence(allTurns []models.Turn, logFile *os.File) []models.Tur
 				break
 			}
 		}
-		
+
 		if !isContinuous {
 			continue // Пропускаем непоследовательные цепочки
 		}
-		
+
 		// Вычисляем сумму углов
 		var totalDiff float64
 		for _, turn := range sequence {
 			totalDiff += turn.Diff
 		}
-		
+
 		// Вычисляем отклонение от 360°
 		deviation := math.Abs(totalDiff - 360)
 		if deviation > 180 {
 			deviation = 360 - deviation
 		}
-		
+
 		if logFile != nil {
 			fmt.Fprintf(logFile, "Последовательность [%d:%d]: сумма=%.2f°, отклонение=%.2f°\n",
 				i+1, i+4, totalDiff, deviation)
 		}
-		
+
 		// Если эта последовательность лучше, сохраняем её
 		if deviation < bestDeviation {
 			bestDeviation = deviation
@@ -403,11 +421,11 @@ func findBestTurnSequence(allTurns []models.Turn, logFile *os.File) []models.Tur
 			}
 		}
 	}
-	
+
 	if logFile != nil {
 		fmt.Fprintf(logFile, "✓ Выбрана последовательность с отклонением %.2f° от 360°\n", bestDeviation)
 	}
-	
+
 	return bestSequence
 }
 
@@ -434,7 +452,7 @@ func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string
 		}
 		return false, errors
 	}
-	
+
 	// Если найдено больше 4 поворотов, берём только первые 4
 	// (компас мог продолжить вращение после завершения калибровки)
 	if len(turns) > 4 {
@@ -443,7 +461,7 @@ func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string
 		}
 		turns = turns[:4] // Обрезаем до первых 4
 	}
-	
+
 	if logFile != nil {
 		fmt.Fprintf(logFile, "✓ Найдено минимум 4 поворота (используем первые 4)\n")
 	}
@@ -453,7 +471,7 @@ func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string
 	for i, turn := range turns {
 		if !turn.IsClockwise {
 			allClockwise = false
-			msg := fmt.Sprintf("Поворот %d идет ПРОТИВ часовой стрелки (%.2f° → %.2f°, знаковая разница: %.2f°)", 
+			msg := fmt.Sprintf("Поворот %d идет ПРОТИВ часовой стрелки (%.2f° → %.2f°, знаковая разница: %.2f°)",
 				i+1, turn.StartAngle, turn.EndAngle, turn.SignedDiff)
 			errors = append(errors, msg)
 			if logFile != nil {
@@ -461,11 +479,11 @@ func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string
 			}
 		}
 	}
-	
+
 	if !allClockwise {
 		return false, errors
 	}
-	
+
 	if logFile != nil {
 		fmt.Fprintf(logFile, "✓ Все повороты идут в одном направлении (по часовой стрелке)\n")
 	}
@@ -485,7 +503,7 @@ func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string
 	if logFile != nil {
 		fmt.Fprintf(logFile, "✓ Повороты идут последовательно без пересечений по индексам\n")
 	}
-	
+
 	// Проверка 3.5: Непрерывность по индексам сегментов
 	// Эта проверка уже выполнена в findBestTurnSequence, просто логируем результат
 	if logFile != nil {
@@ -493,7 +511,7 @@ func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string
 		for i := 1; i < len(turns); i++ {
 			prevToSegment := turns[i-1].ToSegment
 			currFromSegment := turns[i].FromSegment
-			
+
 			if currFromSegment == prevToSegment {
 				fmt.Fprintf(logFile, "  Поворот %d → %d: сегмент %d → %d (непрерывно)\n",
 					i, i+1, prevToSegment, currFromSegment)
@@ -501,21 +519,21 @@ func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string
 		}
 		fmt.Fprintf(logFile, "✓ Последовательность поворотов непрерывна (выбрана оптимальная цепочка)\n")
 	}
-	
+
 	// Проверка 4: Непрерывность цепочки (конечный угол поворота N ≈ начальный угол поворота N+1)
 	const continuityTolerance = 20.0 // Допуск на непрерывность в градусах
 	continuousChain := true
-	
+
 	for i := 0; i < len(turns)-1; i++ {
 		currentEnd := turns[i].EndAngle
 		nextStart := turns[i+1].StartAngle
 		gap := normalizeAngleDifference(currentEnd, nextStart)
-		
+
 		if logFile != nil {
 			fmt.Fprintf(logFile, "Проверка непрерывности: поворот %d конец (%.2f°) → поворот %d начало (%.2f°), разрыв: %.2f°\n",
 				i+1, currentEnd, i+2, nextStart, gap)
 		}
-		
+
 		if gap > continuityTolerance {
 			continuousChain = false
 			msg := fmt.Sprintf("Разрыв между поворотом %d (конец %.2f°) и поворотом %d (начало %.2f°): %.2f° > %.2f°",
@@ -526,7 +544,7 @@ func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string
 			// Не считаем это критической ошибкой, только предупреждение
 		}
 	}
-	
+
 	if continuousChain && logFile != nil {
 		fmt.Fprintf(logFile, "✓ Повороты образуют непрерывную цепочку (разрывы ≤ %.2f°)\n", continuityTolerance)
 	}
@@ -536,22 +554,22 @@ func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string
 	for _, turn := range turns {
 		totalDiff += turn.Diff
 	}
-	
+
 	// Нормализуем общую сумму к диапазону [0, 360)
 	totalDiffNorm := math.Mod(totalDiff, 360)
 	deviation := math.Abs(totalDiffNorm - 360)
 	if deviation > 180 {
 		deviation = 360 - deviation
 	}
-	
+
 	if logFile != nil {
 		fmt.Fprintf(logFile, "Сумма поворотов: %.2f° (нормализовано: %.2f°)\n", totalDiff, totalDiffNorm)
 		fmt.Fprintf(logFile, "Отклонение от 360°: %.2f°\n", deviation)
 	}
-	
+
 	const sumTolerance = 15.0 // Допуск ±15° на сумму
 	if deviation > sumTolerance {
-		msg := fmt.Sprintf("Сумма поворотов (%.2f°) слишком отличается от 360° (отклонение: %.2f° > %.2f°)", 
+		msg := fmt.Sprintf("Сумма поворотов (%.2f°) слишком отличается от 360° (отклонение: %.2f° > %.2f°)",
 			totalDiff, deviation, sumTolerance)
 		errors = append(errors, msg)
 		if logFile != nil {
@@ -572,7 +590,7 @@ func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string
 			if !turn.IsClockwise {
 				direction = "против часовой ✗"
 			}
-			fmt.Fprintf(logFile, "Поворот %d: %.2f° → %.2f° (Δ=%.2f°, знак=%.2f°, отклонение от 90°: %.2f°, %s)\n", 
+			fmt.Fprintf(logFile, "Поворот %d: %.2f° → %.2f° (Δ=%.2f°, знак=%.2f°, отклонение от 90°: %.2f°, %s)\n",
 				i+1, turn.StartAngle, turn.EndAngle, turn.Diff, turn.SignedDiff, dev, direction)
 		}
 	}
@@ -586,31 +604,25 @@ func validateTurnSequence(turns []models.Turn, logFile *os.File) (bool, []string
 
 // AnalyzeCompassData анализирует данные компаса и находит повороты на 90 градусов
 // Новая логика с детальной валидацией и отчётностью
-func AnalyzeCompassData(angles []float64, logFile *os.File) (bool, []models.Turn) {
-	// Параметры анализа
-	stabilityThreshold := 5.0 // Порог стабильности в градусах
-	turnTolerance := 15.0     // Допуск для определения поворота на 90±15 градусов (было 10, увеличено для учета реальных данных)
-	minStableLen := 2         // Минимальная длина стабильного сегмента (уменьшено с 3 до 2 для учета коротких переходных зон)
-	maxOutliers := 0          // Отключаем гистерезис - каждый нестабильный угол прерывает сегмент
-
+func AnalyzeCompassData(angles []float64, config AnalysisConfig, logFile *os.File) (bool, []models.Turn) {
 	if logFile != nil {
 		fmt.Fprintf(logFile, "\n╔════════════════════════════════════════════════════════════╗\n")
 		fmt.Fprintf(logFile, "║         АНАЛИЗ ДАННЫХ КОМПАСА (новый алгоритм)          ║\n")
 		fmt.Fprintf(logFile, "╚════════════════════════════════════════════════════════════╝\n")
 		fmt.Fprintf(logFile, "\nВсего записей углов: %d\n", len(angles))
 		fmt.Fprintf(logFile, "\nПараметры анализа:\n")
-		fmt.Fprintf(logFile, "  • Порог стабильности: %.2f°\n", stabilityThreshold)
-		fmt.Fprintf(logFile, "  • Допуск поворота (90±X): ±%.2f°\n", turnTolerance)
-		fmt.Fprintf(logFile, "  • Минимальная длина сегмента: %d записей\n", minStableLen)
-		fmt.Fprintf(logFile, "  • Максимум выбросов (гистерезис): %d\n", maxOutliers)
+		fmt.Fprintf(logFile, "  • Порог стабильности: %.2f°\n", config.StabilityThreshold)
+		fmt.Fprintf(logFile, "  • Допуск поворота (90±X): ±%.2f°\n", config.TurnTolerance)
+		fmt.Fprintf(logFile, "  • Минимальная длина сегмента: %d записей\n", config.MinStableLen)
+		fmt.Fprintf(logFile, "  • Максимум выбросов (гистерезис): %d\n", config.MaxOutliers)
 	}
 
 	// Этап 1: Поиск стабильных сегментов
-	segments := findStableSegments(angles, stabilityThreshold, minStableLen, maxOutliers, logFile)
+	segments := findStableSegments(angles, config.StabilityThreshold, config.MinStableLen, config.MaxOutliers, logFile)
 
 	// Этап 2: Поиск поворотов на ~90° между сегментами
-	allTurns := find90DegreeTurns(segments, turnTolerance, logFile)
-	
+	allTurns := find90DegreeTurns(segments, config.TurnTolerance, logFile)
+
 	// Этап 2.5: Поиск лучшей последовательности из 4 непрерывных поворотов
 	turns := findBestTurnSequence(allTurns, logFile)
 
@@ -628,7 +640,7 @@ func AnalyzeCompassData(angles []float64, logFile *os.File) (bool, []models.Turn
 			fmt.Fprintf(logFile, " (используем первые 4)")
 		}
 		fmt.Fprintf(logFile, "\n")
-		
+
 		if isValid {
 			fmt.Fprintf(logFile, "\n✓✓✓ КАЛИБРОВКА УСПЕШНА ✓✓✓\n")
 			fmt.Fprintf(logFile, "\nПоследовательность поворотов (первые 4):\n")
@@ -637,10 +649,10 @@ func AnalyzeCompassData(angles []float64, logFile *os.File) (bool, []models.Turn
 				if !turn.IsClockwise {
 					direction = "против часовой ✗"
 				}
-				fmt.Fprintf(logFile, "  %d. %.2f° → %.2f° (Δ = %.2f°, направление: %s)\n", 
+				fmt.Fprintf(logFile, "  %d. %.2f° → %.2f° (Δ = %.2f°, направление: %s)\n",
 					i+1, turn.StartAngle, turn.EndAngle, turn.Diff, direction)
 			}
-			
+
 			// Если было больше 4 поворотов, показываем дополнительные
 			if len(allTurns) > 4 {
 				fmt.Fprintf(logFile, "\nДополнительные повороты (вне основного круга):\n")
@@ -650,7 +662,7 @@ func AnalyzeCompassData(angles []float64, logFile *os.File) (bool, []models.Turn
 					if !turn.IsClockwise {
 						direction = "против часовой ✗"
 					}
-					fmt.Fprintf(logFile, "  %d. %.2f° → %.2f° (Δ = %.2f°, направление: %s)\n", 
+					fmt.Fprintf(logFile, "  %d. %.2f° → %.2f° (Δ = %.2f°, направление: %s)\n",
 						i+1, turn.StartAngle, turn.EndAngle, turn.Diff, direction)
 				}
 			}
@@ -660,7 +672,7 @@ func AnalyzeCompassData(angles []float64, logFile *os.File) (bool, []models.Turn
 			for i, err := range validationErrors {
 				fmt.Fprintf(logFile, "  %d. %s\n", i+1, err)
 			}
-			
+
 			if len(turns) > 0 {
 				fmt.Fprintf(logFile, "\nЧастичные результаты (найденные повороты):\n")
 				for i, turn := range turns {
@@ -668,24 +680,21 @@ func AnalyzeCompassData(angles []float64, logFile *os.File) (bool, []models.Turn
 					if !turn.IsClockwise {
 						direction = "ПРОТИВ часовой ✗"
 					}
-					fmt.Fprintf(logFile, "  %d. %.2f° → %.2f° (Δ = %.2f°, знак=%.2f°, %s)\n", 
+					fmt.Fprintf(logFile, "  %d. %.2f° → %.2f° (Δ = %.2f°, знак=%.2f°, %s)\n",
 						i+1, turn.StartAngle, turn.EndAngle, turn.Diff, turn.SignedDiff, direction)
 				}
 			}
 		}
-		
-		fmt.Fprintf(logFile, "\n" + strings.Repeat("=", 60) + "\n")
+
+		fmt.Fprintf(logFile, "\n"+strings.Repeat("=", 60)+"\n")
 	}
 
 	return isValid, turns
 }
 
 // GetSegments возвращает найденные стабильные сегменты для визуализации
-func GetSegments(angles []float64) []AngleSegment {
-	stabilityThreshold := 5.0
-	minStableLen := 2  // Те же параметры, что в AnalyzeCompassData
-	maxOutliers := 0   // Те же параметры, что в AnalyzeCompassData
-	return findStableSegments(angles, stabilityThreshold, minStableLen, maxOutliers, nil)
+func GetSegments(angles []float64, config AnalysisConfig) []AngleSegment {
+	return findStableSegments(angles, config.StabilityThreshold, config.MinStableLen, config.MaxOutliers, nil)
 }
 
 // PrintAnalysis выводит результаты анализа
@@ -701,4 +710,3 @@ func PrintAnalysis(angles []float64, turns []models.Turn) {
 		fmt.Printf("  Индексы: %d -> %d\n", turn.StartIndex, turn.EndIndex)
 	}
 }
-

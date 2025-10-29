@@ -289,8 +289,10 @@ func runSession(dataDir, successDir, failureDir string) models.SessionResults {
 			defer logFile.Close()
 		}
 
+		// Используем конфигурацию по умолчанию
+		config := analyzer.DefaultConfig()
 		// Анализируем данные с помощью нового алгоритма
-		isValid, turns := analyzer.AnalyzeCompassData(angles, logFile)
+		isValid, turns := analyzer.AnalyzeCompassData(angles, config, logFile)
 
 		result := models.CompassResult{
 			CompassNumber: folderName,
@@ -489,12 +491,12 @@ func main() {
 			fmt.Println("\n🖥️  Запуск десктопного приложения...\n")
 			gui.CreateDesktopApp()
 			return
-			
+
 		case "tui":
 			// Запуск Terminal UI (работает без GCC)
 			StartTUI()
 			return
-			
+
 		case "web":
 			// Прямой запуск веб-интерфейса
 			fmt.Println("\n╔════════════════════════════════════════════════════════════╗")

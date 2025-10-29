@@ -16,19 +16,20 @@ import (
 
 // AnalysisRequest представляет запрос на анализ
 type AnalysisRequest struct {
-	FolderPath string `json:"folderPath"`
+	FolderPath string                   `json:"folderPath"`
+	Config     *analyzer.AnalysisConfig `json:"config,omitempty"` // Опциональная конфигурация
 }
 
 // AnalysisResponse представляет ответ с результатами анализа
 type AnalysisResponse struct {
-	Success    bool           `json:"success"`
-	IsValid    bool           `json:"isValid"`
-	Compass    string         `json:"compass"`
-	Turns      []models.Turn  `json:"turns"`
-	AllAngles  []float64      `json:"allAngles"`
-	Segments   []SegmentInfo  `json:"segments"`
-	Errors     []string       `json:"errors"`
-	Log        string         `json:"log"`
+	Success   bool          `json:"success"`
+	IsValid   bool          `json:"isValid"`
+	Compass   string        `json:"compass"`
+	Turns     []models.Turn `json:"turns"`
+	AllAngles []float64     `json:"allAngles"`
+	Segments  []SegmentInfo `json:"segments"`
+	Errors    []string      `json:"errors"`
+	Log       string        `json:"log"`
 }
 
 // SegmentInfo представляет информацию о сегменте для фронтенда
@@ -59,6 +60,7 @@ func (s *Server) Start() error {
 	http.HandleFunc("/api/analyze", s.handleAnalyze)
 	http.HandleFunc("/api/batch-analyze", s.handleBatchAnalyze)
 	http.HandleFunc("/api/batch-analyze-stream", s.handleBatchAnalyzeStream)
+	http.HandleFunc("/api/config", s.handleConfig)
 
 	addr := ":" + s.port
 	fmt.Printf("\n╔════════════════════════════════════════════════════════╗\n")
@@ -82,7 +84,13 @@ func (s *Server) handleAnalyze(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := s.analyzeFolder(req.FolderPath)
+	// Используем конфигурацию из запроса или дефолтную
+	config := analyzer.DefaultConfig()
+	if req.Config != nil {
+		config = *req.Config
+	}
+
+	response := s.analyzeFolder(req.FolderPath, config)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
@@ -96,12 +104,19 @@ func (s *Server) handleBatchAnalyze(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req struct {
-		DataDir string `json:"dataDir"`
+		DataDir string                   `json:"dataDir"`
+		Config  *analyzer.AnalysisConfig `json:"config,omitempty"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
+	}
+
+	// Используем конфигурацию из запроса или дефолтную
+	config := analyzer.DefaultConfig()
+	if req.Config != nil {
+		config = *req.Config
 	}
 
 	folders, err := os.ReadDir(req.DataDir)
@@ -118,7 +133,7 @@ func (s *Server) handleBatchAnalyze(w http.ResponseWriter, r *http.Request) {
 		}
 
 		folderPath := filepath.Join(req.DataDir, folder.Name())
-		response := s.analyzeFolder(folderPath)
+		response := s.analyzeFolder(folderPath, config)
 		responses = append(responses, response)
 	}
 
@@ -134,12 +149,19 @@ func (s *Server) handleBatchAnalyzeStream(w http.ResponseWriter, r *http.Request
 	}
 
 	var req struct {
-		DataDir string `json:"dataDir"`
+		DataDir string                   `json:"dataDir"`
+		Config  *analyzer.AnalysisConfig `json:"config,omitempty"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
+	}
+
+	// Используем конфигурацию из запроса или дефолтную
+	config := analyzer.DefaultConfig()
+	if req.Config != nil {
+		config = *req.Config
 	}
 
 	folders, err := os.ReadDir(req.DataDir)
@@ -179,11 +201,11 @@ func (s *Server) handleBatchAnalyzeStream(w http.ResponseWriter, r *http.Request
 
 		processed++
 		folderPath := filepath.Join(req.DataDir, folder.Name())
-		
+
 		log.Printf("⏳ [%d/%d] Анализ: %s", processed, totalFolders, folder.Name())
-		
-		response := s.analyzeFolder(folderPath)
-		
+
+		response := s.analyzeFolder(folderPath, config)
+
 		// Создаем сообщение с прогрессом
 		progressMsg := map[string]interface{}{
 			"type":      "progress",
@@ -192,18 +214,18 @@ func (s *Server) handleBatchAnalyzeStream(w http.ResponseWriter, r *http.Request
 			"compass":   folder.Name(),
 			"completed": false,
 		}
-		
+
 		// Отправляем прогресс
 		data, _ := json.Marshal(progressMsg)
 		fmt.Fprintf(w, "data: %s\n\n", data)
 		flusher.Flush()
-		
+
 		// Отправляем результат
 		resultMsg := map[string]interface{}{
 			"type":   "result",
 			"result": response,
 		}
-		
+
 		data, _ = json.Marshal(resultMsg)
 		fmt.Fprintf(w, "data: %s\n\n", data)
 		flusher.Flush()
@@ -215,7 +237,7 @@ func (s *Server) handleBatchAnalyzeStream(w http.ResponseWriter, r *http.Request
 		"total":     totalFolders,
 		"completed": true,
 	}
-	
+
 	data, _ := json.Marshal(completeMsg)
 	fmt.Fprintf(w, "data: %s\n\n", data)
 	flusher.Flush()
@@ -224,7 +246,7 @@ func (s *Server) handleBatchAnalyzeStream(w http.ResponseWriter, r *http.Request
 }
 
 // analyzeFolder анализирует данные компаса из указанной папки
-func (s *Server) analyzeFolder(folderPath string) AnalysisResponse {
+func (s *Server) analyzeFolder(folderPath string, config analyzer.AnalysisConfig) AnalysisResponse {
 	response := AnalysisResponse{
 		Compass: filepath.Base(folderPath),
 	}
@@ -266,7 +288,7 @@ func (s *Server) analyzeFolder(folderPath string) AnalysisResponse {
 	}()
 
 	// Анализируем
-	isValid, turns := analyzer.AnalyzeCompassData(angles, logFile)
+	isValid, turns := analyzer.AnalyzeCompassData(angles, config, logFile)
 
 	response.Success = true
 	response.IsValid = isValid
@@ -281,7 +303,7 @@ func (s *Server) analyzeFolder(folderPath string) AnalysisResponse {
 
 	// Получаем информацию о сегментах (для визуализации)
 	// Пересоздаем сегменты для отправки на фронт
-	segments := analyzer.GetSegments(angles)
+	segments := analyzer.GetSegments(angles, config)
 	for _, seg := range segments {
 		response.Segments = append(response.Segments, SegmentInfo{
 			StartIndex: seg.StartIndex,
@@ -300,6 +322,50 @@ func (s *Server) analyzeFolder(folderPath string) AnalysisResponse {
 	return response
 }
 
+// handleConfig обрабатывает запросы для получения/установки конфигурации
+func (s *Server) handleConfig(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	switch r.Method {
+	case http.MethodGet:
+		// Возвращаем конфигурацию по умолчанию
+		config := analyzer.DefaultConfig()
+		json.NewEncoder(w).Encode(config)
+
+	case http.MethodPost:
+		// Принимаем и валидируем новую конфигурацию
+		var config analyzer.AnalysisConfig
+		if err := json.NewDecoder(r.Body).Decode(&config); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		// Валидация
+		if config.StabilityThreshold < 0 || config.StabilityThreshold > 20 {
+			http.Error(w, "StabilityThreshold должен быть от 0 до 20", http.StatusBadRequest)
+			return
+		}
+		if config.TurnTolerance < 0 || config.TurnTolerance > 30 {
+			http.Error(w, "TurnTolerance должен быть от 0 до 30", http.StatusBadRequest)
+			return
+		}
+		if config.MinStableLen < 1 || config.MinStableLen > 10 {
+			http.Error(w, "MinStableLen должен быть от 1 до 10", http.StatusBadRequest)
+			return
+		}
+		if config.MaxOutliers < 0 || config.MaxOutliers > 10 {
+			http.Error(w, "MaxOutliers должен быть от 0 до 10", http.StatusBadRequest)
+			return
+		}
+
+		// Возвращаем валидированную конфигурацию
+		json.NewEncoder(w).Encode(config)
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
 // StartWebUI запускает веб-интерфейс
 func StartWebUI(port string) {
 	server := NewServer(port)
@@ -307,4 +373,3 @@ func StartWebUI(port string) {
 		log.Fatalf("Ошибка запуска веб-сервера: %v", err)
 	}
 }
-

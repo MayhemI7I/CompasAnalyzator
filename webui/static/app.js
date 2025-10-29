@@ -226,13 +226,26 @@ async function analyzeSingleFolder(folderPath) {
     try {
         showToast('Анализ начат...', 'info');
         
+        // Подготавливаем конфигурацию для отправки
+        const config = {
+            stabilityThreshold: state.settings.stabilityThreshold,
+            turnTolerance: state.settings.turnTolerance,
+            minStableLen: state.settings.minSegmentLength,
+            maxOutliers: state.settings.maxOutliers
+        };
+        
+        console.log('📤 Отправка анализа с настройками:', config);
+        
         // Отправляем реальный запрос на сервер
         const response = await fetch('/api/analyze', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ folderPath: folderPath })
+            body: JSON.stringify({ 
+                folderPath: folderPath,
+                config: config
+            })
         });
         
         if (!response.ok) {
@@ -309,12 +322,25 @@ async function handleBatchAnalyzeStream(dataDir) {
     let totalFiles = 0;
     
     try {
+        // Подготавливаем конфигурацию для отправки
+        const config = {
+            stabilityThreshold: state.settings.stabilityThreshold,
+            turnTolerance: state.settings.turnTolerance,
+            minStableLen: state.settings.minSegmentLength,
+            maxOutliers: state.settings.maxOutliers
+        };
+        
+        console.log('📤 Запуск пакетного анализа с настройками:', config);
+        
         const response = await fetch('/api/batch-analyze-stream', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ dataDir })
+            body: JSON.stringify({ 
+                dataDir: dataDir,
+                config: config
+            })
         });
         
         if (!response.ok) {
