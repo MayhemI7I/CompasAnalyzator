@@ -1,0 +1,109 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"os"
+
+	"compass_analyzer/analyzer"
+	"compass_analyzer/parser"
+)
+
+func main() {
+	fmt.Println("╔════════════════════════════════════════════════════════════╗")
+	fmt.Println("║           ТЕСТ АЛГОРИТМА НА КЕЙСЕ 1912                   ║")
+	fmt.Println("╚════════════════════════════════════════════════════════════╝\n")
+
+	// Путь к файлу из брака
+	brakPath := `Брак\1912\SB_CMPS_CALIB_CUTTED.csv`
+	fmt.Printf("📁 Анализируем: %s\n\n", brakPath)
+
+	// Читаем данные
+	data, err := parser.ReadCSVFile(brakPath)
+	if err != nil {
+		log.Fatalf("❌ Ошибка чтения файла: %v", err)
+	}
+
+	fmt.Printf("✓ Прочитано записей: %d\n\n", len(data))
+
+	// Извлекаем углы
+	angles := make([]float64, len(data))
+	for i, d := range data {
+		angles[i] = d.Angle
+	}
+
+	// Создаем лог-файл
+	logFile, err := os.Create("test_1912_results.log")
+	if err != nil {
+		log.Printf("⚠ Не удалось создать лог-файл: %v", err)
+		logFile = nil
+	}
+	defer func() {
+		if logFile != nil {
+			logFile.Close()
+			fmt.Println("\n📄 Детальный лог сохранен в: test_1912_results.log")
+		}
+	}()
+
+	// АНАЛИЗИРУЕМ!
+	fmt.Println("🔍 Запуск анализа с новым алгоритмом...\n")
+	fmt.Println(string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}))
+
+	isValid, turns := analyzer.AnalyzeCompassData(angles, logFile)
+
+	// РЕЗУЛЬТАТЫ
+	fmt.Println("\n╔════════════════════════════════════════════════════════════╗")
+	fmt.Println("║                     РЕЗУЛЬТАТ ТЕСТА                       ║")
+	fmt.Println("╚════════════════════════════════════════════════════════════╝\n")
+
+	if isValid {
+		fmt.Println("✅ СТАТУС: КАЛИБРОВКА УСПЕШНА")
+		fmt.Println("   (Ранее этот файл был в брак, теперь исправлено!)")
+	} else {
+		fmt.Println("❌ СТАТУС: КАЛИБРОВКА НЕ ПРОШЛА")
+		fmt.Println("   (Требуется дальнейшая настройка алгоритма)")
+	}
+
+	fmt.Printf("\n📊 СТАТИСТИКА:\n")
+	fmt.Printf("   • Всего измерений: %d\n", len(angles))
+	fmt.Printf("   • Найдено поворотов: %d/4\n", len(turns))
+
+	if len(turns) > 0 {
+		fmt.Println("\n🔄 НАЙДЕННЫЕ ПОВОРОТЫ:")
+		var totalDiff float64
+		for i, turn := range turns {
+			fmt.Printf("   %d. %.2f° → %.2f° (Δ = %.2f°)\n",
+				i+1, turn.StartAngle, turn.EndAngle, turn.Diff)
+			totalDiff += turn.Diff
+		}
+
+		fmt.Printf("\n   Сумма всех поворотов: %.2f°\n", totalDiff)
+		deviation := totalDiff - 360
+		if deviation < 0 {
+			deviation = -deviation
+		}
+		fmt.Printf("   Отклонение от 360°: %.2f°\n", deviation)
+
+		if deviation <= 15 {
+			fmt.Println("   ✓ Сумма в пределах допуска (±15°)")
+		} else {
+			fmt.Println("   ✗ Сумма превышает допуск")
+		}
+	} else {
+		fmt.Println("\n⚠ Повороты не обнаружены")
+	}
+
+	// Сравнение со старым результатом
+	fmt.Println("\n" + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}))
+	fmt.Println("\n📈 СРАВНЕНИЕ С ПРЕДЫДУЩЕЙ ВЕРСИЕЙ:")
+	fmt.Println("   Старый алгоритм: ❌ Брак (ложное срабатывание)")
+	if isValid {
+		fmt.Println("   Новый алгоритм:  ✅ Успешно (исправлено!)")
+		fmt.Println("\n🎉 УЛУЧШЕНИЕ: Кейс 1912 теперь проходит валидацию!")
+	} else {
+		fmt.Println("   Новый алгоритм:  ❌ Брак")
+		fmt.Println("\n⚠ Требуется дальнейшая настройка параметров")
+	}
+
+	fmt.Println("\n" + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}) + string([]byte{0xE2, 0x94, 0x80}))
+}

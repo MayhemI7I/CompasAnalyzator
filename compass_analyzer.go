@@ -11,6 +11,7 @@ type AngleSegment struct {
 	EndIndex   int
 	AvgAngle   float64
 	IsStable   bool
+	Outliers   []int
 }
 
 // Turn представляет обнаруженный поворот
@@ -22,6 +23,21 @@ type Turn struct {
 	Diff       float64
 }
 
+// normalizeAngleDifference нормализует разницу углов с учетом перехода через 0/360
+func normalizeAngleDifference(angle1, angle2 float64) float64 {
+	diff := math.Abs(angle2 - angle1)
+	if diff > 180 {
+		diff = 360 - diff
+	}
+	return math.Round(diff)
+}
+
+// isConsecutiveAngle проверяет, является ли угол последовательным
+func isConsecutiveAngle(current, previous float64, threshold float64) bool {
+	diff := normalizeAngleDifference(current, previous)
+	return diff <= threshold
+}
+
 // findStableSegments находит стабильные сегменты в последовательности углов
 func findStableSegments(angles []float64, stabilityThreshold float64) []AngleSegment {
 	segments := make([]AngleSegment, 0)
@@ -29,43 +45,82 @@ func findStableSegments(angles []float64, stabilityThreshold float64) []AngleSeg
 		return segments
 	}
 
-	currentSegment := AngleSegment{StartIndex: 0}
+	// Минимальная длина стабильного сегмента
+	minStableLen := 3
 
-	for i := 1; i < len(angles); i++ {
-		diff := math.Abs(angles[i] - angles[i-1])
+	for i := 0; i < len(angles)-minStableLen+1; i++ {
+		stableCount := 0
+		var stableAngles []float64
+		var outliers []int
 
-		if diff <= stabilityThreshold {
-			// Продолжаем текущий сегмент
-			currentSegment.EndIndex = i
-		} else {
-			// Завершаем текущий сегмент
-			if currentSegment.EndIndex-currentSegment.StartIndex >= 3 {
-				// Вычисляем среднее значение для сегмента
-				sum := 0.0
-				for j := currentSegment.StartIndex; j <= currentSegment.EndIndex; j++ {
-					sum += angles[j]
-				}
-				currentSegment.AvgAngle = sum / float64(currentSegment.EndIndex-currentSegment.StartIndex+1)
-				currentSegment.IsStable = true
-				segments = append(segments, currentSegment)
+		// Проверяем все углы в окне
+		for j := i; j < i+minStableLen; j++ {
+			if j >= len(angles) {
+				break
 			}
-			// Начинаем новый сегмент
-			currentSegment = AngleSegment{StartIndex: i}
-		}
-	}
 
-	// Добавляем последний сегмент, если он достаточно длинный
-	if currentSegment.EndIndex-currentSegment.StartIndex >= 3 {
-		sum := 0.0
-		for j := currentSegment.StartIndex; j <= currentSegment.EndIndex; j++ {
-			sum += angles[j]
+			// Проверяем разницу с предыдущим углом
+			if j > i {
+				diff := normalizeAngleDifference(angles[j], angles[j-1])
+				if diff <= stabilityThreshold {
+					stableCount++
+					stableAngles = append(stableAngles, angles[j])
+				} else {
+					outliers = append(outliers, j)
+				}
+			} else {
+				stableAngles = append(stableAngles, angles[j])
+			}
 		}
-		currentSegment.AvgAngle = sum / float64(currentSegment.EndIndex-currentSegment.StartIndex+1)
-		currentSegment.IsStable = true
-		segments = append(segments, currentSegment)
+
+		// Если нашли достаточно стабильных углов
+		if stableCount >= minStableLen-1 {
+			// Вычисляем средний угол для стабильного сегмента
+			var sum float64
+			for _, angle := range stableAngles {
+				sum += angle
+			}
+			avgAngle := sum / float64(len(stableAngles))
+
+			segments = append(segments, AngleSegment{
+				StartIndex: i,
+				EndIndex:   i + minStableLen - 1,
+				AvgAngle:   avgAngle,
+				IsStable:   true,
+				Outliers:   outliers,
+			})
+		}
 	}
 
 	return segments
+}
+
+// validateTurnSequence проверяет последовательность поворотов
+func validateTurnSequence(turns []Turn) bool {
+	if len(turns) < 4 {
+		return false
+	}
+
+	// Проверяем, что повороты идут последовательно
+	for i := 1; i < len(turns); i++ {
+		if turns[i].StartIndex <= turns[i-1].EndIndex {
+			return false
+		}
+	}
+
+	// Проверяем, что сумма всех поворотов близка к 360 градусам
+	var totalDiff float64
+	for _, turn := range turns {
+		totalDiff += turn.Diff
+	}
+
+	// Нормализуем общую разницу
+	totalDiff = math.Mod(totalDiff, 360)
+	if totalDiff > 180 {
+		totalDiff = 360 - totalDiff
+	}
+
+	return math.Abs(totalDiff) <= 10 // Допуск 10 градусов
 }
 
 // find90DegreeTurns находит повороты на 90 градусов между стабильными сегментами
@@ -78,10 +133,7 @@ func find90DegreeTurns(segments []AngleSegment) []Turn {
 		}
 
 		// Вычисляем разницу углов с учетом перехода через 0/360
-		diff := math.Abs(segments[i].AvgAngle - segments[i-1].AvgAngle)
-		if diff > 180 {
-			diff = 360 - diff
-		}
+		diff := normalizeAngleDifference(segments[i].AvgAngle, segments[i-1].AvgAngle)
 
 		// Проверяем, является ли разница близкой к 90 градусам
 		if math.Abs(diff-90) <= 5 { // Допуск 5 градусов
@@ -93,6 +145,11 @@ func find90DegreeTurns(segments []AngleSegment) []Turn {
 				Diff:       diff,
 			})
 		}
+	}
+
+	// Проверяем последовательность поворотов
+	if !validateTurnSequence(turns) {
+		return []Turn{} // Возвращаем пустой слайс, если последовательность невалидна
 	}
 
 	return turns

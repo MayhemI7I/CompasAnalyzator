@@ -15,11 +15,15 @@ type CompassData struct {
 
 // Turn представляет поворот компаса
 type Turn struct {
-	StartAngle float64 // Начальный угол
-	EndAngle   float64 // Конечный угол
-	Diff       float64 // Разница между углами
-	StartIndex int     // Индекс начального угла
-	EndIndex   int     // Индекс конечного угла
+	StartAngle    float64 `json:"startAngle"`    // Начальный угол
+	EndAngle      float64 `json:"endAngle"`      // Конечный угол
+	Diff          float64 `json:"diff"`          // Разница между углами (абсолютное значение для отображения)
+	SignedDiff    float64 `json:"signedDiff"`    // Знаковая разница (+ = по часовой, - = против часовой)
+	IsClockwise   bool    `json:"isClockwise"`   // Направление поворота (true = по часовой стрелке)
+	StartIndex    int     `json:"startIndex"`    // Индекс начального угла
+	EndIndex      int     `json:"endIndex"`      // Индекс конечного угла
+	FromSegment   int     `json:"-"`             // Номер начального сегмента (не экспортируется в JSON)
+	ToSegment     int     `json:"-"`             // Номер конечного сегмента (не экспортируется в JSON)
 }
 
 // CompassResult представляет результаты анализа одного компаса.
