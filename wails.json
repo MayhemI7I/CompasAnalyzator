@@ -1,0 +1,25 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "compass_analyzer_desktop",
+  "outputfilename": "CompassAnalyzer",
+  "frontend:install": "",
+  "frontend:build": "",
+  "frontend:dev:watcher": "",
+  "frontend:dev:serverUrl": "",
+  "author": {
+    "name": "Ульянов Александр",
+    "email": ""
+  },
+  "info": {
+    "companyName": "МТЦ",
+    "productName": "Compass Analyzer Desktop",
+    "productVersion": "2.0",
+    "copyright": "© 2025 МТЦ - Все права защищены",
+    "comments": "Анализатор калибровки компасов"
+  },
+  "wailsjsdir": "./frontend",
+  "assetdir": "./webui/static",
+  "reloaddirs": "",
+  "build:dir": "./build",
+  "nsisType": "multiple"
+}
