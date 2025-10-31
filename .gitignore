@@ -1,0 +1,38 @@
+# Binaries
+build/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Wails
+frontend/dist/
+frontend/node_modules/
+wailsjs/
+
+# История анализов (локальные данные пользователя)
+history/
+**/history/analysis_history.json
+
+# Экспорт результатов
+Export Results CSV/
+Export Results JSON/
+
+# Временные файлы
+*.tmp
+*.log
+
