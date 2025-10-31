@@ -633,24 +633,45 @@ function displayBatchResults(results) {
 
 // Просмотр результата из пакетного анализа (глобальная функция для onclick)
 window.viewBatchResult = function(index) {
-    if (!state.batchResults || !state.batchResults[index]) {
-        showToast('⚠️ Результат не найден', 'warning');
-        return;
+    try {
+        console.log('🔍 Запрос просмотра результата:', index);
+        
+        if (!state.batchResults || !Array.isArray(state.batchResults)) {
+            console.error('❌ Результаты пакетного анализа не загружены');
+            showToast('⚠️ Результаты пакетного анализа не найдены', 'warning');
+            return;
+        }
+        
+        if (index < 0 || index >= state.batchResults.length) {
+            console.error('❌ Неверный индекс:', index, 'из', state.batchResults.length);
+            showToast('⚠️ Результат не найден (неверный индекс)', 'warning');
+            return;
+        }
+        
+        const result = state.batchResults[index];
+        console.log('📊 Результат найден:', result);
+        
+        if (!result) {
+            showToast('⚠️ Результат не найден', 'warning');
+            return;
+        }
+        
+        if (!result.success) {
+            showToast('⚠️ Этот анализ завершился с ошибкой', 'warning');
+            return;
+        }
+        
+        console.log('📊 Просмотр из пакетного анализа:', result.compass);
+        
+        // Отображаем результаты как обычный анализ
+        displayResults(result);
+        switchPage('analyze');
+        showToast(`📊 Просмотр результата: ${result.compass}`, 'info');
+        
+    } catch (error) {
+        console.error('❌ Ошибка при просмотре результата:', error);
+        showToast(`Ошибка: ${error.message || error}`, 'error');
     }
-    
-    const result = state.batchResults[index];
-    
-    if (!result.success) {
-        showToast('⚠️ Этот анализ завершился с ошибкой', 'warning');
-        return;
-    }
-    
-    console.log('📊 Просмотр из пакетного анализа:', result.compass);
-    
-    // Отображаем результаты как обычный анализ
-    displayResults(result);
-    switchPage('analyze');
-    showToast(`📊 Просмотр результата: ${result.compass}`, 'info');
 };
 
 // Settings
@@ -1225,17 +1246,32 @@ window.viewHistoryItem = async function(itemId) {
     try {
         console.log(`🔍 Загрузка записи: ${itemId}`);
         
+        // Проверяем наличие Go API
+        if (!window.go || !window.go.desktop || !window.go.desktop.App) {
+            throw new Error('Go API не доступен. Пожалуйста, перезапустите приложение.');
+        }
+        
         // Загружаем ТОЛЬКО одну запись (вместо всей истории!)
         const item = await window.go.desktop.App.LoadHistoryItem(itemId);
         
-        if (!item || !item.fullData) {
-            throw new Error('Запись не найдена или повреждена');
+        if (!item) {
+            throw new Error('Запись не найдена');
         }
         
-        // Парсим fullData
-        const fullData = JSON.parse(item.fullData);
+        if (!item.fullData) {
+            throw new Error('Данные записи повреждены');
+        }
         
-        console.log(`✅ Загружена запись для ${item.compass}`);
+        // Парсим fullData с проверкой
+        let fullData;
+        try {
+            fullData = typeof item.fullData === 'string' ? JSON.parse(item.fullData) : item.fullData;
+        } catch (parseError) {
+            console.error('Ошибка парсинга fullData:', parseError);
+            throw new Error('Не удалось прочитать данные анализа');
+        }
+        
+        console.log(`✅ Загружена запись для ${item.compass}`, fullData);
         
         // Отображаем результаты
         displayResults(fullData);
@@ -1243,8 +1279,8 @@ window.viewHistoryItem = async function(itemId) {
         showToast('📋 Данные загружены из истории', 'success');
         
     } catch (error) {
-        console.error('Ошибка загрузки из истории:', error);
-        showToast(`❌ Ошибка: ${error.message}`, 'error');
+        console.error('❌ Ошибка загрузки из истории:', error);
+        showToast(`Ошибка загрузки: ${error.message}`, 'error');
     } finally {
         showLoading(false);
     }

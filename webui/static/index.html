@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Compass Analyzer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <!-- OFFLINE MODE: локальные шрифты и библиотеки -->
+    <link rel="stylesheet" href="fonts/material-icons.css">
+    <link rel="stylesheet" href="styles.css?v=2.0.2">
 </head>
 <body>
     <div class="app-container">
@@ -147,8 +150,9 @@
                         <div class="card chart-card">
                             <div class="card-header">
                                 <h3>Визуализация углов</h3>
-                                <button class="btn-icon" id="resetChartZoom" title="Сбросить зум">
+                                <button class="btn btn-secondary" id="resetChartZoom" title="Сбросить зум" style="height: 36px;">
                                     <span class="material-icons">zoom_out_map</span>
+                                    Сбросить зум
                                 </button>
                             </div>
                             <div class="card-body">
@@ -285,6 +289,7 @@
                         <div class="header-actions" style="display: flex; gap: 0.5rem;">
                             <button class="btn btn-secondary" id="refreshHistoryBtn" title="Обновить">
                                 <span class="material-icons">refresh</span>
+                                Обновить
                             </button>
                             <button class="btn btn-secondary" id="clearHistoryBtn" title="Очистить историю">
                                 <span class="material-icons">delete_sweep</span>
@@ -407,9 +412,10 @@
                             <div class="input-group">
                                 <input type="text" id="editorDirInput" class="form-control" 
                                        placeholder="E:\Данные\Файлы">
-                                <button class="btn btn-secondary" id="selectEditorDirBtn">
-                                    <span class="material-icons">folder_open</span>
-                                </button>
+                            <button class="btn btn-secondary" id="selectEditorDirBtn">
+                                <span class="material-icons">folder_open</span>
+                                Выбрать
+                            </button>
                             </div>
                             <small>Выберите папку с файлами для переименования</small>
                         </div>
@@ -623,6 +629,7 @@
                                placeholder="Выберите папку..." readonly>
                         <button class="btn btn-secondary" id="selectExportDirBtn">
                             <span class="material-icons">folder_open</span>
+                            Выбрать
                         </button>
                     </div>
                     <small>По умолчанию сохраняется рядом с программой</small>
@@ -643,9 +650,11 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <!-- Chart.js - локальная копия для работы без интернета -->
+    <script src="vendor/chart.umd.min.js"></script>
+    <script src="vendor/chartjs-plugin-zoom.min.js"></script>
     <script src="wailsjs/runtime/runtime.js"></script>
-    <script src="app.js"></script>
+    <script src="version.js?v=2.0.2"></script>
+    <script src="app.js?v=2.0.2"></script>
 </body>
 </html>
