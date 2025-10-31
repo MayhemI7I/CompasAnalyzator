@@ -1,154 +1,129 @@
 @echo off
-chcp 65001 > nul
-echo.
-echo ╔═══════════════════════════════════════════════════════════╗
-echo ║        КОПИРОВАНИЕ НА ФЛЕШКУ                            ║
-echo ╚═══════════════════════════════════════════════════════════╝
+chcp 65001 >nul
+echo ╔═══════════════════════════════════════════════════════════════╗
+echo ║     КОПИРОВАНИЕ ПРОГРАММЫ С ИСТОРИЕЙ НА ФЛЕШКУ               ║
+echo ╚═══════════════════════════════════════════════════════════════╝
 echo.
 
-REM Проверяем наличие скомпилированного exe
-if not exist "build\bin\CompassAnalyzer.exe" (
-    echo ❌ Файл CompassAnalyzer.exe не найден!
+REM Получаем букву флешки от пользователя
+set /p FLASH_DRIVE="Введите букву флешки (например E): "
+
+REM Убираем двоеточие если есть
+set FLASH_DRIVE=%FLASH_DRIVE::=%
+
+REM Проверяем существование диска
+if not exist %FLASH_DRIVE%:\ (
     echo.
-    echo 💡 Сначала соберите приложение командой:
-    echo    rebuild_wails_simple.bat
-    echo.
+    echo ❌ ОШИБКА: Диск %FLASH_DRIVE%:\ не найден!
+    echo    Проверьте букву диска и попробуйте снова.
     pause
     exit /b 1
 )
 
-echo 📂 Укажите букву флешки (например, E, F, G):
-set /p FLASH_DRIVE="Буква диска: "
+echo.
+echo 📦 Целевой диск: %FLASH_DRIVE%:\
+echo.
 
-if "%FLASH_DRIVE%"=="" (
-    echo ❌ Буква диска не указана!
+REM Создаем структуру папок на флешке
+echo 📁 Создание папок на флешке...
+mkdir "%FLASH_DRIVE%:\CompasAnalyzer" 2>nul
+mkdir "%FLASH_DRIVE%:\CompasAnalyzer\history" 2>nul
+
+REM Копируем программу
+echo.
+echo 📄 Копирование программы...
+if exist "build\bin\CompassAnalyzer.exe" (
+    copy /Y "build\bin\CompassAnalyzer.exe" "%FLASH_DRIVE%:\CompasAnalyzer\" >nul
+    echo    ✅ CompassAnalyzer.exe скопирован
+) else (
+    echo    ❌ ОШИБКА: build\bin\CompassAnalyzer.exe не найден!
     pause
     exit /b 1
 )
 
-set DEST=%FLASH_DRIVE%:\CompassAnalyzer
-set HISTORY_SOURCE=%USERPROFILE%\CompasAnalyzer\history\analysis_history.json
-
+REM Копируем документацию
 echo.
-echo 📦 Будет создана папка: %DEST%
-echo.
-echo Что копировать?
-echo [1] Только приложение (быстро, ~15 МБ)
-echo [2] Приложение + История
-echo [3] Весь проект (исходники + приложение)
-echo.
-set /p COPY_MODE="Выберите (1/2/3): "
+echo 📄 Копирование документации...
+if exist "README.md" (
+    copy /Y "README.md" "%FLASH_DRIVE%:\CompasAnalyzer\" >nul
+    echo    ✅ README.md скопирован
+)
 
-if "%COPY_MODE%"=="1" goto COPY_APP_ONLY
-if "%COPY_MODE%"=="2" goto COPY_WITH_HISTORY
-if "%COPY_MODE%"=="3" goto COPY_FULL_PROJECT
+if exist "ПЕРЕНОС_НА_ФЛЕШКУ.txt" (
+    copy /Y "ПЕРЕНОС_НА_ФЛЕШКУ.txt" "%FLASH_DRIVE%:\CompasAnalyzer\" >nul
+    echo    ✅ ПЕРЕНОС_НА_ФЛЕШКУ.txt скопирован
+)
 
-echo ❌ Неверный выбор!
-pause
-exit /b 1
-
-:COPY_APP_ONLY
+REM Ищем файл истории
 echo.
-echo [1/1] 📋 Копирование приложения...
-if not exist "%DEST%" mkdir "%DEST%"
-copy /Y "build\bin\CompassAnalyzer.exe" "%DEST%\CompassAnalyzer.exe" > nul
-echo ✅ Готово!
-goto SUCCESS
+echo 🔍 Поиск файла истории...
+set HISTORY_PATH=%USERPROFILE%\CompasAnalyzer\history\analysis_history.json
 
-:COPY_WITH_HISTORY
-echo.
-echo [1/2] 📋 Копирование приложения...
-if not exist "%DEST%" mkdir "%DEST%"
-copy /Y "build\bin\CompassAnalyzer.exe" "%DEST%\CompassAnalyzer.exe" > nul
-echo ✅ Приложение скопировано
-
-echo.
-echo [2/2] 💾 Копирование истории...
-if exist "%HISTORY_SOURCE%" (
-    if not exist "%DEST%\history_backup" mkdir "%DEST%\history_backup"
-    copy /Y "%HISTORY_SOURCE%" "%DEST%\history_backup\analysis_history.json" > nul
-    echo ✅ История скопирована
+if exist "%HISTORY_PATH%" (
+    echo    ✅ Найден: %HISTORY_PATH%
+    echo.
+    echo 📄 Копирование истории...
+    copy /Y "%HISTORY_PATH%" "%FLASH_DRIVE%:\CompasAnalyzer\history\" >nul
+    
+    REM Проверяем размер файла
+    for %%A in ("%HISTORY_PATH%") do set SIZE=%%~zA
+    set /a SIZE_MB=%SIZE% / 1048576
+    echo    ✅ История скопирована (размер: %SIZE_MB% МБ)
 ) else (
-    echo ⚠️  Файл истории не найден (история пуста)
+    echo    ⚠️  ВНИМАНИЕ: Файл истории не найден!
+    echo    Путь: %HISTORY_PATH%
+    echo.
+    echo    Программа будет скопирована БЕЗ истории.
+    echo    На новом ПК история будет пустой.
 )
-goto SUCCESS
 
-:COPY_FULL_PROJECT
+REM Итоги
 echo.
-echo [1/7] 📋 Создание структуры папок...
-if not exist "%DEST%" mkdir "%DEST%"
-if not exist "%DEST%\analyzer" mkdir "%DEST%\analyzer"
-if not exist "%DEST%\desktop" mkdir "%DEST%\desktop"
-if not exist "%DEST%\models" mkdir "%DEST%\models"
-if not exist "%DEST%\parser" mkdir "%DEST%\parser"
-if not exist "%DEST%\utils" mkdir "%DEST%\utils"
-if not exist "%DEST%\webui" mkdir "%DEST%\webui"
-if not exist "%DEST%\webui\static" mkdir "%DEST%\webui\static"
-if not exist "%DEST%\build" mkdir "%DEST%\build"
-if not exist "%DEST%\build\bin" mkdir "%DEST%\build\bin"
-echo ✅ Папки созданы
-
+echo ═══════════════════════════════════════════════════════════════
 echo.
-echo [2/7] 📁 Копирование исходников Go...
-xcopy /Y /Q "analyzer\*.go" "%DEST%\analyzer\" > nul
-xcopy /Y /Q "desktop\*.go" "%DEST%\desktop\" > nul
-xcopy /Y /Q "models\*.go" "%DEST%\models\" > nul
-xcopy /Y /Q "parser\*.go" "%DEST%\parser\" > nul
-xcopy /Y /Q "utils\*.go" "%DEST%\utils\" > nul
-echo ✅ Исходники скопированы
-
+echo ✅ КОПИРОВАНИЕ ЗАВЕРШЕНО!
 echo.
-echo [3/7] 🌐 Копирование веб-интерфейса...
-xcopy /Y /Q "webui\static\*.*" "%DEST%\webui\static\" > nul
-echo ✅ Веб-интерфейс скопирован
-
-echo.
-echo [4/7] 📋 Копирование основных файлов...
-copy /Y "main_desktop.go" "%DEST%\" > nul
-copy /Y "go.mod" "%DEST%\" > nul
-copy /Y "go.sum" "%DEST%\" > nul
-copy /Y "wails.json" "%DEST%\" > nul
-echo ✅ Основные файлы скопированы
-
-echo.
-echo [5/7] 🔨 Копирование скомпилированного приложения...
-copy /Y "build\bin\CompassAnalyzer.exe" "%DEST%\build\bin\" > nul
-echo ✅ Приложение скопировано
-
-echo.
-echo [6/7] 📜 Копирование документации...
-copy /Y "*.md" "%DEST%\" > nul 2>&1
-copy /Y "*.bat" "%DEST%\" > nul 2>&1
-echo ✅ Документация скопирована
-
-echo.
-echo [7/7] 💾 Копирование истории...
-if exist "%HISTORY_SOURCE%" (
-    if not exist "%DEST%\history_backup" mkdir "%DEST%\history_backup"
-    copy /Y "%HISTORY_SOURCE%" "%DEST%\history_backup\analysis_history.json" > nul
-    echo ✅ История скопирована
-) else (
-    echo ⚠️  Файл истории не найден (история пуста)
+echo 📦 Содержимое флешки:
+echo    %FLASH_DRIVE%:\CompasAnalyzer\
+echo    ├── CompassAnalyzer.exe
+echo    ├── README.md
+echo    ├── ПЕРЕНОС_НА_ФЛЕШКУ.txt
+if exist "%FLASH_DRIVE%:\CompasAnalyzer\history\analysis_history.json" (
+    echo    └── history\
+    echo        └── analysis_history.json
 )
-goto SUCCESS
+echo.
 
-:SUCCESS
+REM Показываем следующие шаги
+echo 📋 СЛЕДУЮЩИЕ ШАГИ НА НОВОМ ПК:
 echo.
-echo ╔═══════════════════════════════════════════════════════════╗
-echo ║              ✅ КОПИРОВАНИЕ ЗАВЕРШЕНО!                  ║
-echo ╚═══════════════════════════════════════════════════════════╝
+echo 1. Создайте папку:
+echo    C:\Users\^<Пользователь^>\CompasAnalyzer\history\
 echo.
-echo 📁 Файлы скопированы в: %DEST%
-echo.
-echo 🚀 На новом ПК:
-echo    1. Скопируйте папку с флешки
-echo    2. Запустите CompassAnalyzer.exe
-if "%COPY_MODE%"=="2" (
-    echo    3. Для переноса истории смотрите ПЕРЕНОС_НА_ДРУГОЙ_ПК.md
+echo 2. Скопируйте историю:
+if exist "%FLASH_DRIVE%:\CompasAnalyzer\history\analysis_history.json" (
+    echo    %FLASH_DRIVE%:\CompasAnalyzer\history\analysis_history.json
+    echo    →
+    echo    C:\Users\^<Пользователь^>\CompasAnalyzer\history\analysis_history.json
 )
-if "%COPY_MODE%"=="3" (
-    echo    3. Для пересборки: rebuild_wails_simple.bat
+echo.
+echo 3. Скопируйте программу в любую папку:
+echo    %FLASH_DRIVE%:\CompasAnalyzer\CompassAnalyzer.exe
+echo    →
+echo    C:\Projects\CompasAnalyzer\CompassAnalyzer.exe
+echo.
+echo 4. Запустите программу
+echo.
+echo ═══════════════════════════════════════════════════════════════
+echo.
+echo 💡 Подробная инструкция: ПЕРЕНОС_НА_ФЛЕШКУ.txt
+echo.
+
+REM Предлагаем открыть папку на флешке
+set /p OPEN_FOLDER="Открыть папку на флешке? (Y/N): "
+if /i "%OPEN_FOLDER%"=="Y" (
+    explorer "%FLASH_DRIVE%:\CompasAnalyzer"
 )
+
 echo.
 pause
-

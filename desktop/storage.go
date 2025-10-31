@@ -13,6 +13,7 @@ type HistoryItem struct {
 	ID          string `json:"id"`
 	Timestamp   int64  `json:"timestamp"`
 	Compass     string `json:"compass"`
+	DeviceType  string `json:"deviceType"`  // Тип устройства (Коралл, МТ-12 и т.д.)
 	IsValid     bool   `json:"isValid"`
 	TurnsCount  int    `json:"turnsCount"`
 	AnglesCount int    `json:"anglesCount"`
@@ -21,14 +22,17 @@ type HistoryItem struct {
 
 // GetHistoryPath возвращает путь к файлу истории
 func GetHistoryPath() (string, error) {
-	// Получаем папку пользователя
-	homeDir, err := os.UserHomeDir()
+	// Получаем путь к исполняемому файлу
+	exePath, err := os.Executable()
 	if err != nil {
 		return "", err
 	}
 
-	// Создаем папку для истории
-	historyDir := filepath.Join(homeDir, "CompasAnalyzer", "history")
+	// Получаем директорию, где находится EXE
+	exeDir := filepath.Dir(exePath)
+
+	// Создаем папку для истории РЯДОМ с программой
+	historyDir := filepath.Join(exeDir, "history")
 	if err := os.MkdirAll(historyDir, 0755); err != nil {
 		return "", err
 	}
@@ -184,6 +188,7 @@ func (a *App) LoadHistoryMetadata() ([]HistoryItem, error) {
 			ID:          item.ID,
 			Timestamp:   item.Timestamp,
 			Compass:     item.Compass,
+			DeviceType:  item.DeviceType, // Включаем тип устройства
 			IsValid:     item.IsValid,
 			TurnsCount:  item.TurnsCount,
 			AnglesCount: item.AnglesCount,
@@ -192,4 +197,29 @@ func (a *App) LoadHistoryMetadata() ([]HistoryItem, error) {
 	}
 
 	return metadata, nil
+}
+
+// LoadHistoryItems загружает множество записей по ID (оптимизировано)
+func (a *App) LoadHistoryItems(itemIDs []string) ([]HistoryItem, error) {
+	// Загружаем всю историю ОДИН раз
+	allItems, err := a.LoadHistory()
+	if err != nil {
+		return nil, err
+	}
+
+	// Создаем map для быстрого поиска
+	itemMap := make(map[string]HistoryItem)
+	for _, item := range allItems {
+		itemMap[item.ID] = item
+	}
+
+	// Собираем нужные записи
+	result := make([]HistoryItem, 0, len(itemIDs))
+	for _, id := range itemIDs {
+		if item, exists := itemMap[id]; exists {
+			result = append(result, item)
+		}
+	}
+
+	return result, nil
 }

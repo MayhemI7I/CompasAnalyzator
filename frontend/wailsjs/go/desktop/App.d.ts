@@ -3,15 +3,19 @@
 import {desktop} from '../models';
 import {analyzer} from '../models';
 
+export function AddManyToHistory(arg1:Array<desktop.HistoryItem>):Promise<void>;
+
 export function AddToHistory(arg1:desktop.HistoryItem):Promise<void>;
 
-export function AnalyzeCompass(arg1:string,arg2:analyzer.AnalysisConfig):Promise<desktop.AnalysisResponse>;
+export function AnalyzeCompass(arg1:string,arg2:analyzer.AnalysisConfig,arg3:string):Promise<desktop.AnalysisResponse>;
 
-export function BatchAnalyze(arg1:string,arg2:analyzer.AnalysisConfig):Promise<Array<desktop.AnalysisResponse>>;
+export function BatchAnalyze(arg1:string,arg2:analyzer.AnalysisConfig,arg3:string):Promise<Array<desktop.AnalysisResponse>>;
 
 export function ClearHistory():Promise<void>;
 
 export function GetDefaultConfig():Promise<analyzer.AnalysisConfig>;
+
+export function GetFilesCount(arg1:string,arg2:string,arg3:boolean):Promise<number>;
 
 export function GetHistoryDir():Promise<string>;
 
@@ -19,4 +23,18 @@ export function GetHistoryStats():Promise<Record<string, any>>;
 
 export function LoadHistory():Promise<Array<desktop.HistoryItem>>;
 
+export function LoadHistoryItem(arg1:string):Promise<desktop.HistoryItem>;
+
+export function LoadHistoryItems(arg1:Array<string>):Promise<Array<desktop.HistoryItem>>;
+
+export function LoadHistoryMetadata():Promise<Array<desktop.HistoryItem>>;
+
+export function PreviewRename(arg1:string,arg2:string,arg3:boolean):Promise<desktop.RenameStats>;
+
+export function RemoveTextFromFilenames(arg1:string,arg2:string,arg3:boolean):Promise<desktop.RenameStats>;
+
+export function SaveExportFile(arg1:string,arg2:string,arg3:string,arg4:string):Promise<string>;
+
 export function SaveHistory(arg1:Array<desktop.HistoryItem>):Promise<void>;
+
+export function SelectDirectory(arg1:string):Promise<string>;

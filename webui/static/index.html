@@ -17,7 +17,7 @@
                     <span class="material-icons logo-icon">explore</span>
                     <h1>Compass<br>Analyzer</h1>
                 </div>
-                <p class="version">v2.0 Desktop</p>
+                <p class="version">v2.0</p>
             </div>
 
             <nav class="sidebar-nav">
@@ -45,9 +45,9 @@
 
             <div class="sidebar-footer">
                 <div class="author-card">
-                    <p class="author-name">Ульянов Александр</p>
-                    <p class="author-title">Регулировщик 3-го разряда</p>
-                    <p class="copyright">© 2025 МТЦ Desktop Edition</p>
+                    <p class="author-name">Программа разработана</p>
+                    <p class="author-title">Ульяновым Александром Юрьевичем</p>
+                    <p class="copyright" style="opacity: 0.3; font-size: 0.75rem;">© ПакостинКорпорейтед</p>
                 </div>
             </div>
         </aside>
@@ -58,7 +58,7 @@
             <header class="header">
                 <div class="header-title">
                     <h2 id="page-title">Анализ калибровки компаса</h2>
-                    <p id="page-subtitle">Нативное desktop приложение на Wails</p>
+                    <p id="page-subtitle">Система анализа калибровки компасов МТЦ</p>
                 </div>
                 <div class="header-actions">
                     <button class="btn btn-secondary" id="exportCSVBtn">
@@ -153,15 +153,13 @@
                             </div>
                             <div class="card-body">
                                 <!-- Контролы диапазона индексов -->
-                                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; padding: 0.75rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px;">
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <label style="font-weight: 500; white-space: nowrap;">От индекса:</label>
-                                        <input type="number" id="chartStartIndex" class="form-control" style="width: 100px;" min="0" value="0">
-                                    </div>
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <label style="font-weight: 500; white-space: nowrap;">До индекса:</label>
-                                        <input type="number" id="chartEndIndex" class="form-control" style="width: 100px;" min="0" value="1000">
-                                    </div>
+                                <div style="display: grid; grid-template-columns: auto 100px auto 100px auto auto; gap: 0.75rem; align-items: center; margin-bottom: 1rem; padding: 0.75rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px;">
+                                    <label style="font-weight: 500; white-space: nowrap;">От индекса:</label>
+                                    <input type="number" id="chartStartIndex" class="form-control" min="0" value="0">
+                                    
+                                    <label style="font-weight: 500; white-space: nowrap;">До индекса:</label>
+                                    <input type="number" id="chartEndIndex" class="form-control" min="0" value="1000">
+                                    
                                     <button class="btn btn-primary" id="applyChartRange" style="white-space: nowrap;">
                                         <span class="material-icons" style="font-size: 18px;">filter_alt</span>
                                         Применить
@@ -264,10 +262,10 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Компас</th>
+                                            <th>№ ДСС</th>
+                                            <th>Тип устройства</th>
                                             <th>Статус</th>
                                             <th>Повороты</th>
-                                            <th>Измерений</th>
                                             <th>Действия</th>
                                         </tr>
                                     </thead>
@@ -298,6 +296,11 @@
                         <!-- Фильтры -->
                         <div style="display: flex; gap: 1rem; margin-bottom: 1rem; padding: 0.75rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px; flex-wrap: wrap;">
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label style="font-weight: 500; white-space: nowrap;">Поиск:</label>
+                                <input type="text" id="historySearchInput" class="form-control" 
+                                       placeholder="Номер компаса..." style="width: 150px;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
                                 <label style="font-weight: 500; white-space: nowrap;">Статус:</label>
                                 <select id="historyFilterStatus" class="form-control" style="width: 150px;">
                                     <option value="all">Все</option>
@@ -314,12 +317,20 @@
                                 <input type="date" id="historyFilterDateTo" class="form-control" style="width: 150px;">
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label style="font-weight: 500; white-space: nowrap;">Тип:</label>
+                                <select id="historyFilterDeviceType" class="form-control" style="width: 150px;">
+                                    <option value="all">Все типы</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
                                 <label style="font-weight: 500; white-space: nowrap;">Сортировка:</label>
                                 <select id="historySort" class="form-control" style="width: 200px;">
                                     <option value="date-desc">Дата (новые первые)</option>
                                     <option value="date-asc">Дата (старые первые)</option>
-                                    <option value="name-asc">Название (А-Я)</option>
-                                    <option value="name-desc">Название (Я-А)</option>
+                                    <option value="name-asc">№ ДСС (А-Я)</option>
+                                    <option value="name-desc">№ ДСС (Я-А)</option>
+                                    <option value="device-asc">Тип (А-Я)</option>
+                                    <option value="device-desc">Тип (Я-А)</option>
                                 </select>
                             </div>
                             <button class="btn btn-primary" id="applyHistoryFilters" style="white-space: nowrap;">
@@ -355,10 +366,10 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Дата и время</th>
-                                        <th>Компас</th>
+                                        <th>№ ДСС</th>
+                                        <th>Тип устройства</th>
                                         <th>Статус</th>
                                         <th>Повороты</th>
-                                        <th>Измерений</th>
                                         <th>Действия</th>
                                     </tr>
                                 </thead>
@@ -564,6 +575,73 @@
 
     <!-- Toast Notifications -->
     <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Analysis Device Type Modal -->
+    <div class="modal-overlay" id="analysisDeviceTypeModal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Начало анализа</h3>
+                <button class="btn-icon" onclick="closeAnalysisDeviceModal()">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Тип устройства (ДСС)</label>
+                    <input type="text" id="analysisDeviceTypeInput" class="form-control" 
+                           placeholder="Например: Коралл, МТ-12" 
+                           value="Коралл">
+                    <small>Будет сохранен в истории и использован при экспорте</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAnalysisDeviceModal()">
+                    Отмена
+                </button>
+                <button class="btn btn-primary" id="confirmAnalysisBtn">
+                    <span class="material-icons">play_arrow</span>
+                    Начать анализ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Directory Modal -->
+    <div class="modal-overlay" id="deviceTypeModal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Экспорт результатов калибровки</h3>
+                <button class="btn-icon" onclick="closeDeviceTypeModal()">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Директория для сохранения</label>
+                    <div class="input-group">
+                        <input type="text" id="exportDirInput" class="form-control" 
+                               placeholder="Выберите папку..." readonly>
+                        <button class="btn btn-secondary" id="selectExportDirBtn">
+                            <span class="material-icons">folder_open</span>
+                        </button>
+                    </div>
+                    <small>По умолчанию сохраняется рядом с программой</small>
+                </div>
+                <div id="exportInfo" style="padding: 0.75rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px; margin-top: 1rem;">
+                    <p style="margin: 0; font-weight: 500;">Будет экспортировано: <span id="exportCount">0</span> записей</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeviceTypeModal()">
+                    Отмена
+                </button>
+                <button class="btn btn-primary" id="confirmExportBtn">
+                    <span class="material-icons">download</span>
+                    Экспортировать
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>

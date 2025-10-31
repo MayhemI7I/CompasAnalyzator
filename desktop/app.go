@@ -32,14 +32,15 @@ func (a *App) Startup(ctx context.Context) {
 
 // AnalysisResponse структура ответа
 type AnalysisResponse struct {
-	Success   bool          `json:"success"`
-	IsValid   bool          `json:"isValid"`
-	Compass   string        `json:"compass"`
-	Turns     []TurnInfo    `json:"turns"`
-	AllAngles []float64     `json:"allAngles"`
-	Segments  []SegmentInfo `json:"segments"`
-	Errors    []string      `json:"errors,omitempty"`
-	Log       string        `json:"log,omitempty"`
+	Success    bool          `json:"success"`
+	IsValid    bool          `json:"isValid"`
+	Compass    string        `json:"compass"`
+	DeviceType string        `json:"deviceType"` // Тип устройства
+	Turns      []TurnInfo    `json:"turns"`
+	AllAngles  []float64     `json:"allAngles"`
+	Segments   []SegmentInfo `json:"segments"`
+	Errors     []string      `json:"errors,omitempty"`
+	Log        string        `json:"log,omitempty"`
 }
 
 // TurnInfo информация о повороте
@@ -62,9 +63,10 @@ type SegmentInfo struct {
 }
 
 // AnalyzeCompass анализирует компас
-func (a *App) AnalyzeCompass(folderPath string, config analyzer.AnalysisConfig) AnalysisResponse {
+func (a *App) AnalyzeCompass(folderPath string, config analyzer.AnalysisConfig, deviceType string) AnalysisResponse {
 	response := AnalysisResponse{
-		Compass: filepath.Base(folderPath),
+		Compass:    filepath.Base(folderPath),
+		DeviceType: deviceType,
 	}
 
 	// Проверяем CSV
@@ -149,7 +151,7 @@ func (a *App) AnalyzeCompass(folderPath string, config analyzer.AnalysisConfig) 
 }
 
 // BatchAnalyze пакетный анализ с параллельной обработкой
-func (a *App) BatchAnalyze(dataDir string, config analyzer.AnalysisConfig) []AnalysisResponse {
+func (a *App) BatchAnalyze(dataDir string, config analyzer.AnalysisConfig, deviceType string) []AnalysisResponse {
 	folders, err := os.ReadDir(dataDir)
 	if err != nil {
 		return []AnalysisResponse{{
@@ -167,11 +169,11 @@ func (a *App) BatchAnalyze(dataDir string, config analyzer.AnalysisConfig) []Ana
 	}
 
 	// Параллельная обработка с горутинами
-	return a.batchAnalyzeParallel(dataDir, validFolders, config)
+	return a.batchAnalyzeParallel(dataDir, validFolders, config, deviceType)
 }
 
 // batchAnalyzeParallel параллельная обработка с горутинами
-func (a *App) batchAnalyzeParallel(dataDir string, folders []os.DirEntry, config analyzer.AnalysisConfig) []AnalysisResponse {
+func (a *App) batchAnalyzeParallel(dataDir string, folders []os.DirEntry, config analyzer.AnalysisConfig, deviceType string) []AnalysisResponse {
 	// Автоопределение оптимального количества воркеров
 	// На 4-ядерном процессоре = 4 воркера, на 8-ядерном = 8
 	numWorkers := runtime.NumCPU()
@@ -194,8 +196,8 @@ func (a *App) batchAnalyzeParallel(dataDir string, folders []os.DirEntry, config
 				folder := folders[index]
 				folderPath := filepath.Join(dataDir, folder.Name())
 				
-				// Полный анализ
-				response := a.AnalyzeCompass(folderPath, config)
+				// Полный анализ с типом устройства
+				response := a.AnalyzeCompass(folderPath, config, deviceType)
 				
 				results <- struct {
 					index    int
@@ -247,4 +249,46 @@ func (a *App) SelectDirectory(title string) (string, error) {
 	})
 	
 	return selection, err
+}
+
+// SaveExportFile сохраняет файл экспорта в соответствующую папку
+func (a *App) SaveExportFile(content string, filename string, fileType string, customDir string) (string, error) {
+	var exportDir string
+	
+	if customDir != "" {
+		// Используем выбранную директорию
+		exportDir = customDir
+	} else {
+		// Получаем путь к exe файлу (по умолчанию)
+		exePath, err := os.Executable()
+		if err != nil {
+			return "", fmt.Errorf("не удалось определить путь к приложению: %v", err)
+		}
+		
+		exeDir := filepath.Dir(exePath)
+		
+		// Определяем папку в зависимости от типа
+		if fileType == "csv" {
+			exportDir = filepath.Join(exeDir, "Export Results CSV")
+		} else if fileType == "json" {
+			exportDir = filepath.Join(exeDir, "Export Results JSON")
+		} else {
+			return "", fmt.Errorf("неизвестный тип файла: %s", fileType)
+		}
+	}
+	
+	// Создаем папку если не существует
+	if err := os.MkdirAll(exportDir, 0755); err != nil {
+		return "", fmt.Errorf("ошибка создания папки: %v", err)
+	}
+	
+	// Полный путь к файлу
+	fullPath := filepath.Join(exportDir, filename)
+	
+	// Сохраняем файл
+	if err := os.WriteFile(fullPath, []byte(content), 0644); err != nil {
+		return "", fmt.Errorf("ошибка сохранения файла: %v", err)
+	}
+	
+	return fullPath, nil
 }
