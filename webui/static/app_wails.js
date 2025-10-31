@@ -6,7 +6,10 @@ const state = {
     currentData: null,
     batchResults: null,
     chart: null,
-    settings: null
+    settings: null,
+    currentChartData: null,  // Для управления диапазоном графика
+    historyData: null,
+    historyDataFull: null    // Полные данные для фильтрации
 };
 
 // Default settings
@@ -133,10 +136,8 @@ async function selectSingleFolder() {
     }
     
     try {
-        const result = await window.runtime.OpenDirectoryDialog({
-            Title: 'Выберите папку с данными компаса',
-            ShowHiddenFiles: false
-        });
+        // Используем Go метод через Wails binding
+        const result = await window.go.desktop.App.SelectDirectory('Выберите папку с данными компаса');
         
         if (result) {
             document.getElementById('singleFolderInput').value = result;
@@ -144,7 +145,7 @@ async function selectSingleFolder() {
         }
     } catch (error) {
         console.error('Ошибка выбора папки:', error);
-        showToast('❌ Ошибка выбора папки', 'error');
+        showToast(`❌ Ошибка: ${error.message || error}`, 'error');
     }
 }
 
@@ -156,10 +157,8 @@ async function selectBatchDirectory() {
     }
     
     try {
-        const result = await window.runtime.OpenDirectoryDialog({
-            Title: 'Выберите директорию с папками компасов',
-            ShowHiddenFiles: false
-        });
+        // Используем Go метод через Wails binding
+        const result = await window.go.desktop.App.SelectDirectory('Выберите директорию с папками компасов');
         
         if (result) {
             document.getElementById('batchDirInput').value = result;
@@ -167,7 +166,7 @@ async function selectBatchDirectory() {
         }
     } catch (error) {
         console.error('Ошибка выбора директории:', error);
-        showToast('❌ Ошибка выбора директории', 'error');
+        showToast(`❌ Ошибка: ${error.message || error}`, 'error');
     }
 }
 
@@ -303,12 +302,18 @@ async function handleBatchAnalyze() {
         
         displayBatchResults(results);
         
-        // Сохраняем все результаты в историю (только в Wails режиме)
-        if (isWailsMode() && results && results.length > 0) {
-            await saveBatchToHistory(results, dirInput);
-        }
-        
+        // Показываем результаты сразу, сохранение в фоне
         showToast(`✅ Обработано: ${results.length}`, 'success');
+        
+        // Сохраняем в историю в ФОНЕ (не блокируя UI)
+        if (isWailsMode() && results && results.length > 0) {
+            saveBatchToHistory(results, dirInput).then(() => {
+                console.log('💾 Результаты сохранены в историю');
+                showToast('💾 Результаты сохранены в историю', 'success');
+            }).catch(err => {
+                console.error('Ошибка сохранения в историю:', err);
+            });
+        }
     } catch (error) {
         showToast(`❌ Ошибка: ${error.message}`, 'error');
         console.error(error);
@@ -317,18 +322,33 @@ async function handleBatchAnalyze() {
     }
 }
 
-// Функция сохранения пакетных результатов в историю
+// Функция сохранения пакетных результатов в историю (ОПТИМИЗИРОВАНО)
 async function saveBatchToHistory(results, baseDir) {
     try {
-        let savedCount = 0;
+        // Подготавливаем все записи для пакетного сохранения
+        const historyItems = [];
+        
         for (const result of results) {
             if (result.success) {
-                const folderPath = baseDir + '\\' + result.compass;
-                await saveToHistory(result, folderPath);
-                savedCount++;
+                const compassName = result.compass || 'Unknown';
+                
+                historyItems.push({
+                    id: '',  // Будет сгенерирован на бэкенде
+                    timestamp: Date.now(),
+                    compass: compassName,
+                    isValid: result.isValid,
+                    turnsCount: result.turns ? result.turns.length : 0,
+                    anglesCount: result.allAngles ? result.allAngles.length : 0,
+                    fullData: JSON.stringify(result)
+                });
             }
         }
-        console.log(`💾 Сохранено в историю: ${savedCount} из ${results.length}`);
+        
+        if (historyItems.length > 0) {
+            // Одна операция вместо тысяч!
+            await window.go.desktop.App.AddManyToHistory(historyItems);
+            console.log(`💾 Сохранено в историю: ${historyItems.length} записей за один раз`);
+        }
     } catch (error) {
         console.error('Ошибка сохранения пакета в историю:', error);
     }
@@ -401,16 +421,28 @@ function displayTurnsTable(turns) {
 }
 
 // Display polar chart
-function displayPolarChart(data) {
+function displayPolarChart(data, startIndex = null, endIndex = null) {
     const ctx = document.getElementById('polarChart');
     
     if (state.chart) state.chart.destroy();
     
-    // Основные данные (все углы)
-    const angleData = data.allAngles.map((angle, index) => ({
-        x: index,
-        y: angle
-    }));
+    // Сохраняем полные данные для возможности изменения диапазона
+    state.currentChartData = data;
+    
+    // Определяем диапазон
+    const start = startIndex !== null ? startIndex : 0;
+    const end = endIndex !== null ? endIndex : data.allAngles.length - 1;
+    
+    // Обновляем поля ввода
+    document.getElementById('chartStartIndex').value = start;
+    document.getElementById('chartEndIndex').value = end;
+    document.getElementById('chartStartIndex').max = data.allAngles.length - 1;
+    document.getElementById('chartEndIndex').max = data.allAngles.length - 1;
+    
+    // Основные данные (с учетом диапазона)
+    const angleData = data.allAngles
+        .map((angle, index) => ({ x: index, y: angle }))
+        .filter(point => point.x >= start && point.x <= end);
     
     // Создаем датасеты для подсветки поворотов
     const datasets = [{
@@ -422,7 +454,7 @@ function displayPolarChart(data) {
         pointHoverRadius: 5
     }];
     
-    // Добавляем датасеты для каждого поворота (подсветка)
+    // Добавляем датасеты для каждого поворота (подсветка, с учетом диапазона)
     if (data.turns && data.turns.length > 0) {
         const colors = [
             'rgba(239, 68, 68, 0.8)',   // Красный
@@ -433,7 +465,11 @@ function displayPolarChart(data) {
         
         data.turns.forEach((turn, index) => {
             const turnData = [];
-            for (let i = turn.startIndex; i <= turn.endIndex && i < data.allAngles.length; i++) {
+            // Учитываем диапазон при построении поворотов
+            const turnStart = Math.max(turn.startIndex, start);
+            const turnEnd = Math.min(turn.endIndex, end);
+            
+            for (let i = turnStart; i <= turnEnd && i < data.allAngles.length; i++) {
                 turnData.push({
                     x: i,
                     y: data.allAngles[i]
@@ -510,8 +546,33 @@ function displayBatchResults(results) {
             <td><span class="badge ${result.isValid ? 'success' : 'error'}">${result.isValid ? '✓ Успешно' : '✗ Ошибка'}</span></td>
             <td>${result.turns ? result.turns.length : 0}/4</td>
             <td>${result.allAngles ? result.allAngles.length : '-'}</td>
+            <td>
+                <button class="btn-icon" onclick="viewBatchResult(${index})" title="Детальный просмотр">
+                    <span class="material-icons">visibility</span>
+                </button>
+            </td>
         </tr>
     `).join('');
+}
+
+// Просмотр результата из пакетного анализа
+function viewBatchResult(index) {
+    if (!state.batchResults || !state.batchResults[index]) {
+        showToast('⚠️ Результат не найден', 'warning');
+        return;
+    }
+    
+    const result = state.batchResults[index];
+    
+    if (!result.success) {
+        showToast('⚠️ Этот анализ завершился с ошибкой', 'warning');
+        return;
+    }
+    
+    // Отображаем результаты как обычный анализ
+    displayResults(result);
+    switchPage('analyze');
+    showToast(`📊 Просмотр результата: ${result.compass}`, 'info');
 }
 
 // Settings
@@ -628,7 +689,7 @@ function exportResultsCSV() {
     showToast('📥 Экспортировано в CSV', 'success');
 }
 
-// Chart zoom reset
+// Chart zoom reset and range controls
 document.addEventListener('DOMContentLoaded', () => {
     const resetBtn = document.getElementById('resetChartZoom');
     if (resetBtn) {
@@ -637,6 +698,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 state.chart.resetZoom();
                 showToast('♻️ Зум сброшен', 'info');
             }
+        });
+    }
+    
+    // Применить диапазон индексов
+    const applyRangeBtn = document.getElementById('applyChartRange');
+    if (applyRangeBtn) {
+        applyRangeBtn.addEventListener('click', () => {
+            if (!state.currentChartData) {
+                showToast('⚠️ Нет данных для отображения', 'warning');
+                return;
+            }
+            
+            const startIndex = parseInt(document.getElementById('chartStartIndex').value);
+            const endIndex = parseInt(document.getElementById('chartEndIndex').value);
+            
+            if (isNaN(startIndex) || isNaN(endIndex)) {
+                showToast('⚠️ Укажите корректные индексы', 'warning');
+                return;
+            }
+            
+            if (startIndex >= endIndex) {
+                showToast('⚠️ Начальный индекс должен быть меньше конечного', 'warning');
+                return;
+            }
+            
+            if (startIndex < 0 || endIndex >= state.currentChartData.allAngles.length) {
+                showToast(`⚠️ Индексы должны быть от 0 до ${state.currentChartData.allAngles.length - 1}`, 'warning');
+                return;
+            }
+            
+            displayPolarChart(state.currentChartData, startIndex, endIndex);
+            showToast(`📊 Отображен диапазон: ${startIndex} - ${endIndex}`, 'success');
+        });
+    }
+    
+    // Сбросить диапазон (показать все)
+    const resetRangeBtn = document.getElementById('resetChartRange');
+    if (resetRangeBtn) {
+        resetRangeBtn.addEventListener('click', () => {
+            if (!state.currentChartData) {
+                showToast('⚠️ Нет данных для отображения', 'warning');
+                return;
+            }
+            
+            displayPolarChart(state.currentChartData);
+            showToast('♻️ Показаны все данные', 'info');
         });
     }
 });
@@ -692,7 +799,7 @@ async function loadHistory() {
 }
 
 // Отображение истории (ОПТИМИЗИРОВАНО - без fullData)
-function displayHistory(history) {
+function displayHistory(history, applyFilters = false) {
     const tbody = document.getElementById('historyTableBody');
     
     if (!history || history.length === 0) {
@@ -711,16 +818,23 @@ function displayHistory(history) {
         return;
     }
     
-    // Статистика
-    const successCount = history.filter(h => h.isValid).length;
-    const failedCount = history.length - successCount;
+    let filteredHistory = [...history];
+    
+    // Применяем фильтры если нужно
+    if (applyFilters) {
+        filteredHistory = applyHistoryFilters(history);
+    }
+    
+    // Статистика (по отфильтрованным данным)
+    const successCount = filteredHistory.filter(h => h.isValid).length;
+    const failedCount = filteredHistory.length - successCount;
     
     document.getElementById('historySuccess').textContent = successCount;
     document.getElementById('historyFailed').textContent = failedCount;
-    document.getElementById('historyTotal').textContent = history.length;
+    document.getElementById('historyTotal').textContent = filteredHistory.length;
     
     // Таблица - сохраняем только метаданные (БЕЗ fullData!)
-    tbody.innerHTML = history.map((item, index) => {
+    tbody.innerHTML = filteredHistory.map((item, index) => {
         const date = new Date(item.timestamp);
         const dateStr = date.toLocaleDateString('ru-RU');
         const timeStr = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
@@ -753,7 +867,10 @@ function displayHistory(history) {
         // fullData НЕ сохраняем! Загрузим при просмотре
     }));
     
-    console.log(`📊 История загружена: ${history.length} записей (БЕЗ fullData)`);
+    // Сохраняем полные данные для фильтрации
+    state.historyDataFull = history;
+    
+    console.log(`📊 История загружена: ${history.length} записей, показано: ${filteredHistory.length} (БЕЗ fullData)`);
 }
 
 // Просмотр элемента истории (ОПТИМИЗИРОВАНО - загрузка одной записи)
@@ -794,6 +911,53 @@ async function viewHistoryItem(itemId) {
     }
 }
 
+// Функция фильтрации и сортировки истории
+function applyHistoryFilters(history) {
+    let filtered = [...history];
+    
+    // Фильтр по статусу
+    const statusFilter = document.getElementById('historyFilterStatus').value;
+    if (statusFilter === 'success') {
+        filtered = filtered.filter(item => item.isValid);
+    } else if (statusFilter === 'failed') {
+        filtered = filtered.filter(item => !item.isValid);
+    }
+    
+    // Фильтр по датам
+    const dateFrom = document.getElementById('historyFilterDateFrom').value;
+    const dateTo = document.getElementById('historyFilterDateTo').value;
+    
+    if (dateFrom) {
+        const fromTimestamp = new Date(dateFrom).getTime();
+        filtered = filtered.filter(item => item.timestamp >= fromTimestamp);
+    }
+    
+    if (dateTo) {
+        const toTimestamp = new Date(dateTo).setHours(23, 59, 59, 999);
+        filtered = filtered.filter(item => item.timestamp <= toTimestamp);
+    }
+    
+    // Сортировка
+    const sortBy = document.getElementById('historySort').value;
+    
+    switch (sortBy) {
+        case 'date-desc':
+            filtered.sort((a, b) => b.timestamp - a.timestamp);
+            break;
+        case 'date-asc':
+            filtered.sort((a, b) => a.timestamp - b.timestamp);
+            break;
+        case 'name-asc':
+            filtered.sort((a, b) => a.compass.localeCompare(b.compass, 'ru'));
+            break;
+        case 'name-desc':
+            filtered.sort((a, b) => b.compass.localeCompare(a.compass, 'ru'));
+            break;
+    }
+    
+    return filtered;
+}
+
 // Очистка истории
 async function clearHistory() {
     if (!isWailsMode()) {
@@ -828,6 +992,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearBtn = document.getElementById('clearHistoryBtn');
     if (clearBtn) {
         clearBtn.addEventListener('click', clearHistory);
+    }
+    
+    // Применить фильтры
+    const applyFiltersBtn = document.getElementById('applyHistoryFilters');
+    if (applyFiltersBtn) {
+        applyFiltersBtn.addEventListener('click', () => {
+            if (state.historyDataFull) {
+                displayHistory(state.historyDataFull, true);
+                showToast('🔍 Фильтры применены', 'success');
+            } else {
+                showToast('⚠️ Нет данных для фильтрации', 'warning');
+            }
+        });
+    }
+    
+    // Сбросить фильтры
+    const resetFiltersBtn = document.getElementById('resetHistoryFilters');
+    if (resetFiltersBtn) {
+        resetFiltersBtn.addEventListener('click', () => {
+            document.getElementById('historyFilterStatus').value = 'all';
+            document.getElementById('historyFilterDateFrom').value = '';
+            document.getElementById('historyFilterDateTo').value = '';
+            document.getElementById('historySort').value = 'date-desc';
+            
+            if (state.historyDataFull) {
+                displayHistory(state.historyDataFull, false);
+                showToast('♻️ Фильтры сброшены', 'info');
+            }
+        });
     }
     
     // Загружаем историю при переключении на страницу
@@ -889,10 +1082,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             try {
-                const result = await window.runtime.OpenDirectoryDialog({
-                    Title: 'Выберите директорию для обработки',
-                    ShowHiddenFiles: false
-                });
+                // Используем Go метод через Wails binding
+                const result = await window.go.desktop.App.SelectDirectory('Выберите директорию для обработки файлов');
                 
                 if (result) {
                     document.getElementById('editorDirInput').value = result;
@@ -901,7 +1092,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error('Ошибка выбора директории:', error);
-                showToast('❌ Ошибка выбора директории', 'error');
+                showToast(`❌ Ошибка: ${error.message || error}`, 'error');
             }
         });
     }
@@ -1064,4 +1255,5 @@ function displayRenameResults(stats, isPreview) {
     // Прокрутка к результатам
     resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
 

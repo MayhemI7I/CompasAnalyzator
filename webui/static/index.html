@@ -152,9 +152,28 @@
                                 </button>
                             </div>
                             <div class="card-body">
+                                <!-- Контролы диапазона индексов -->
+                                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; padding: 0.75rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <label style="font-weight: 500; white-space: nowrap;">От индекса:</label>
+                                        <input type="number" id="chartStartIndex" class="form-control" style="width: 100px;" min="0" value="0">
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <label style="font-weight: 500; white-space: nowrap;">До индекса:</label>
+                                        <input type="number" id="chartEndIndex" class="form-control" style="width: 100px;" min="0" value="1000">
+                                    </div>
+                                    <button class="btn btn-primary" id="applyChartRange" style="white-space: nowrap;">
+                                        <span class="material-icons" style="font-size: 18px;">filter_alt</span>
+                                        Применить
+                                    </button>
+                                    <button class="btn btn-secondary" id="resetChartRange" style="white-space: nowrap;">
+                                        <span class="material-icons" style="font-size: 18px;">refresh</span>
+                                        Сбросить
+                                    </button>
+                                </div>
                                 <canvas id="polarChart"></canvas>
                                 <small style="color: var(--text-secondary); text-align: center; display: block; margin-top: 0.5rem;">
-                                    💡 Используйте колесико мыши для зума, перетаскивание для перемещения
+                                    💡 Используйте поля выше для выбора диапазона индексов, или колесико мыши для зума
                                 </small>
                             </div>
                         </div>
@@ -249,6 +268,7 @@
                                             <th>Статус</th>
                                             <th>Повороты</th>
                                             <th>Измерений</th>
+                                            <th>Действия</th>
                                         </tr>
                                     </thead>
                                     <tbody id="batchResultsBody"></tbody>
@@ -275,6 +295,43 @@
                         </div>
                     </div>
                     <div class="card-body">
+                        <!-- Фильтры -->
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem; padding: 0.75rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label style="font-weight: 500; white-space: nowrap;">Статус:</label>
+                                <select id="historyFilterStatus" class="form-control" style="width: 150px;">
+                                    <option value="all">Все</option>
+                                    <option value="success">✓ Успешно</option>
+                                    <option value="failed">✗ Ошибки</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label style="font-weight: 500; white-space: nowrap;">От даты:</label>
+                                <input type="date" id="historyFilterDateFrom" class="form-control" style="width: 150px;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label style="font-weight: 500; white-space: nowrap;">До даты:</label>
+                                <input type="date" id="historyFilterDateTo" class="form-control" style="width: 150px;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label style="font-weight: 500; white-space: nowrap;">Сортировка:</label>
+                                <select id="historySort" class="form-control" style="width: 200px;">
+                                    <option value="date-desc">Дата (новые первые)</option>
+                                    <option value="date-asc">Дата (старые первые)</option>
+                                    <option value="name-asc">Название (А-Я)</option>
+                                    <option value="name-desc">Название (Я-А)</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="applyHistoryFilters" style="white-space: nowrap;">
+                                <span class="material-icons" style="font-size: 18px;">filter_alt</span>
+                                Применить
+                            </button>
+                            <button class="btn btn-secondary" id="resetHistoryFilters" style="white-space: nowrap;">
+                                <span class="material-icons" style="font-size: 18px;">clear</span>
+                                Сбросить
+                            </button>
+                        </div>
+
                         <!-- Статистика -->
                         <div class="batch-summary" id="historySummary" style="margin-bottom: 1.5rem;">
                             <div class="summary-item success">

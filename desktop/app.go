@@ -10,6 +10,8 @@ import (
 
 	"compass_analyzer/analyzer"
 	"compass_analyzer/parser"
+	
+	wailsruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App структура
@@ -234,4 +236,15 @@ func (a *App) GetDefaultConfig() analyzer.AnalysisConfig {
 // GetHistoryDir возвращает путь к папке с историей
 func (a *App) GetHistoryDir() (string, error) {
 	return GetHistoryPath()
+}
+
+// SelectDirectory открывает диалог выбора директории через Wails
+func (a *App) SelectDirectory(title string) (string, error) {
+	// Используем Wails runtime для открытия диалога
+	// Этот метод вызывается из JavaScript
+	selection, err := wailsruntime.OpenDirectoryDialog(a.ctx, wailsruntime.OpenDialogOptions{
+		Title: title,
+	})
+	
+	return selection, err
 }

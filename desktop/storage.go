@@ -99,6 +99,32 @@ func (a *App) AddToHistory(item HistoryItem) error {
 	return a.SaveHistory(items)
 }
 
+// AddManyToHistory добавляет множество записей за один раз (оптимизировано)
+func (a *App) AddManyToHistory(newItems []HistoryItem) error {
+	items, err := a.LoadHistory()
+	if err != nil {
+		items = []HistoryItem{}
+	}
+
+	// Генерируем ID для всех записей
+	timestamp := time.Now()
+	for i := range newItems {
+		if newItems[i].ID == "" {
+			newItems[i].ID = timestamp.Add(time.Duration(i) * time.Millisecond).Format("20060102150405.000") + "_" + newItems[i].Compass
+		}
+	}
+
+	// Добавляем все записи в начало
+	items = append(newItems, items...)
+
+	// Ограничиваем размер до 10000 записей
+	if len(items) > 10000 {
+		items = items[:10000]
+	}
+
+	return a.SaveHistory(items)
+}
+
 // ClearHistory очищает историю
 func (a *App) ClearHistory() error {
 	return a.SaveHistory([]HistoryItem{})
