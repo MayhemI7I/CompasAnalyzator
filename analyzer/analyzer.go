@@ -434,11 +434,15 @@ func findBestTurnSequence(allTurns []models.Turn, logFile *os.File) []models.Tur
 		return sequence
 	}
 
-	// Если не нашли непрерывной последовательности, возвращаем первые 4
+	// Если не нашли непрерывной последовательности - это критическая ошибка!
 	if logFile != nil {
-		fmt.Fprintf(logFile, "⚠ Не найдено непрерывной последовательности, возвращаем первые 4 поворота\n")
+		fmt.Fprintf(logFile, "❌ КРИТИЧЕСКАЯ ОШИБКА: Не найдено непрерывной последовательности из 4 поворотов!\n")
+		fmt.Fprintf(logFile, "   Найденные повороты НЕ образуют непрерывную цепочку (есть разрывы по сегментам).\n")
+		fmt.Fprintf(logFile, "   Это указывает на некорректные данные калибровки.\n")
 	}
-	return allTurns[:4]
+	
+	// Возвращаем все найденные повороты, но они будут помечены как FAILED
+	return allTurns
 }
 
 // detectSkippedSegments обнаруживает "пропущенные" сегменты между поворотами
@@ -613,20 +617,40 @@ func validateTurnSequence(turns []models.Turn, turnTolerance float64, sumToleran
 		fmt.Fprintf(logFile, "✓ Повороты идут последовательно без пересечений по индексам\n")
 	}
 
-	// Проверка 3.5: Непрерывность по индексам сегментов
-	// Эта проверка уже выполнена в findBestTurnSequence, просто логируем результат
+	// Проверка 3.5: КРИТИЧЕСКАЯ проверка непрерывности по индексам сегментов
+	// Повороты должны следовать друг за другом БЕЗ пропущенных сегментов
 	if logFile != nil {
 		fmt.Fprintf(logFile, "Проверка непрерывности по сегментам:\n")
-		for i := 1; i < len(turns); i++ {
-			prevToSegment := turns[i-1].ToSegment
-			currFromSegment := turns[i].FromSegment
+	}
+	
+	for i := 1; i < len(turns); i++ {
+		prevToSegment := turns[i-1].ToSegment
+		currFromSegment := turns[i].FromSegment
 
-			if currFromSegment == prevToSegment {
-				fmt.Fprintf(logFile, "  Поворот %d → %d: сегмент %d → %d (непрерывно)\n",
-					i, i+1, prevToSegment, currFromSegment)
-			}
+		if logFile != nil {
+			fmt.Fprintf(logFile, "  Поворот %d → %d: ToSegment(%d)=%d, FromSegment(%d)=%d\n",
+				i, i+1, i, prevToSegment, i+1, currFromSegment)
 		}
-		fmt.Fprintf(logFile, "✓ Последовательность поворотов непрерывна (выбрана оптимальная цепочка)\n")
+
+		// КРИТИЧЕСКАЯ ПРОВЕРКА: FromSegment следующего ДОЛЖЕН равняться ToSegment предыдущего!
+		if currFromSegment != prevToSegment {
+			msg := fmt.Sprintf("Повороты НЕ образуют непрерывную последовательность: между поворотом %d (ToSegment=%d) и поворотом %d (FromSegment=%d) есть разрыв (пропущены сегменты %d-%d). Калибровка некорректна.",
+				i, prevToSegment, i+1, currFromSegment, prevToSegment+1, currFromSegment-1)
+			errors = append(errors, msg)
+			if logFile != nil {
+				fmt.Fprintf(logFile, "  ✗ КРИТИЧЕСКАЯ ОШИБКА: %s\n", msg)
+			}
+			return false, errors
+		}
+		
+		if logFile != nil {
+			fmt.Fprintf(logFile, "  ✓ Поворот %d → %d: непрерывно (сегмент %d → %d)\n",
+				i, i+1, prevToSegment, currFromSegment)
+		}
+	}
+	
+	if logFile != nil {
+		fmt.Fprintf(logFile, "✓ Последовательность поворотов непрерывна (без пропущенных сегментов)\n")
 	}
 
 	// Проверка 4: Непрерывность цепочки (конечный угол поворота N ≈ начальный угол поворота N+1)
@@ -645,12 +669,24 @@ func validateTurnSequence(turns []models.Turn, turnTolerance float64, sumToleran
 
 		if gap > continuityTolerance {
 			continuousChain = false
+			
+			// ВАЖНО: Если разрыв близок к 90° (80-110°), это пропущенный поворот → КРИТИЧЕСКАЯ ОШИБКА!
+			if gap >= 80 && gap <= 110 {
+				msg := fmt.Sprintf("КРИТИЧЕСКАЯ ОШИБКА: Разрыв между поворотом %d (конец %.2f°) и поворотом %d (начало %.2f°) составляет %.2f°, что близко к 90°. Это указывает на пропущенный поворот в последовательности. Калибровка некорректна.",
+					i+1, currentEnd, i+2, nextStart, gap)
+				errors = append(errors, msg)
+				if logFile != nil {
+					fmt.Fprintf(logFile, "  ✗ КРИТИЧЕСКАЯ ОШИБКА (пропущенный поворот): %s\n", msg)
+				}
+				return false, errors // Возвращаем ошибку сразу
+			}
+			
+			// Обычный разрыв (не близкий к 90°) - только предупреждение
 			msg := fmt.Sprintf("Разрыв между поворотом %d (конец %.2f°) и поворотом %d (начало %.2f°): %.2f° > %.2f°",
 				i+1, currentEnd, i+2, nextStart, gap, continuityTolerance)
 			if logFile != nil {
 				fmt.Fprintf(logFile, "  ⚠ Предупреждение: %s\n", msg)
 			}
-			// Не считаем это критической ошибкой, только предупреждение
 		}
 	}
 
@@ -749,16 +785,16 @@ func AnalyzeCompassData(angles []float64, config AnalysisConfig, logFile *os.Fil
 	isValid, validationErrors := validateTurnSequence(turns, config.TurnTolerance, config.SumTolerance, logFile)
 	
 	// Устанавливаем статусы для каждого поворота
+	// ВАЖНО: Статусы только "success" или "failed" (warning убран, информация остаётся в логах)
 	for i := range turns {
-		if problemTurnIdx >= 0 && i == problemTurnIdx {
-			// Если обнаружен пропущенный сегмент, помечаем ТОЛЬКО проблемный поворот
-			turns[i].Status = "warning"
-			turns[i].WarningReason = skippedReason
-		} else if isValid {
+		if isValid {
 			turns[i].Status = "success"
 		} else {
 			turns[i].Status = "failed"
-			if len(validationErrors) > 0 {
+			// Сохраняем причину ошибки (для логов и детального просмотра)
+			if problemTurnIdx >= 0 && i == problemTurnIdx {
+				turns[i].WarningReason = skippedReason
+			} else if len(validationErrors) > 0 {
 				turns[i].WarningReason = validationErrors[0]
 			}
 		}

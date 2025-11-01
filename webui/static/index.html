@@ -76,10 +76,6 @@
                         <span class="material-icons">download</span>
                         JSON
                     </button>
-                    <button class="btn btn-primary" id="analyzeBtn">
-                        <span class="material-icons">play_arrow</span>
-                        Новый анализ
-                    </button>
                 </div>
             </header>
 
@@ -117,24 +113,34 @@
                 <!-- Results Section -->
                 <div class="results-section" id="resultsSection" style="display: none;">
                     <!-- Device Info Panel -->
-                    <div class="device-info-panel" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid rgb(99, 102, 241); display: grid; grid-template-columns: auto 1fr auto; gap: 2rem; align-items: center;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <span class="material-icons" style="color: rgb(99, 102, 241); font-size: 32px;">category</span>
-                            <div>
-                                <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Тип устройства</p>
-                                <p id="deviceTypeDisplay" style="font-size: 1.125rem; font-weight: 600; color: var(--text-primary); margin: 0;">—</p>
+                    <div id="deviceInfoPanel" class="device-info-panel" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(139, 92, 246, 0.9) 100%); border-radius: 12px; padding: 1.5rem 2rem; margin-bottom: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                        <!-- Информация о устройстве + Навигация -->
+                        <div style="display: grid; grid-template-columns: auto auto 1fr auto; gap: 2.5rem; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span class="material-icons" style="color: rgb(255, 255, 255); font-size: 40px;">category</span>
+                                <div>
+                                    <p style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.7); margin: 0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Тип устройства</p>
+                                    <p id="deviceTypeDisplay" style="font-size: 1.25rem; font-weight: 700; color: #fff; margin: 0;">—</p>
+                                </div>
                             </div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <span class="material-icons" style="color: rgb(99, 102, 241); font-size: 32px;">numbers</span>
-                            <div>
-                                <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Номер ДСС</p>
-                                <p id="compassNumberDisplay" style="font-size: 1.125rem; font-weight: 600; color: var(--text-primary); margin: 0;">—</p>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span class="material-icons" style="color: rgb(255, 255, 255); font-size: 40px;">numbers</span>
+                                <div>
+                                    <p style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.7); margin: 0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Номер ДСС</p>
+                                    <p id="compassNumberDisplay" style="font-size: 1.25rem; font-weight: 700; color: #fff; margin: 0;">—</p>
+                                </div>
                             </div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255, 255, 255, 0.5); border-radius: 8px;">
-                            <span class="material-icons" style="color: var(--text-secondary); font-size: 20px;">info</span>
-                            <span style="font-size: 0.875rem; color: var(--text-secondary);">Текущий анализ</span>
+                            <div></div>
+                            <!-- Navigation Buttons -->
+                            <div id="navigationButtons" style="display: none; gap: 0.5rem; align-items: center;">
+                                <button class="nav-btn" id="prevAnalysisBtn" title="Предыдущий">
+                                    <span class="material-icons">chevron_left</span>
+                                </button>
+                                <span id="navPosition" style="color: rgba(255, 255, 255, 0.95); font-size: 0.875rem; font-weight: 600; white-space: nowrap;">1 / 10</span>
+                                <button class="nav-btn" id="nextAnalysisBtn" title="Следующий">
+                                    <span class="material-icons">chevron_right</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
@@ -302,25 +308,23 @@
                                     <select id="batchFilterStatus" class="form-control" style="width: 180px;">
                                         <option value="all">Все</option>
                                         <option value="success">✓ Успешно</option>
-                                        <option value="warning">⚠ Требует проверки</option>
                                         <option value="failed">✗ Ошибки</option>
                                     </select>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <label style="font-weight: 500; white-space: nowrap;">Сортировка:</label>
                                     <select id="batchSort" class="form-control" style="width: 200px;">
-                                        <option value="name-asc">№ ДСС (А-Я)</option>
+                                        <option value="name-asc" selected>№ ДСС (А-Я)</option>
                                         <option value="name-desc">№ ДСС (Я-А)</option>
-                                        <option value="status-warning">Требует проверки первые</option>
                                         <option value="status-failed">Ошибки первые</option>
                                         <option value="status-success">Успешные первые</option>
                                     </select>
                                 </div>
-                                <button class="btn btn-secondary" id="applyBatchFilters">
+                                <button class="btn btn-primary" id="applyBatchFilters">
                                     <span class="material-icons">filter_alt</span>
                                     Применить
                                 </button>
-                                <button class="btn btn-secondary" id="resetBatchFilters">
+                                <button class="btn btn-warning" id="resetBatchFilters">
                                     <span class="material-icons">clear</span>
                                     Сбросить
                                 </button>
@@ -375,7 +379,6 @@
                                 <select id="historyFilterStatus" class="form-control" style="width: 180px;">
                                     <option value="all">Все</option>
                                     <option value="success">✓ Успешно</option>
-                                    <option value="warning">⚠ Требует проверки</option>
                                     <option value="failed">✗ Ошибки</option>
                                 </select>
                             </div>
@@ -398,7 +401,7 @@
                                 <select id="historySort" class="form-control" style="width: 200px;">
                                     <option value="date-desc">Дата (новые первые)</option>
                                     <option value="date-asc">Дата (старые первые)</option>
-                                    <option value="name-asc">№ ДСС (А-Я)</option>
+                                    <option value="name-asc" selected>№ ДСС (А-Я)</option>
                                     <option value="name-desc">№ ДСС (Я-А)</option>
                                     <option value="device-asc">Тип (А-Я)</option>
                                     <option value="device-desc">Тип (Я-А)</option>
@@ -408,7 +411,7 @@
                                 <span class="material-icons" style="font-size: 18px;">filter_alt</span>
                                 Применить
                             </button>
-                            <button class="btn btn-secondary" id="resetHistoryFilters" style="white-space: nowrap;">
+                            <button class="btn btn-warning" id="resetHistoryFilters" style="white-space: nowrap;">
                                 <span class="material-icons" style="font-size: 18px;">clear</span>
                                 Сбросить
                             </button>
@@ -758,16 +761,16 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div style="padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border-left: 4px solid rgb(251, 191, 36); margin-bottom: 1rem;">
-                    <p style="margin: 0; font-weight: 500; color: rgb(217, 119, 6);">
-                        <span class="material-icons" style="vertical-align: middle; font-size: 20px;">warning</span>
-                        Этот анализ требует проверки оператором
+                <div style="padding: 1rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px; border-left: 4px solid rgb(99, 102, 241); margin-bottom: 1rem;">
+                    <p style="margin: 0; font-weight: 500; color: rgb(79, 70, 229);">
+                        <span class="material-icons" style="vertical-align: middle; font-size: 20px;">edit</span>
+                        Изменить статус анализа
                     </p>
                     <p id="changeStatusReason" style="margin: 0.5rem 0 0 0; font-size: 0.875rem; color: var(--text-secondary);"></p>
                 </div>
                 
                 <div class="form-group">
-                    <label style="font-weight: 600; margin-bottom: 0.75rem; display: block;">Выберите итоговый статус:</label>
+                    <label style="font-weight: 600; margin-bottom: 0.75rem; display: block;">Выберите новый статус:</label>
                     <div style="display: flex; gap: 1rem;">
                         <button class="btn btn-success" id="confirmSuccessBtn" style="flex: 1;">
                             <span class="material-icons">check_circle</span>

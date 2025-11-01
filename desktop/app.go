@@ -327,27 +327,23 @@ func (a *App) UpdateAnalysisStatus(itemID string, newStatus string) error {
 	
 	// Обновляем статус в зависимости от решения оператора
 	if newStatus == "success" {
-		// Оператор подтвердил - убираем warnings, ставим success
+		// Оператор изменил failed на success
 		analysisData.IsValid = true
-		analysisData.OperatorComment = "Проверено оператором - подтверждено"
+		analysisData.OperatorComment = "Изменено оператором - подтверждено"
 		for i := range analysisData.Turns {
 			analysisData.Turns[i].Status = "success"
 			analysisData.Turns[i].WarningReason = ""
 		}
 		item.IsValid = true
-		item.HasWarnings = false
 		item.ResolvedByOperator = true
 	} else if newStatus == "failed" {
-		// Оператор отклонил - ставим failed
+		// Оператор изменил success на failed
 		analysisData.IsValid = false
-		analysisData.OperatorComment = "Проверено оператором - отклонено"
+		analysisData.OperatorComment = "Изменено оператором - отклонено"
 		for i := range analysisData.Turns {
-			if analysisData.Turns[i].Status == "warning" {
-				analysisData.Turns[i].Status = "failed"
-			}
+			analysisData.Turns[i].Status = "failed"
 		}
 		item.IsValid = false
-		item.HasWarnings = false
 		item.ResolvedByOperator = true
 	}
 	

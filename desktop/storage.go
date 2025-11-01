@@ -15,8 +15,7 @@ type HistoryItem struct {
 	Compass            string `json:"compass"`
 	DeviceType         string `json:"deviceType"`         // Тип устройства (Коралл, МТ-12 и т.д.)
 	IsValid            bool   `json:"isValid"`
-	HasWarnings        bool   `json:"hasWarnings"`        // Есть ли предупреждения в поворотах
-	ResolvedByOperator bool   `json:"resolvedByOperator"` // Разрешено оператором вручную
+	ResolvedByOperator bool   `json:"resolvedByOperator"` // Изменено оператором вручную
 	TurnsCount         int    `json:"turnsCount"`
 	AnglesCount        int    `json:"anglesCount"`
 	FullData           string `json:"fullData"`
@@ -218,16 +217,15 @@ func (a *App) LoadHistoryMetadata() ([]HistoryItem, error) {
 	metadata := make([]HistoryItem, len(items))
 	for i, item := range items {
 		metadata[i] = HistoryItem{
-			ID:                 item.ID,
-			Timestamp:          item.Timestamp,
-			Compass:            item.Compass,
-			DeviceType:         item.DeviceType,         // Включаем тип устройства
-			IsValid:            item.IsValid,
-			HasWarnings:        item.HasWarnings,        // Включаем флаг предупреждений
-			ResolvedByOperator: item.ResolvedByOperator, // Включаем флаг разрешения оператором
-			TurnsCount:         item.TurnsCount,
-			AnglesCount:        item.AnglesCount,
-			FullData:           "", // Не загружаем!
+		ID:                 item.ID,
+		Timestamp:          item.Timestamp,
+		Compass:            item.Compass,
+		DeviceType:         item.DeviceType,         // Включаем тип устройства
+		IsValid:            item.IsValid,
+		ResolvedByOperator: item.ResolvedByOperator, // Изменено оператором вручную
+		TurnsCount:         item.TurnsCount,
+		AnglesCount:        item.AnglesCount,
+		FullData:           "", // Не загружаем!
 		}
 	}
 
