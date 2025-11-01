@@ -10,14 +10,16 @@ import (
 
 // HistoryItem запись истории
 type HistoryItem struct {
-	ID          string `json:"id"`
-	Timestamp   int64  `json:"timestamp"`
-	Compass     string `json:"compass"`
-	DeviceType  string `json:"deviceType"`  // Тип устройства (Коралл, МТ-12 и т.д.)
-	IsValid     bool   `json:"isValid"`
-	TurnsCount  int    `json:"turnsCount"`
-	AnglesCount int    `json:"anglesCount"`
-	FullData    string `json:"fullData"`
+	ID                 string `json:"id"`
+	Timestamp          int64  `json:"timestamp"`
+	Compass            string `json:"compass"`
+	DeviceType         string `json:"deviceType"`         // Тип устройства (Коралл, МТ-12 и т.д.)
+	IsValid            bool   `json:"isValid"`
+	HasWarnings        bool   `json:"hasWarnings"`        // Есть ли предупреждения в поворотах
+	ResolvedByOperator bool   `json:"resolvedByOperator"` // Разрешено оператором вручную
+	TurnsCount         int    `json:"turnsCount"`
+	AnglesCount        int    `json:"anglesCount"`
+	FullData           string `json:"fullData"`
 }
 
 // GetHistoryPath возвращает путь к файлу истории
@@ -80,27 +82,44 @@ func (a *App) LoadHistory() ([]HistoryItem, error) {
 	return items, nil
 }
 
-// AddToHistory добавляет запись в историю
-func (a *App) AddToHistory(item HistoryItem) error {
+// AddToHistory добавляет запись в историю и возвращает ID
+func (a *App) AddToHistory(item HistoryItem) (string, error) {
+	Log("INFO", "AddToHistory вызвана для компаса: %s", item.Compass)
+	
 	items, err := a.LoadHistory()
 	if err != nil {
+		Log("WARN", "Ошибка загрузки истории: %v, создаем новую", err)
 		items = []HistoryItem{}
 	}
 
 	// Генерируем ID если не указан
 	if item.ID == "" {
-		item.ID = time.Now().Format("20060102150405") + "_" + item.Compass
+		// Используем UnixNano для уникальности
+		timestamp := time.Now()
+		item.ID = fmt.Sprintf("%s_%d_%s", 
+			timestamp.Format("20060102150405"), 
+			timestamp.Nanosecond()/1000, // микросекунды
+			item.Compass)
+		Log("INFO", "Сгенерирован ID: %s", item.ID)
 	}
 
 	// Добавляем в начало
 	items = append([]HistoryItem{item}, items...)
+	Log("INFO", "Добавлена запись, всего в истории: %d", len(items))
 
 	// Ограничиваем размер до 10000 записей
 	if len(items) > 10000 {
 		items = items[:10000]
+		Log("WARN", "История обрезана до 10000 записей")
 	}
 
-	return a.SaveHistory(items)
+	if err := a.SaveHistory(items); err != nil {
+		Log("ERROR", "Ошибка сохранения истории: %v", err)
+		return "", err
+	}
+	
+	Log("SUCCESS", "Запись успешно сохранена, ID: %s", item.ID)
+	return item.ID, nil
 }
 
 // AddManyToHistory добавляет множество записей за один раз (оптимизировано)
@@ -160,14 +179,28 @@ func (a *App) GetHistoryStats() (map[string]interface{}, error) {
 
 // LoadHistoryItem загружает одну запись истории по ID
 func (a *App) LoadHistoryItem(itemID string) (HistoryItem, error) {
+	Log("INFO", "LoadHistoryItem вызвана для ID: %s", itemID)
+	
 	items, err := a.LoadHistory()
 	if err != nil {
+		Log("ERROR", "Ошибка загрузки истории: %v", err)
 		return HistoryItem{}, err
 	}
+	
+	Log("INFO", "Всего записей в истории: %d", len(items))
 
 	for _, item := range items {
 		if item.ID == itemID {
+			Log("SUCCESS", "Запись найдена: %s (компас: %s)", itemID, item.Compass)
 			return item, nil
+		}
+	}
+	
+	// Логируем все ID для отладки
+	Log("ERROR", "Запись с ID %s НЕ НАЙДЕНА. Доступные ID:", itemID)
+	for i, item := range items {
+		if i < 5 { // Первые 5 для примера
+			Log("DEBUG", "  ID[%d]: %s (компас: %s)", i, item.ID, item.Compass)
 		}
 	}
 
@@ -185,14 +218,16 @@ func (a *App) LoadHistoryMetadata() ([]HistoryItem, error) {
 	metadata := make([]HistoryItem, len(items))
 	for i, item := range items {
 		metadata[i] = HistoryItem{
-			ID:          item.ID,
-			Timestamp:   item.Timestamp,
-			Compass:     item.Compass,
-			DeviceType:  item.DeviceType, // Включаем тип устройства
-			IsValid:     item.IsValid,
-			TurnsCount:  item.TurnsCount,
-			AnglesCount: item.AnglesCount,
-			FullData:    "", // Не загружаем!
+			ID:                 item.ID,
+			Timestamp:          item.Timestamp,
+			Compass:            item.Compass,
+			DeviceType:         item.DeviceType,         // Включаем тип устройства
+			IsValid:            item.IsValid,
+			HasWarnings:        item.HasWarnings,        // Включаем флаг предупреждений
+			ResolvedByOperator: item.ResolvedByOperator, // Включаем флаг разрешения оператором
+			TurnsCount:         item.TurnsCount,
+			AnglesCount:        item.AnglesCount,
+			FullData:           "", // Не загружаем!
 		}
 	}
 
@@ -222,4 +257,29 @@ func (a *App) LoadHistoryItems(itemIDs []string) ([]HistoryItem, error) {
 	}
 
 	return result, nil
+}
+
+// UpdateHistoryItem обновляет существующую запись в истории
+func UpdateHistoryItem(updatedItem HistoryItem) error {
+	app := &App{}
+	items, err := app.LoadHistory()
+	if err != nil {
+		return err
+	}
+
+	// Находим и обновляем запись
+	found := false
+	for i, item := range items {
+		if item.ID == updatedItem.ID {
+			items[i] = updatedItem
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return fmt.Errorf("запись с ID %s не найдена", updatedItem.ID)
+	}
+
+	return app.SaveHistory(items)
 }

@@ -8,8 +8,8 @@
     <meta http-equiv="Expires" content="0">
     <title>Compass Analyzer</title>
     <!-- OFFLINE MODE: локальные шрифты и библиотеки -->
-    <link rel="stylesheet" href="fonts/material-icons.css">
-    <link rel="stylesheet" href="styles.css?v=2.0.2">
+    <link rel="stylesheet" href="fonts/material-icons.css?v=2.0.3">
+    <link rel="stylesheet" href="styles.css?v=2.0.3">
 </head>
 <body>
     <div class="app-container">
@@ -43,6 +43,10 @@
                 <a href="#" class="nav-item" data-page="editor">
                     <span class="material-icons">drive_file_rename_outline</span>
                     <span>Редактор файлов</span>
+                </a>
+                <a href="#" class="nav-item" data-page="logs">
+                    <span class="material-icons">bug_report</span>
+                    <span>Логи отладки</span>
                 </a>
             </nav>
 
@@ -112,13 +116,37 @@
 
                 <!-- Results Section -->
                 <div class="results-section" id="resultsSection" style="display: none;">
-                    <!-- Идентичная структура как в оригинальном index.html -->
+                    <!-- Device Info Panel -->
+                    <div class="device-info-panel" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid rgb(99, 102, 241); display: grid; grid-template-columns: auto 1fr auto; gap: 2rem; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span class="material-icons" style="color: rgb(99, 102, 241); font-size: 32px;">category</span>
+                            <div>
+                                <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Тип устройства</p>
+                                <p id="deviceTypeDisplay" style="font-size: 1.125rem; font-weight: 600; color: var(--text-primary); margin: 0;">—</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span class="material-icons" style="color: rgb(99, 102, 241); font-size: 32px;">numbers</span>
+                            <div>
+                                <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Номер ДСС</p>
+                                <p id="compassNumberDisplay" style="font-size: 1.125rem; font-weight: 600; color: var(--text-primary); margin: 0;">—</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255, 255, 255, 0.5); border-radius: 8px;">
+                            <span class="material-icons" style="color: var(--text-secondary); font-size: 20px;">info</span>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">Текущий анализ</span>
+                        </div>
+                    </div>
+                    
                     <!-- Stats Grid -->
                     <div class="stats-grid">
                         <div class="stat-card">
-                            <span class="material-icons stat-icon success">check_circle</span>
+                            <span id="statIcon" class="material-icons stat-icon success">check_circle</span>
                             <div class="stat-content">
-                                <h4 id="statValid">-</h4>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                    <h4 id="statValid">-</h4>
+                                    <div id="operatorBadgeContainer" style="display: none;"></div>
+                                </div>
                                 <p>Статус</p>
                             </div>
                         </div>
@@ -191,6 +219,7 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
+                                                <th>Индексы</th>
                                                 <th>Начальный угол</th>
                                                 <th>Конечный угол</th>
                                                 <th>Изменение</th>
@@ -199,7 +228,7 @@
                                         </thead>
                                         <tbody id="turnsTableBody">
                                             <tr>
-                                                <td colspan="5" class="empty-state">
+                                                <td colspan="6" class="empty-state">
                                                     <span class="material-icons">info</span>
                                                     Нет данных
                                                 </td>
@@ -261,6 +290,42 @@
                                 </div>
                             </div>
                             
+                            <!-- Фильтры пакетного анализа -->
+                            <div style="display: flex; gap: 1rem; margin-top: 1rem; padding: 0.75rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px; flex-wrap: wrap;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <label style="font-weight: 500; white-space: nowrap;">Поиск:</label>
+                                    <input type="text" id="batchSearchInput" class="form-control" 
+                                           placeholder="Номер компаса..." style="width: 150px;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <label style="font-weight: 500; white-space: nowrap;">Статус:</label>
+                                    <select id="batchFilterStatus" class="form-control" style="width: 180px;">
+                                        <option value="all">Все</option>
+                                        <option value="success">✓ Успешно</option>
+                                        <option value="warning">⚠ Требует проверки</option>
+                                        <option value="failed">✗ Ошибки</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <label style="font-weight: 500; white-space: nowrap;">Сортировка:</label>
+                                    <select id="batchSort" class="form-control" style="width: 200px;">
+                                        <option value="name-asc">№ ДСС (А-Я)</option>
+                                        <option value="name-desc">№ ДСС (Я-А)</option>
+                                        <option value="status-warning">Требует проверки первые</option>
+                                        <option value="status-failed">Ошибки первые</option>
+                                        <option value="status-success">Успешные первые</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-secondary" id="applyBatchFilters">
+                                    <span class="material-icons">filter_alt</span>
+                                    Применить
+                                </button>
+                                <button class="btn btn-secondary" id="resetBatchFilters">
+                                    <span class="material-icons">clear</span>
+                                    Сбросить
+                                </button>
+                            </div>
+                            
                             <div class="table-container" style="margin-top: 1.5rem;">
                                 <table class="data-table">
                                     <thead>
@@ -307,9 +372,10 @@
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
                                 <label style="font-weight: 500; white-space: nowrap;">Статус:</label>
-                                <select id="historyFilterStatus" class="form-control" style="width: 150px;">
+                                <select id="historyFilterStatus" class="form-control" style="width: 180px;">
                                     <option value="all">Все</option>
                                     <option value="success">✓ Успешно</option>
+                                    <option value="warning">⚠ Требует проверки</option>
                                     <option value="failed">✗ Ошибки</option>
                                 </select>
                             </div>
@@ -477,6 +543,38 @@
                                     <tbody id="renameResultsBody"></tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs Page -->
+            <div class="page" id="logsPage">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Логи отладки</h3>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" id="refreshLogsBtn">
+                                <span class="material-icons">refresh</span>
+                                Обновить
+                            </button>
+                            <button class="btn btn-secondary" id="clearLogsBtn">
+                                <span class="material-icons">delete_sweep</span>
+                                Очистить
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="settings-info-box" style="margin-bottom: 1rem;">
+                            <span class="material-icons">info</span>
+                            <div>
+                                <strong>Просмотр логов отладки</strong><br>
+                                Здесь отображаются детальные логи работы приложения для диагностики проблем.
+                            </div>
+                        </div>
+                        
+                        <div style="background: var(--bg-card); border-radius: var(--radius-md); padding: 1rem; max-height: 600px; overflow-y: auto; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.875rem;">
+                            <pre id="logsViewer" style="margin: 0; white-space: pre-wrap; word-wrap: break-word; color: var(--text-primary);">Загрузка логов...</pre>
                         </div>
                     </div>
                 </div>
@@ -650,11 +748,54 @@
         </div>
     </div>
 
+    <!-- Change Status Modal -->
+    <div class="modal-overlay" id="changeStatusModal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Изменение статуса анализа</h3>
+                <button class="btn-icon" onclick="closeChangeStatusModal()">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 8px; border-left: 4px solid rgb(251, 191, 36); margin-bottom: 1rem;">
+                    <p style="margin: 0; font-weight: 500; color: rgb(217, 119, 6);">
+                        <span class="material-icons" style="vertical-align: middle; font-size: 20px;">warning</span>
+                        Этот анализ требует проверки оператором
+                    </p>
+                    <p id="changeStatusReason" style="margin: 0.5rem 0 0 0; font-size: 0.875rem; color: var(--text-secondary);"></p>
+                </div>
+                
+                <div class="form-group">
+                    <label style="font-weight: 600; margin-bottom: 0.75rem; display: block;">Выберите итоговый статус:</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-success" id="confirmSuccessBtn" style="flex: 1;">
+                            <span class="material-icons">check_circle</span>
+                            Успешно
+                        </button>
+                        <button class="btn btn-danger" id="confirmFailedBtn" style="flex: 1;">
+                            <span class="material-icons">cancel</span>
+                            Не прошло
+                        </button>
+                    </div>
+                    <small style="display: block; margin-top: 0.75rem; color: var(--text-secondary);">
+                        После подтверждения статус будет обновлен и сохранен в истории
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeChangeStatusModal()">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Chart.js - локальная копия для работы без интернета -->
     <script src="vendor/chart.umd.min.js"></script>
     <script src="vendor/chartjs-plugin-zoom.min.js"></script>
     <script src="wailsjs/runtime/runtime.js"></script>
-    <script src="version.js?v=2.0.2"></script>
-    <script src="app.js?v=2.0.2"></script>
+    <script src="version.js?v=2.0.3"></script>
+    <script src="app.js?v=2.0.3"></script>
 </body>
 </html>

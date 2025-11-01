@@ -24,6 +24,8 @@ type Turn struct {
 	EndIndex      int     `json:"endIndex"`      // Индекс конечного угла
 	FromSegment   int     `json:"-"`             // Номер начального сегмента (не экспортируется в JSON)
 	ToSegment     int     `json:"-"`             // Номер конечного сегмента (не экспортируется в JSON)
+	Status        string  `json:"status"`        // Статус поворота: "success", "warning", "failed"
+	WarningReason string  `json:"warningReason"` // Причина предупреждения (если Status == "warning")
 }
 
 // CompassResult представляет результаты анализа одного компаса.
@@ -39,6 +41,10 @@ type CompassResult struct {
 	Turns []Turn
 	// Errors - список ошибок, обнаруженных при анализе
 	Errors []string
+	// ResolvedByOperator - флаг, что статус был изменен оператором вручную
+	ResolvedByOperator bool
+	// OperatorComment - комментарий оператора при ручном разрешении
+	OperatorComment string
 }
 
 // SessionResults хранит результаты сессии анализа.

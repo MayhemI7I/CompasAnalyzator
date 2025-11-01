@@ -5,13 +5,15 @@ import {analyzer} from '../models';
 
 export function AddManyToHistory(arg1:Array<desktop.HistoryItem>):Promise<void>;
 
-export function AddToHistory(arg1:desktop.HistoryItem):Promise<void>;
+export function AddToHistory(arg1:desktop.HistoryItem):Promise<string>;
 
 export function AnalyzeCompass(arg1:string,arg2:analyzer.AnalysisConfig,arg3:string):Promise<desktop.AnalysisResponse>;
 
 export function BatchAnalyze(arg1:string,arg2:analyzer.AnalysisConfig,arg3:string):Promise<Array<desktop.AnalysisResponse>>;
 
 export function ClearHistory():Promise<void>;
+
+export function ClearLogs():Promise<void>;
 
 export function GetDefaultConfig():Promise<analyzer.AnalysisConfig>;
 
@@ -20,6 +22,8 @@ export function GetFilesCount(arg1:string,arg2:string,arg3:boolean):Promise<numb
 export function GetHistoryDir():Promise<string>;
 
 export function GetHistoryStats():Promise<Record<string, any>>;
+
+export function GetLogs():Promise<Array<desktop.LogEntry>>;
 
 export function LoadHistory():Promise<Array<desktop.HistoryItem>>;
 
@@ -38,3 +42,5 @@ export function SaveExportFile(arg1:string,arg2:string,arg3:string,arg4:string):
 export function SaveHistory(arg1:Array<desktop.HistoryItem>):Promise<void>;
 
 export function SelectDirectory(arg1:string):Promise<string>;
+
+export function UpdateAnalysisStatus(arg1:string,arg2:string):Promise<void>;

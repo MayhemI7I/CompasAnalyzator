@@ -51,6 +51,8 @@ export namespace desktop {
 	    isClockwise: boolean;
 	    startIndex: number;
 	    endIndex: number;
+	    status: string;
+	    warningReason: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new TurnInfo(source);
@@ -65,6 +67,8 @@ export namespace desktop {
 	        this.isClockwise = source["isClockwise"];
 	        this.startIndex = source["startIndex"];
 	        this.endIndex = source["endIndex"];
+	        this.status = source["status"];
+	        this.warningReason = source["warningReason"];
 	    }
 	}
 	export class AnalysisResponse {
@@ -77,6 +81,8 @@ export namespace desktop {
 	    segments: SegmentInfo[];
 	    errors?: string[];
 	    log?: string;
+	    resolvedByOperator: boolean;
+	    operatorComment: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new AnalysisResponse(source);
@@ -93,6 +99,8 @@ export namespace desktop {
 	        this.segments = this.convertValues(source["segments"], SegmentInfo);
 	        this.errors = source["errors"];
 	        this.log = source["log"];
+	        this.resolvedByOperator = source["resolvedByOperator"];
+	        this.operatorComment = source["operatorComment"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -119,6 +127,8 @@ export namespace desktop {
 	    compass: string;
 	    deviceType: string;
 	    isValid: boolean;
+	    hasWarnings: boolean;
+	    resolvedByOperator: boolean;
 	    turnsCount: number;
 	    anglesCount: number;
 	    fullData: string;
@@ -134,9 +144,27 @@ export namespace desktop {
 	        this.compass = source["compass"];
 	        this.deviceType = source["deviceType"];
 	        this.isValid = source["isValid"];
+	        this.hasWarnings = source["hasWarnings"];
+	        this.resolvedByOperator = source["resolvedByOperator"];
 	        this.turnsCount = source["turnsCount"];
 	        this.anglesCount = source["anglesCount"];
 	        this.fullData = source["fullData"];
+	    }
+	}
+	export class LogEntry {
+	    timestamp: string;
+	    level: string;
+	    message: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new LogEntry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.timestamp = source["timestamp"];
+	        this.level = source["level"];
+	        this.message = source["message"];
 	    }
 	}
 	export class RenameResult {

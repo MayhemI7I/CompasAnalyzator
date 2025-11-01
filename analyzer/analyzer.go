@@ -441,6 +441,103 @@ func findBestTurnSequence(allTurns []models.Turn, logFile *os.File) []models.Tur
 	return allTurns[:4]
 }
 
+// detectSkippedSegments обнаруживает "пропущенные" сегменты между поворотами
+// Возвращает индекс проблемного поворота (-1 если нет проблем) и причину
+func detectSkippedSegments(turns []models.Turn, allSegments []AngleSegment, turnTolerance float64, logFile *os.File) (int, string) {
+	if len(turns) < 2 {
+		return -1, ""
+	}
+
+	const extendedTolerance = 15.0 // Расширенный допуск для обнаружения "почти поворотов"
+	
+	if logFile != nil {
+		fmt.Fprintf(logFile, "\n=== Проверка пропущенных сегментов ===\n")
+	}
+
+	// Проверяем каждую пару последовательных поворотов
+	for i := 0; i < len(turns)-1; i++ {
+		currentTurn := turns[i]
+		nextTurn := turns[i+1]
+
+		// Находим все сегменты между этими двумя поворотами
+		fromSegIdx := currentTurn.ToSegment
+		toSegIdx := nextTurn.FromSegment
+
+		if logFile != nil {
+			fmt.Fprintf(logFile, "Проверка между поворотом %d (сегмент %d) и поворотом %d (сегмент %d)\n",
+				i+1, fromSegIdx, i+2, toSegIdx)
+		}
+
+		// Если между поворотами есть промежуточные сегменты
+		if toSegIdx - fromSegIdx > 1 {
+			// Проверяем каждый промежуточный сегмент
+			for segIdx := fromSegIdx; segIdx < toSegIdx; segIdx++ {
+				if segIdx >= 0 && segIdx < len(allSegments)-1 {
+					seg1 := allSegments[segIdx]
+					seg2 := allSegments[segIdx+1]
+					
+					angle1 := seg1.AvgAngle
+					angle2 := seg2.AvgAngle
+					signedDiff := signedAngleDifference(angle1, angle2)
+					absDiff := math.Abs(signedDiff)
+					
+					// Проверяем, является ли это "почти поворотом" (80-110 градусов)
+					if absDiff >= 80 && absDiff <= 110 {
+						deviationFrom90 := math.Abs(absDiff - 90)
+						
+						if logFile != nil {
+							fmt.Fprintf(logFile, "  Найден пропущенный сегмент %d→%d: %.2f°→%.2f° (Δ=%.2f°, откл. от 90°: %.2f°)\n",
+								segIdx, segIdx+1, angle1, angle2, absDiff, deviationFrom90)
+						}
+						
+						// Если отклонение больше разрешенного допуска, но меньше расширенного
+						if deviationFrom90 > turnTolerance && deviationFrom90 <= extendedTolerance {
+							reason := fmt.Sprintf("Обнаружен пропущенный поворот между сегментами %d и %d: %.2f°→%.2f° (изменение %.2f°, отклонение от 90°: %.2f° > допуска %.2f°). Возможно, оператор сделал дополнительный поворот.",
+								segIdx, segIdx+1, angle1, angle2, absDiff, deviationFrom90, turnTolerance)
+							
+							if logFile != nil {
+								fmt.Fprintf(logFile, "  ⚠ ПРЕДУПРЕЖДЕНИЕ: %s\n", reason)
+							}
+							
+							// Возвращаем индекс следующего поворота (перед которым разрыв)
+							return i + 1, reason
+						}
+					}
+				}
+			}
+		}
+		
+		// НОВАЯ ПРОВЕРКА: Проверяем угловой разрыв между концом текущего поворота и началом следующего
+		gap := normalizeAngleDifference(currentTurn.EndAngle, nextTurn.StartAngle)
+
+		if logFile != nil {
+			fmt.Fprintf(logFile, "  Проверка углового разрыва: %.2f° → %.2f°, разница: %.2f°\n",
+				currentTurn.EndAngle, nextTurn.StartAngle, gap)
+		}
+
+		// Если разрыв большой (> 20°) И близок к 90° (это пропущенный поворот)
+		if gap > 20.0 && gap >= 80 && gap <= 110 {
+			deviationFrom90 := math.Abs(gap - 90)
+			
+			reason := fmt.Sprintf("Обнаружен пропущенный поворот между поворотами %d и %d: разрыв %.2f° (конец поворота %d: %.2f° → начало поворота %d: %.2f°). Отклонение от 90°: %.2f°. Возможно, оператор сделал дополнительный поворот или пропустил сегмент.",
+				i+1, i+2, gap, i+1, currentTurn.EndAngle, i+2, nextTurn.StartAngle, deviationFrom90)
+			
+			if logFile != nil {
+				fmt.Fprintf(logFile, "  ⚠ ПРЕДУПРЕЖДЕНИЕ (угловой разрыв): %s\n", reason)
+			}
+			
+			// Возвращаем индекс следующего поворота (перед которым разрыв)
+			return i + 1, reason
+		}
+	}
+
+	if logFile != nil {
+		fmt.Fprintf(logFile, "✓ Пропущенных сегментов не обнаружено\n")
+	}
+
+	return -1, ""
+}
+
 // validateTurnSequence проверяет последовательность поворотов на корректность
 // Требования:
 // 1. Ровно 4 поворота на ~90°
@@ -645,8 +742,36 @@ func AnalyzeCompassData(angles []float64, config AnalysisConfig, logFile *os.Fil
 	// Этап 2.5: Поиск лучшей последовательности из 4 непрерывных поворотов
 	turns := findBestTurnSequence(allTurns, logFile)
 
+	// Этап 2.7: Проверка на пропущенные сегменты между поворотами
+	problemTurnIdx, skippedReason := detectSkippedSegments(turns, segments, config.TurnTolerance, logFile)
+
 	// Этап 3: Валидация последовательности поворотов
 	isValid, validationErrors := validateTurnSequence(turns, config.TurnTolerance, config.SumTolerance, logFile)
+	
+	// Устанавливаем статусы для каждого поворота
+	for i := range turns {
+		if problemTurnIdx >= 0 && i == problemTurnIdx {
+			// Если обнаружен пропущенный сегмент, помечаем ТОЛЬКО проблемный поворот
+			turns[i].Status = "warning"
+			turns[i].WarningReason = skippedReason
+		} else if isValid {
+			turns[i].Status = "success"
+		} else {
+			turns[i].Status = "failed"
+			if len(validationErrors) > 0 {
+				turns[i].WarningReason = validationErrors[0]
+			}
+		}
+	}
+	
+	// Если есть пропущенные сегменты, это не означает полный провал, но требует проверки
+	if problemTurnIdx >= 0 {
+		if logFile != nil {
+			fmt.Fprintf(logFile, "\n⚠⚠⚠ ВНИМАНИЕ: Обнаружены пропущенные сегменты ⚠⚠⚠\n")
+			fmt.Fprintf(logFile, "Поворот %d требует проверки оператором!\n", problemTurnIdx+1)
+			fmt.Fprintf(logFile, "Причина: %s\n", skippedReason)
+		}
+	}
 
 	// Итоговый отчёт
 	if logFile != nil {
@@ -660,7 +785,24 @@ func AnalyzeCompassData(angles []float64, config AnalysisConfig, logFile *os.Fil
 		}
 		fmt.Fprintf(logFile, "\n")
 
-		if isValid {
+		if problemTurnIdx >= 0 {
+			fmt.Fprintf(logFile, "\n⚠⚠⚠ ТРЕБУЕТСЯ ПРОВЕРКА ОПЕРАТОРОМ ⚠⚠⚠\n")
+			fmt.Fprintf(logFile, "\nПоследовательность поворотов (первые 4):\n")
+			for i, turn := range turns {
+				direction := "по часовой ✓"
+				if !turn.IsClockwise {
+					direction = "против часовой ✗"
+				}
+				if i == problemTurnIdx {
+					fmt.Fprintf(logFile, "  ⚠ %d. %.2f° → %.2f° (Δ = %.2f°, направление: %s) [ТРЕБУЕТ ПРОВЕРКИ]\n",
+						i+1, turn.StartAngle, turn.EndAngle, turn.Diff, direction)
+				} else {
+					fmt.Fprintf(logFile, "  %d. %.2f° → %.2f° (Δ = %.2f°, направление: %s)\n",
+						i+1, turn.StartAngle, turn.EndAngle, turn.Diff, direction)
+				}
+			}
+			fmt.Fprintf(logFile, "\nПричина: %s\n", skippedReason)
+		} else if isValid {
 			fmt.Fprintf(logFile, "\n✓✓✓ КАЛИБРОВКА УСПЕШНА ✓✓✓\n")
 			fmt.Fprintf(logFile, "\nПоследовательность поворотов (первые 4):\n")
 			for i, turn := range turns {

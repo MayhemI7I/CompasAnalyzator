@@ -2,6 +2,7 @@ package desktop
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -32,26 +33,30 @@ func (a *App) Startup(ctx context.Context) {
 
 // AnalysisResponse структура ответа
 type AnalysisResponse struct {
-	Success    bool          `json:"success"`
-	IsValid    bool          `json:"isValid"`
-	Compass    string        `json:"compass"`
-	DeviceType string        `json:"deviceType"` // Тип устройства
-	Turns      []TurnInfo    `json:"turns"`
-	AllAngles  []float64     `json:"allAngles"`
-	Segments   []SegmentInfo `json:"segments"`
-	Errors     []string      `json:"errors,omitempty"`
-	Log        string        `json:"log,omitempty"`
+	Success            bool          `json:"success"`
+	IsValid            bool          `json:"isValid"`
+	Compass            string        `json:"compass"`
+	DeviceType         string        `json:"deviceType"`         // Тип устройства
+	Turns              []TurnInfo    `json:"turns"`
+	AllAngles          []float64     `json:"allAngles"`
+	Segments           []SegmentInfo `json:"segments"`
+	Errors             []string      `json:"errors,omitempty"`
+	Log                string        `json:"log,omitempty"`
+	ResolvedByOperator bool          `json:"resolvedByOperator"` // Разрешено оператором
+	OperatorComment    string        `json:"operatorComment"`    // Комментарий оператора
 }
 
 // TurnInfo информация о повороте
 type TurnInfo struct {
-	StartAngle  float64 `json:"startAngle"`
-	EndAngle    float64 `json:"endAngle"`
-	Diff        float64 `json:"diff"`
-	SignedDiff  float64 `json:"signedDiff"`
-	IsClockwise bool    `json:"isClockwise"`
-	StartIndex  int     `json:"startIndex"`
-	EndIndex    int     `json:"endIndex"`
+	StartAngle    float64 `json:"startAngle"`
+	EndAngle      float64 `json:"endAngle"`
+	Diff          float64 `json:"diff"`
+	SignedDiff    float64 `json:"signedDiff"`
+	IsClockwise   bool    `json:"isClockwise"`
+	StartIndex    int     `json:"startIndex"`
+	EndIndex      int     `json:"endIndex"`
+	Status        string  `json:"status"`
+	WarningReason string  `json:"warningReason"`
 }
 
 // SegmentInfo информация о сегменте
@@ -113,13 +118,15 @@ func (a *App) AnalyzeCompass(folderPath string, config analyzer.AnalysisConfig, 
 	// Конвертируем turns
 	for _, turn := range turns {
 		response.Turns = append(response.Turns, TurnInfo{
-			StartAngle:  turn.StartAngle,
-			EndAngle:    turn.EndAngle,
-			Diff:        turn.Diff,
-			SignedDiff:  turn.SignedDiff,
-			IsClockwise: turn.IsClockwise,
-			StartIndex:  turn.StartIndex,
-			EndIndex:    turn.EndIndex,
+			StartAngle:    turn.StartAngle,
+			EndAngle:      turn.EndAngle,
+			Diff:          turn.Diff,
+			SignedDiff:    turn.SignedDiff,
+			IsClockwise:   turn.IsClockwise,
+			StartIndex:    turn.StartIndex,
+			EndIndex:      turn.EndIndex,
+			Status:        turn.Status,
+			WarningReason: turn.WarningReason,
 		})
 	}
 
@@ -291,4 +298,75 @@ func (a *App) SaveExportFile(content string, filename string, fileType string, c
 	}
 	
 	return fullPath, nil
+}
+
+// UpdateAnalysisStatus обновляет статус анализа вручную оператором
+func (a *App) UpdateAnalysisStatus(itemID string, newStatus string) error {
+	Log("INFO", "UpdateAnalysisStatus вызвана: itemID=%s, newStatus=%s", itemID, newStatus)
+	
+	// Загружаем запись из истории
+	item, err := a.LoadHistoryItem(itemID)
+	if err != nil {
+		Log("ERROR", "Ошибка загрузки записи %s: %v", itemID, err)
+		return fmt.Errorf("ошибка загрузки записи: %v", err)
+	}
+	
+	Log("SUCCESS", "Запись загружена: %s", item.Compass)
+	
+	// Парсим fullData
+	var analysisData AnalysisResponse
+	if err := json.Unmarshal([]byte(item.FullData), &analysisData); err != nil {
+		Log("ERROR", "Ошибка парсинга fullData: %v", err)
+		return fmt.Errorf("ошибка парсинга данных: %v", err)
+	}
+	
+	Log("INFO", "FullData успешно распарсен, компас: %s", analysisData.Compass)
+	
+	// Устанавливаем флаг что статус разрешен оператором
+	analysisData.ResolvedByOperator = true
+	
+	// Обновляем статус в зависимости от решения оператора
+	if newStatus == "success" {
+		// Оператор подтвердил - убираем warnings, ставим success
+		analysisData.IsValid = true
+		analysisData.OperatorComment = "Проверено оператором - подтверждено"
+		for i := range analysisData.Turns {
+			analysisData.Turns[i].Status = "success"
+			analysisData.Turns[i].WarningReason = ""
+		}
+		item.IsValid = true
+		item.HasWarnings = false
+		item.ResolvedByOperator = true
+	} else if newStatus == "failed" {
+		// Оператор отклонил - ставим failed
+		analysisData.IsValid = false
+		analysisData.OperatorComment = "Проверено оператором - отклонено"
+		for i := range analysisData.Turns {
+			if analysisData.Turns[i].Status == "warning" {
+				analysisData.Turns[i].Status = "failed"
+			}
+		}
+		item.IsValid = false
+		item.HasWarnings = false
+		item.ResolvedByOperator = true
+	}
+	
+	// Сохраняем обновленные данные
+	updatedFullData, err := json.Marshal(analysisData)
+	if err != nil {
+		Log("ERROR", "Ошибка сериализации: %v", err)
+		return fmt.Errorf("ошибка сериализации: %v", err)
+	}
+	item.FullData = string(updatedFullData)
+	
+	Log("INFO", "Попытка обновления записи в истории с ID: %s", item.ID)
+	
+	// Обновляем запись в истории
+	if err := UpdateHistoryItem(item); err != nil {
+		Log("ERROR", "Ошибка обновления истории: %v", err)
+		return fmt.Errorf("ошибка обновления истории: %v", err)
+	}
+	
+	Log("SUCCESS", "Статус успешно обновлен для %s на %s", item.Compass, newStatus)
+	return nil
 }

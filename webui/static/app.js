@@ -53,10 +53,29 @@ document.addEventListener('DOMContentLoaded', () => {
     setupNavigation();
     setupButtons();
     initSettingsPage();
+    restoreLastViewedAnalysis();
     
     const mode = isWailsMode() ? '🖥️ Desktop (Wails)' : '🌐 Web';
     showToast(`${mode} режим готов к работе!`, 'success');
 });
+
+// Restore last viewed analysis info on page load
+function restoreLastViewedAnalysis() {
+    const lastCompass = localStorage.getItem('lastViewedCompass');
+    const lastDeviceType = localStorage.getItem('lastViewedDeviceType');
+    
+    if (lastCompass && lastDeviceType) {
+        // Если есть сохраненные данные, показываем их в панели информации
+        const deviceTypeEl = document.getElementById('deviceTypeDisplay');
+        const compassNumberEl = document.getElementById('compassNumberDisplay');
+        
+        if (deviceTypeEl && compassNumberEl) {
+            deviceTypeEl.textContent = lastDeviceType;
+            compassNumberEl.textContent = lastCompass;
+            console.log('📋 Восстановлена информация о последнем анализе:', lastCompass, lastDeviceType);
+        }
+    }
+}
 
 // Setup navigation
 function setupNavigation() {
@@ -80,7 +99,8 @@ function switchPage(pageName) {
         batch: { title: 'Пакетный анализ', subtitle: 'Массовая обработка нескольких компасов с параллельной обработкой' },
         history: { title: 'История анализов', subtitle: 'Просмотр выполненных проверок с фильтрацией и поиском' },
         settings: { title: 'Настройки алгоритма', subtitle: 'Конфигурация параметров анализа' },
-        editor: { title: 'Редактор файлов', subtitle: 'Массовое переименование файлов в директории' }
+        editor: { title: 'Редактор файлов', subtitle: 'Массовое переименование файлов в директории' },
+        logs: { title: 'Логи отладки', subtitle: 'Просмотр детальных логов для диагностики проблем' }
     };
     
     if (titles[pageName]) {
@@ -89,6 +109,11 @@ function switchPage(pageName) {
     }
     
     state.currentPage = pageName;
+    
+    // Загружаем логи при переходе на страницу логов
+    if (pageName === 'logs') {
+        setTimeout(loadLogs, 100);
+    }
     
     console.log('📄 Переключение на страницу:', pageName);
 }
@@ -299,19 +324,29 @@ async function saveToHistory(analysisData, folderPath) {
         // Извлекаем имя папки из пути
         const compassName = analysisData.compass || folderPath.split(/[\/\\]/).pop() || 'Unknown';
         
+        // Проверяем наличие предупреждений
+        const hasWarnings = analysisData.turns && analysisData.turns.some(t => t.status === 'warning');
+        
         const historyItem = {
             id: '',  // Будет сгенерирован на бэкенде
             timestamp: Date.now(),
             compass: compassName,
             deviceType: analysisData.deviceType || 'Неизвестно',
             isValid: analysisData.isValid,
+            hasWarnings: hasWarnings,
             turnsCount: analysisData.turns ? analysisData.turns.length : 0,
             anglesCount: analysisData.allAngles ? analysisData.allAngles.length : 0,
             fullData: JSON.stringify(analysisData)
         };
         
-        await window.go.desktop.App.AddToHistory(historyItem);
-        console.log('💾 Результат сохранен в историю');
+        // AddToHistory теперь возвращает ID!
+        const createdID = await window.go.desktop.App.AddToHistory(historyItem);
+        console.log('💾 Результат сохранен в историю, ID:', createdID);
+        
+        // Сохраняем ID в данных для возможности разрешения конфликта
+        if (createdID && state.currentData) {
+            state.currentData.historyItemID = createdID;
+        }
     } catch (error) {
         console.error('Ошибка сохранения в историю:', error);
         // Не показываем ошибку пользователю, это не критично
@@ -385,12 +420,16 @@ async function saveBatchToHistory(results, baseDir) {
             if (result.success) {
                 const compassName = result.compass || 'Unknown';
                 
+                // Проверяем наличие предупреждений
+                const hasWarnings = result.turns && result.turns.some(t => t.status === 'warning');
+                
                 historyItems.push({
                     id: '',  // Будет сгенерирован на бэкенде
                     timestamp: Date.now(),
                     compass: compassName,
                     deviceType: result.deviceType || 'Неизвестно',
                     isValid: result.isValid,
+                    hasWarnings: hasWarnings,
                     turnsCount: result.turns ? result.turns.length : 0,
                     anglesCount: result.allAngles ? result.allAngles.length : 0,
                     fullData: JSON.stringify(result)
@@ -419,8 +458,138 @@ function displayResults(data) {
     document.getElementById('page-title').textContent = `Анализ калибровки компаса: ${compassName}`;
     document.getElementById('page-subtitle').textContent = `Детальный просмотр результатов анализа`;
     
-    document.getElementById('statValid').textContent = data.isValid ? '✓ Валидно' : '✗ Не прошло';
-    document.getElementById('statValid').style.color = data.isValid ? 'var(--success)' : 'var(--error)';
+    // Обновляем информацию о типе устройства и номере ДСС
+    const deviceType = data.deviceType || 'Не указано';
+    document.getElementById('deviceTypeDisplay').textContent = deviceType;
+    document.getElementById('compassNumberDisplay').textContent = compassName;
+    
+    // Сохраняем последние просмотренные данные для отображения после перезапуска
+    localStorage.setItem('lastViewedCompass', compassName);
+    localStorage.setItem('lastViewedDeviceType', deviceType);
+    
+    // Проверяем, есть ли предупреждения в поворотах
+    const hasWarnings = data.turns && data.turns.some(t => t.status === 'warning');
+    
+    let statusText, statusColor, iconName, iconClass;
+    if (hasWarnings) {
+        statusText = '⚠ Требует проверки';
+        statusColor = 'rgb(251, 191, 36)'; // Желтый цвет для warning
+        iconName = 'warning';
+        iconClass = 'warning';
+    } else if (data.isValid) {
+        statusText = '✓ Валидно';
+        statusColor = 'var(--success)';
+        iconName = 'check_circle';
+        iconClass = 'success';
+    } else {
+        statusText = '✗ Не прошло';
+        statusColor = 'var(--error)';
+        iconName = 'cancel';
+        iconClass = 'error';
+    }
+    
+    // Обновляем иконку статуса
+    const statIconEl = document.getElementById('statIcon');
+    if (statIconEl) {
+        statIconEl.textContent = iconName;
+        statIconEl.className = `material-icons stat-icon ${iconClass}`;
+    }
+    
+    const statValidEl = document.getElementById('statValid');
+    statValidEl.textContent = statusText;
+    statValidEl.style.color = statusColor;
+    
+    // Добавляем возможность изменения статуса по КЛИКУ для warning
+    console.log('🔧 displayResults: hasWarnings:', hasWarnings, 'historyItemID:', data.historyItemID, 'resolvedByOperator:', data.resolvedByOperator);
+    
+    if (hasWarnings) {
+        console.log('✅ Настройка клика для статуса, ID:', data.historyItemID);
+        statValidEl.style.cursor = 'pointer';
+        statValidEl.title = 'Нажмите для разрешения конфликта';
+        
+        // Удаляем старый обработчик - клонируем элемент
+        const newStatValidEl = statValidEl.cloneNode(true);
+        statValidEl.parentNode.replaceChild(newStatValidEl, statValidEl);
+        
+        // Получаем обновленную ссылку и добавляем обработчик КЛИКА (ЛКМ)
+        const updatedStatValidEl = document.getElementById('statValid');
+        const savedItemID = data.historyItemID; // Может быть undefined для новых анализов
+        const savedData = data; // Сохраняем все данные
+        
+        updatedStatValidEl.addEventListener('click', async (e) => {
+            e.preventDefault();
+            console.log('🔧 Клик на статусе, ID:', savedItemID);
+            
+            // Если нет ID - это новый анализ, нужно сначала сохранить в историю
+            if (!savedItemID && isWailsMode()) {
+                try {
+                    showLoading(true, 'Сохранение в историю...');
+                    
+                    // Сохраняем в историю
+                    const compassName = savedData.compass || 'Unknown';
+                    const hasWarnings = savedData.turns && savedData.turns.some(t => t.status === 'warning');
+                    
+                    const historyItem = {
+                        id: '',
+                        timestamp: Date.now(),
+                        compass: compassName,
+                        deviceType: savedData.deviceType || 'Неизвестно',
+                        isValid: savedData.isValid,
+                        hasWarnings: hasWarnings,
+                        turnsCount: savedData.turns ? savedData.turns.length : 0,
+                        anglesCount: savedData.allAngles ? savedData.allAngles.length : 0,
+                        fullData: JSON.stringify(savedData)
+                    };
+                    
+                    // AddToHistory теперь возвращает ID созданной записи!
+                    const createdID = await window.go.desktop.App.AddToHistory(historyItem);
+                    console.log('💾 Анализ сохранен в историю, получен ID:', createdID);
+                    
+                    if (createdID) {
+                        savedData.historyItemID = createdID;
+                        state.currentData.historyItemID = createdID; // Обновляем и в state
+                        showLoading(false);
+                        const warningReason = savedData.turns.find(t => t.status === 'warning')?.warningReason || '';
+                        openChangeStatusModal(createdID, warningReason);
+                    } else {
+                        showLoading(false);
+                        showToast('❌ Не удалось получить ID записи', 'error');
+                    }
+                } catch (error) {
+                    showLoading(false);
+                    console.error('Ошибка сохранения:', error);
+                    showToast('❌ Ошибка сохранения в историю', 'error');
+                }
+            } else if (savedItemID) {
+                // ID есть - просто открываем модальное окно
+                const warningReason = savedData.turns.find(t => t.status === 'warning')?.warningReason || '';
+                openChangeStatusModal(savedItemID, warningReason);
+            }
+        });
+    } else {
+        console.log('⚠️ Клик не настроен: нет warnings');
+        statValidEl.style.cursor = 'default';
+        statValidEl.title = '';
+    }
+    
+    // Показываем плашку "Разрешено оператором" если применимо
+    const operatorBadgeContainer = document.getElementById('operatorBadgeContainer');
+    if (operatorBadgeContainer) {
+        if (data.resolvedByOperator) {
+            operatorBadgeContainer.style.display = 'block';
+            operatorBadgeContainer.innerHTML = `
+                <span class="badge" style="background: rgba(139, 92, 246, 0.2); color: rgb(139, 92, 246); border: 1px solid rgba(139, 92, 246, 0.4); font-size: 0.875rem; padding: 0.5rem 1rem;">
+                    <span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 0.25rem;">verified</span>
+                    Разрешено оператором
+                </span>
+            `;
+            if (data.operatorComment) {
+                operatorBadgeContainer.title = data.operatorComment;
+            }
+        } else {
+            operatorBadgeContainer.style.display = 'none';
+        }
+    }
     document.getElementById('statTurns').textContent = data.turns ? data.turns.length : 0;
     document.getElementById('statSegments').textContent = data.segments ? data.segments.length : 0;
     document.getElementById('statAngles').textContent = data.allAngles ? data.allAngles.length : 0;
@@ -441,7 +610,7 @@ function displayTurnsTable(turns) {
     const tbody = document.getElementById('turnsTableBody');
     
     if (!turns || !Array.isArray(turns) || turns.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><span class="material-icons">info</span>Повороты не обнаружены</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><span class="material-icons">info</span>Повороты не обнаружены</td></tr>';
         return;
     }
     
@@ -452,25 +621,47 @@ function displayTurnsTable(turns) {
         const diff = turn.diff || 0;
         
         let badgeClass, iconName, statusText;
-        if (diff >= minAngle && diff <= maxAngle) {
+        
+        // Проверяем статус поворота (если он установлен алгоритмом)
+        if (turn.status === 'warning') {
+            // Желтое предупреждение - требует проверки оператором
+            badgeClass = 'warning';
+            iconName = 'warning';
+            statusText = turn.warningReason || 'Требует проверки оператором';
+        } else if (turn.status === 'failed') {
+            // Красный - провал
+            badgeClass = 'error';
+            iconName = 'cancel';
+            statusText = turn.warningReason || 'БРАК!';
+        } else if (turn.status === 'success' || (diff >= minAngle && diff <= maxAngle)) {
+            // Зеленый - успех
             badgeClass = 'success';
             iconName = 'check_circle';
             statusText = `В допуске`;
         } else if (diff >= minAngle - 5 && diff <= maxAngle + 5) {
+            // Желтый - близко к границе
             badgeClass = 'warning';
             iconName = 'warning';
             statusText = `Близко к границе`;
         } else {
+            // Красный - брак
             badgeClass = 'error';
             iconName = 'cancel';
             statusText = `БРАК!`;
         }
         
-        const bgStyle = badgeClass === 'error' ? 'background: rgba(239, 68, 68, 0.1);' : '';
+        // Желтый фон для предупреждений, красный для ошибок
+        let bgStyle = '';
+        if (badgeClass === 'error') {
+            bgStyle = 'background: rgba(239, 68, 68, 0.1);';
+        } else if (turn.status === 'warning') {
+            bgStyle = 'background: rgba(251, 191, 36, 0.1);';
+        }
         
         return `
             <tr style="${bgStyle}">
                 <td><strong>#${index + 1}</strong></td>
+                <td><code style="font-size: 0.875rem; color: var(--text-secondary);">${turn.startIndex || 0}–${turn.endIndex || 0}</code></td>
                 <td>${(turn.startAngle || 0).toFixed(2)}°</td>
                 <td>${(turn.endAngle || 0).toFixed(2)}°</td>
                 <td><span class="badge ${badgeClass}">${diff.toFixed(2)}°</span></td>
@@ -601,34 +792,193 @@ function displayPolarChart(data, startIndex = null, endIndex = null) {
 }
 
 // Display batch results
-function displayBatchResults(results) {
+function displayBatchResults(results, applyFilters = false) {
     const container = document.getElementById('batchResults');
     container.style.display = 'block';
     
     state.batchResults = results;
     
-    const successCount = results.filter(r => r.isValid).length;
-    const failedCount = results.length - successCount;
+    let filteredResults = [...results];
+    
+    // Применяем фильтры если нужно
+    if (applyFilters) {
+        filteredResults = applyBatchFilters(results);
+    }
+    
+    // Подсчет статусов с учетом warning (по отфильтрованным)
+    const successCount = filteredResults.filter(r => {
+        const hasWarnings = r.turns && r.turns.some(t => t.status === 'warning');
+        return r.isValid && !hasWarnings;
+    }).length;
+    const warningCount = filteredResults.filter(r => {
+        const hasWarnings = r.turns && r.turns.some(t => t.status === 'warning');
+        return hasWarnings;
+    }).length;
+    const failedCount = filteredResults.length - successCount - warningCount;
     
     document.getElementById('batchSuccess').textContent = successCount;
     document.getElementById('batchFailed').textContent = failedCount;
-    document.getElementById('batchTotal').textContent = results.length;
+    document.getElementById('batchTotal').textContent = filteredResults.length;
     
     const tbody = document.getElementById('batchResultsBody');
-    tbody.innerHTML = results.map((result, index) => `
-        <tr>
+    tbody.innerHTML = filteredResults.map((result, index) => {
+        // Проверяем наличие warning в поворотах
+        const hasWarnings = result.turns && result.turns.some(t => t.status === 'warning');
+        
+        let badgeClass, badgeText;
+        if (hasWarnings) {
+            badgeClass = 'warning';
+            badgeText = '⚠ Требует проверки';
+        } else if (result.isValid) {
+            badgeClass = 'success';
+            badgeText = '✓ Успешно';
+        } else {
+            badgeClass = 'error';
+            badgeText = '✗ Ошибка';
+        }
+        
+        // Находим исходный индекс в state.batchResults для корректного viewBatchResult
+        const originalIndex = state.batchResults.findIndex(r => r.compass === result.compass);
+        
+        // Добавляем data-атрибут для строк с warning
+        const rowAttrs = hasWarnings ? `data-batch-index="${originalIndex}" data-has-warning="true" style="cursor: pointer;"` : '';
+        
+        return `
+        <tr ${rowAttrs}>
             <td><strong>${index + 1}</strong></td>
             <td><strong>${result.compass}</strong></td>
             <td>${result.deviceType || 'Неизвестно'}</td>
-            <td><span class="badge ${result.isValid ? 'success' : 'error'}">${result.isValid ? '✓ Успешно' : '✗ Ошибка'}</span></td>
+            <td><span class="badge ${badgeClass}">${badgeText}</span></td>
             <td>${result.turns ? result.turns.length : 0}/4</td>
             <td>
-                <button class="btn-icon" onclick="viewBatchResult(${index})" title="Детальный просмотр">
+                <button class="btn-icon" onclick="viewBatchResult(${originalIndex})" title="Детальный просмотр">
                     <span class="material-icons">visibility</span>
                 </button>
             </td>
         </tr>
-    `).join('');
+    `;
+    }).join('');
+    
+    // Добавляем обработчики клика для строк с warning
+    setTimeout(() => {
+        const warningRows = tbody.querySelectorAll('tr[data-has-warning="true"]');
+        console.log(`🔧 Пакетный анализ: найдено строк с warning: ${warningRows.length}`);
+        warningRows.forEach(row => {
+            row.addEventListener('click', (e) => {
+                // Игнорируем клик на кнопку просмотра
+                if (e.target.closest('.btn-icon')) {
+                    return;
+                }
+                
+                const batchIndex = parseInt(row.getAttribute('data-batch-index'));
+                console.log('🔧 Клик на строке пакетного анализа, индекс:', batchIndex);
+                
+                if (isNaN(batchIndex) || !state.batchResults[batchIndex]) {
+                    showToast('⚠️ Ошибка: результат не найден', 'error');
+                    return;
+                }
+                
+                // Открываем детальный просмотр - там уже будет работать клик на статус
+                viewBatchResult(batchIndex);
+            });
+        });
+    }, 100);
+}
+
+// Функция фильтрации и сортировки пакетного анализа
+function applyBatchFilters(results) {
+    let filtered = [...results];
+    
+    // Поиск по номеру компаса
+    const searchQuery = document.getElementById('batchSearchInput').value.trim().toLowerCase();
+    if (searchQuery) {
+        filtered = filtered.filter(item => 
+            item.compass.toLowerCase().includes(searchQuery)
+        );
+        
+        // ПРИОРИТЕТ: Точное совпадение первым!
+        filtered.sort((a, b) => {
+            const aLower = a.compass.toLowerCase();
+            const bLower = b.compass.toLowerCase();
+            const aExact = aLower === searchQuery;
+            const bExact = bLower === searchQuery;
+            
+            if (aExact && !bExact) return -1;
+            if (!aExact && bExact) return 1;
+            
+            const aStarts = aLower.startsWith(searchQuery);
+            const bStarts = bLower.startsWith(searchQuery);
+            
+            if (aStarts && !bStarts) return -1;
+            if (!aStarts && bStarts) return 1;
+            
+            return compareCompassNames(a.compass, b.compass);
+        });
+    }
+    
+    // Фильтр по статусу
+    const statusFilter = document.getElementById('batchFilterStatus').value;
+    if (statusFilter === 'success') {
+        filtered = filtered.filter(item => {
+            const hasWarnings = item.turns && item.turns.some(t => t.status === 'warning');
+            return item.isValid && !hasWarnings;
+        });
+    } else if (statusFilter === 'warning') {
+        filtered = filtered.filter(item => {
+            const hasWarnings = item.turns && item.turns.some(t => t.status === 'warning');
+            return hasWarnings;
+        });
+    } else if (statusFilter === 'failed') {
+        filtered = filtered.filter(item => {
+            const hasWarnings = item.turns && item.turns.some(t => t.status === 'warning');
+            return !item.isValid && !hasWarnings;
+        });
+    }
+    
+    // Сортировка (если не было поиска)
+    if (!searchQuery) {
+        const sortBy = document.getElementById('batchSort').value;
+        
+        switch (sortBy) {
+            case 'name-asc':
+                filtered.sort((a, b) => compareCompassNames(a.compass, b.compass));
+                break;
+            case 'name-desc':
+                filtered.sort((a, b) => compareCompassNames(b.compass, a.compass));
+                break;
+            case 'status-warning':
+                filtered.sort((a, b) => {
+                    const aWarn = a.turns && a.turns.some(t => t.status === 'warning');
+                    const bWarn = b.turns && b.turns.some(t => t.status === 'warning');
+                    if (aWarn && !bWarn) return -1;
+                    if (!aWarn && bWarn) return 1;
+                    return compareCompassNames(a.compass, b.compass);
+                });
+                break;
+            case 'status-failed':
+                filtered.sort((a, b) => {
+                    const aFailed = !a.isValid;
+                    const bFailed = !b.isValid;
+                    if (aFailed && !bFailed) return -1;
+                    if (!aFailed && bFailed) return 1;
+                    return compareCompassNames(a.compass, b.compass);
+                });
+                break;
+            case 'status-success':
+                filtered.sort((a, b) => {
+                    const aWarn = a.turns && a.turns.some(t => t.status === 'warning');
+                    const bWarn = b.turns && b.turns.some(t => t.status === 'warning');
+                    const aSuccess = a.isValid && !aWarn;
+                    const bSuccess = b.isValid && !bWarn;
+                    if (aSuccess && !bSuccess) return -1;
+                    if (!aSuccess && bSuccess) return 1;
+                    return compareCompassNames(a.compass, b.compass);
+                });
+                break;
+        }
+    }
+    
+    return filtered;
 }
 
 // Просмотр результата из пакетного анализа (глобальная функция для onclick)
@@ -882,7 +1232,7 @@ function executeSingleExport(data, customDir) {
     // Берем тип устройства из данных анализа
     const deviceType = data.deviceType || 'Неизвестно';
     
-    let csv = '№ ДСС;Тип устройства;Результат калибровки;Количество поворотов;Поворот 1;Поворот 2;Поворот 3;Поворот 4\n';
+    let csv = '№ ДСС;Тип устройства;Результат калибровки;Количество поворотов;Поворот 1;Поворот 2;Поворот 3;Поворот 4;Комментарии\n';
     
     const dss = data.compass || 'Unknown';
     const status = data.isValid ? 'Успешно' : 'Не прошло';
@@ -896,7 +1246,10 @@ function executeSingleExport(data, customDir) {
         }
     }
     
-    csv += `${dss};${deviceType};${status};${turnsCount};${angles[0]};${angles[1]};${angles[2]};${angles[3]}\n`;
+    // Комментарий оператора
+    const comment = data.resolvedByOperator ? (data.operatorComment || 'Проверено оператором') : '';
+    
+    csv += `${dss};${deviceType};${status};${turnsCount};${angles[0]};${angles[1]};${angles[2]};${angles[3]};${comment}\n`;
     
     downloadCSV(csv, `Результаты калибровки "${deviceType}"`, dss, customDir);
     showToast('📥 Файл экспортирован', 'success');
@@ -911,7 +1264,7 @@ function executeBatchExport(results, customDir) {
     // Берем тип устройства из первого результата (все должны иметь один тип)
     const deviceType = (results[0] && results[0].deviceType) || 'Неизвестно';
     
-    let csv = '№ ДСС;Тип устройства;Результат калибровки;Количество поворотов;Поворот 1;Поворот 2;Поворот 3;Поворот 4\n';
+    let csv = '№ ДСС;Тип устройства;Результат калибровки;Количество поворотов;Поворот 1;Поворот 2;Поворот 3;Поворот 4;Комментарии\n';
     
     results.forEach(result => {
         if (result.success) {
@@ -928,7 +1281,10 @@ function executeBatchExport(results, customDir) {
                 }
             }
             
-            csv += `${dss};${type};${status};${turnsCount};${angles[0]};${angles[1]};${angles[2]};${angles[3]}\n`;
+            // Комментарий оператора
+            const comment = result.resolvedByOperator ? (result.operatorComment || 'Проверено оператором') : '';
+            
+            csv += `${dss};${type};${status};${turnsCount};${angles[0]};${angles[1]};${angles[2]};${angles[3]};${comment}\n`;
         }
     });
     
@@ -958,7 +1314,7 @@ async function executeHistoryExport(historyData, customDir) {
         const deviceTypes = new Set(filteredData.map(item => item.deviceType || 'Неизвестно'));
         const deviceType = deviceTypes.size === 1 ? Array.from(deviceTypes)[0] : 'Смешанные';
         
-        let csv = '№ ДСС;Тип устройства;Результат калибровки;Количество поворотов;Поворот 1;Поворот 2;Поворот 3;Поворот 4\n';
+        let csv = '№ ДСС;Тип устройства;Результат калибровки;Количество поворотов;Поворот 1;Поворот 2;Поворот 3;Поворот 4;Комментарии\n';
         
         // ОПТИМИЗАЦИЯ: Загружаем ВСЕ записи ОДНИМ запросом
         const itemIDs = filteredData.map(item => item.id);
@@ -981,7 +1337,10 @@ async function executeHistoryExport(historyData, customDir) {
                 }
             }
             
-            csv += `${dss};${type};${status};${turnsCount};${angles[0]};${angles[1]};${angles[2]};${angles[3]}\n`;
+            // Комментарий оператора
+            const comment = fullData.resolvedByOperator ? (fullData.operatorComment || 'Проверено оператором') : '';
+            
+            csv += `${dss};${type};${status};${turnsCount};${angles[0]};${angles[1]};${angles[2]};${angles[3]};${comment}\n`;
         });
         
         downloadCSV(csv, `Результаты калибровки "${deviceType}"`, 'history', customDir);
@@ -1093,6 +1452,39 @@ style.textContent = `.badge.error { background: rgba(239, 68, 68, 0.2); color: #
 document.head.appendChild(style);
 
 // ============================================================================
+// ФИЛЬТРЫ ПАКЕТНОГО АНАЛИЗА
+// ============================================================================
+
+// Обработчики кнопок фильтров пакетного анализа
+document.addEventListener('DOMContentLoaded', () => {
+    const applyFiltersBtn = document.getElementById('applyBatchFilters');
+    if (applyFiltersBtn) {
+        applyFiltersBtn.addEventListener('click', () => {
+            if (state.batchResults) {
+                displayBatchResults(state.batchResults, true);
+                showToast('🔍 Фильтры применены', 'success');
+            } else {
+                showToast('⚠️ Нет данных для фильтрации', 'warning');
+            }
+        });
+    }
+    
+    const resetFiltersBtn = document.getElementById('resetBatchFilters');
+    if (resetFiltersBtn) {
+        resetFiltersBtn.addEventListener('click', () => {
+            document.getElementById('batchSearchInput').value = '';
+            document.getElementById('batchFilterStatus').value = 'all';
+            document.getElementById('batchSort').value = 'name-asc';
+            
+            if (state.batchResults) {
+                displayBatchResults(state.batchResults, false);
+                showToast('♻️ Фильтры сброшены', 'info');
+            }
+        });
+    }
+});
+
+// ============================================================================
 // ИСТОРИЯ АНАЛИЗОВ
 // ============================================================================
 
@@ -1185,8 +1577,9 @@ function displayHistory(history, applyFilters = false) {
     }
     
     // Статистика (по отфильтрованным данным)
-    const successCount = filteredHistory.filter(h => h.isValid).length;
-    const failedCount = filteredHistory.length - successCount;
+    const successCount = filteredHistory.filter(h => h.isValid && !h.hasWarnings).length;
+    const warningCount = filteredHistory.filter(h => h.hasWarnings).length;
+    const failedCount = filteredHistory.length - successCount - warningCount;
     
     document.getElementById('historySuccess').textContent = successCount;
     document.getElementById('historyFailed').textContent = failedCount;
@@ -1198,13 +1591,30 @@ function displayHistory(history, applyFilters = false) {
         const dateStr = date.toLocaleDateString('ru-RU');
         const timeStr = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
         
+        // Определяем статус
+        let badgeClass, badgeText;
+        if (item.hasWarnings) {
+            badgeClass = 'warning';
+            badgeText = '⚠ Требует проверки';
+        } else if (item.isValid) {
+            badgeClass = 'success';
+            badgeText = '✓ Валидно';
+        } else {
+            badgeClass = 'error';
+            badgeText = '✗ Не прошло';
+        }
+        
+        // Добавляем data-атрибуты для клика на строки с warning (TRIM для безопасности!)
+        const cleanID = (item.id || '').trim();
+        const dataAttrs = item.hasWarnings ? `data-item-id="${cleanID}" data-has-warning="true" style="cursor: pointer;"` : '';
+        
         return `
-            <tr>
+            <tr ${dataAttrs}>
                 <td><strong>${index + 1}</strong></td>
                 <td>${dateStr} ${timeStr}</td>
                 <td><strong>${item.compass}</strong></td>
                 <td>${item.deviceType || 'Неизвестно'}</td>
-                <td><span class="badge ${item.isValid ? 'success' : 'error'}">${item.isValid ? '✓ Валидно' : '✗ Не прошло'}</span></td>
+                <td><span class="badge ${badgeClass}">${badgeText}</span></td>
                 <td>${item.turnsCount}/4</td>
                 <td>
                     <button class="btn-icon" onclick="viewHistoryItem('${item.id}')" title="Просмотреть">
@@ -1214,6 +1624,28 @@ function displayHistory(history, applyFilters = false) {
             </tr>
         `;
     }).join('');
+    
+    // Добавляем обработчики КЛИКА (ЛКМ) для строк с warning
+    setTimeout(() => {
+        const warningRows = tbody.querySelectorAll('tr[data-has-warning="true"]');
+        console.log(`🔧 Найдено строк с warning: ${warningRows.length}`);
+        warningRows.forEach(row => {
+            row.addEventListener('click', (e) => {
+                // Игнорируем клик на кнопку просмотра
+                if (e.target.closest('.btn-icon')) {
+                    return;
+                }
+                
+                const itemID = row.getAttribute('data-item-id');
+                console.log('🔧 Клик на строке, ID:', itemID);
+                if (!itemID) {
+                    showToast('⚠️ Ошибка: ID записи не найден', 'error');
+                    return;
+                }
+                openChangeStatusModal(itemID, 'Проверьте данные и подтвердите статус');
+            });
+        });
+    }, 100);
     
     // Сохраняем только метаданные (БЕЗ fullData - экономия памяти!)
     state.historyData = history.map(item => ({
@@ -1273,6 +1705,9 @@ window.viewHistoryItem = async function(itemId) {
         
         console.log(`✅ Загружена запись для ${item.compass}`, fullData);
         
+        // Добавляем ID записи для возможности изменения статуса
+        fullData.historyItemID = itemId;
+        
         // Отображаем результаты
         displayResults(fullData);
         switchPage('analyze');
@@ -1323,9 +1758,11 @@ function applyHistoryFilters(history) {
     // Фильтр по статусу
     const statusFilter = document.getElementById('historyFilterStatus').value;
     if (statusFilter === 'success') {
-        filtered = filtered.filter(item => item.isValid);
+        filtered = filtered.filter(item => item.isValid && !item.hasWarnings);
+    } else if (statusFilter === 'warning') {
+        filtered = filtered.filter(item => item.hasWarnings);
     } else if (statusFilter === 'failed') {
-        filtered = filtered.filter(item => !item.isValid);
+        filtered = filtered.filter(item => !item.isValid && !item.hasWarnings);
     }
     
     // Фильтр по типу устройства
@@ -1700,5 +2137,192 @@ function displayRenameResults(stats, isPreview) {
     // Прокрутка к результатам
     resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+// ============================================================================
+// ИЗМЕНЕНИЕ СТАТУСА ВРУЧНУЮ
+// ============================================================================
+
+// Глобальная переменная для хранения текущего ID анализа для изменения
+let currentChangeStatusItemID = null;
+
+// Открыть модальное окно изменения статуса
+window.openChangeStatusModal = function(itemID, reason) {
+    console.log('🔧 openChangeStatusModal вызвана, itemID:', itemID, 'reason:', reason);
+    
+    if (!isWailsMode()) {
+        showToast('⚠️ Доступно только в Desktop режиме', 'warning');
+        return;
+    }
+    
+    if (!itemID) {
+        console.error('❌ Ошибка: itemID не передан!');
+        showToast('⚠️ Ошибка: ID записи не найден', 'error');
+        return;
+    }
+    
+    currentChangeStatusItemID = itemID;
+    console.log('✅ Установлен currentChangeStatusItemID:', currentChangeStatusItemID);
+    
+    const modal = document.getElementById('changeStatusModal');
+    const reasonEl = document.getElementById('changeStatusReason');
+    
+    if (reason) {
+        reasonEl.textContent = reason;
+    } else {
+        reasonEl.textContent = 'Обнаружены отклонения в последовательности поворотов.';
+    }
+    
+    modal.style.display = 'flex';
+    
+    // Обработчики кнопок
+    document.getElementById('confirmSuccessBtn').onclick = () => {
+        confirmStatusChange('success');
+    };
+    
+    document.getElementById('confirmFailedBtn').onclick = () => {
+        confirmStatusChange('failed');
+    };
+};
+
+// Закрыть модальное окно изменения статуса
+window.closeChangeStatusModal = function() {
+    document.getElementById('changeStatusModal').style.display = 'none';
+    currentChangeStatusItemID = null;
+};
+
+// Подтверждение изменения статуса
+async function confirmStatusChange(newStatus) {
+    if (!currentChangeStatusItemID) {
+        showToast('⚠️ Ошибка: ID анализа не найден', 'error');
+        return;
+    }
+    
+    // ⚠️ КРИТИЧНО: Сохраняем ID ПЕРЕД закрытием модального окна!
+    const itemIDToUpdate = currentChangeStatusItemID;
+    console.log('🔧 confirmStatusChange: сохраняем ID для обновления:', itemIDToUpdate);
+    
+    closeChangeStatusModal(); // Это обнуляет currentChangeStatusItemID!
+    showLoading(true, 'Обновление статуса...');
+    
+    try {
+        // Вызываем backend функцию для обновления статуса с СОХРАНЕННЫМ ID
+        console.log('🔧 Вызываем UpdateAnalysisStatus с ID:', itemIDToUpdate, 'статус:', newStatus);
+        await window.go.desktop.App.UpdateAnalysisStatus(itemIDToUpdate, newStatus);
+        
+        const statusText = newStatus === 'success' ? 'Успешно' : 'Не прошло';
+        showToast(`✅ Статус обновлен: ${statusText}`, 'success');
+        
+        // Перезагружаем историю если мы на странице истории
+        if (state.currentPage === 'history') {
+            await loadHistory();
+        }
+        
+        // Если это текущий просматриваемый анализ, обновляем отображение
+        if (state.currentData && state.currentData.compass) {
+            const item = await window.go.desktop.App.LoadHistoryItem(itemIDToUpdate);
+            if (item && item.fullData) {
+                const fullData = JSON.parse(item.fullData);
+                displayResults(fullData);
+            }
+        }
+        
+    } catch (error) {
+        console.error('Ошибка обновления статуса:', error);
+        showToast(`❌ Ошибка: ${error.message || error}`, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Добавить обработчик правого клика на строки с warning
+function setupContextMenuForWarnings() {
+    // Обработчик будет добавлен динамически при отображении результатов
+    // См. функцию displayResults и displayTurnsTable
+}
+
+// ============================================================================
+// ЛОГИ ОТЛАДКИ
+// ============================================================================
+
+// Загрузка логов
+async function loadLogs() {
+    if (!isWailsMode()) {
+        document.getElementById('logsViewer').textContent = 'Логи доступны только в Desktop режиме';
+        return;
+    }
+    
+    try {
+        const logs = await window.go.desktop.App.GetLogs();
+        displayLogs(logs);
+    } catch (error) {
+        console.error('Ошибка загрузки логов:', error);
+        document.getElementById('logsViewer').textContent = `Ошибка загрузки логов: ${error.message}`;
+    }
+}
+
+// Отображение логов
+function displayLogs(logs) {
+    const viewer = document.getElementById('logsViewer');
+    
+    if (!logs || logs.length === 0) {
+        viewer.textContent = 'Нет логов';
+        return;
+    }
+    
+    // Цветовая схема для уровней
+    const colors = {
+        'INFO': '#3b82f6',
+        'SUCCESS': '#10b981',
+        'WARN': '#f59e0b',
+        'ERROR': '#ef4444',
+        'DEBUG': '#8b5cf6'
+    };
+    
+    viewer.innerHTML = logs.map(log => {
+        const color = colors[log.level] || '#94a3b8';
+        return `<span style="color: ${color};">[${log.timestamp}] [${log.level}]</span> ${log.message}`;
+    }).join('\n');
+    
+    // Прокрутка вниз к последним логам
+    viewer.scrollTop = viewer.scrollHeight;
+}
+
+// Обработчики кнопок логов
+document.addEventListener('DOMContentLoaded', () => {
+    const refreshBtn = document.getElementById('refreshLogsBtn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', async () => {
+            await loadLogs();
+            showToast('🔄 Логи обновлены', 'success');
+        });
+    }
+    
+    const clearBtn = document.getElementById('clearLogsBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', async () => {
+            if (!isWailsMode()) {
+                showToast('⚠️ Доступно только в Desktop режиме', 'warning');
+                return;
+            }
+            
+            if (confirm('Очистить все логи?')) {
+                try {
+                    await window.go.desktop.App.ClearLogs();
+                    await loadLogs();
+                    showToast('🗑️ Логи очищены', 'success');
+                } catch (error) {
+                    showToast('❌ Ошибка очистки логов', 'error');
+                }
+            }
+        });
+    }
+    
+    // Автообновление логов каждые 2 секунды если страница активна
+    setInterval(() => {
+        if (state.currentPage === 'logs' && isWailsMode()) {
+            loadLogs();
+        }
+    }, 2000);
+});
 
 

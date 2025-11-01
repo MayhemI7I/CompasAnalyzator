@@ -22,6 +22,10 @@ export function ClearHistory() {
   return window['go']['desktop']['App']['ClearHistory']();
 }
 
+export function ClearLogs() {
+  return window['go']['desktop']['App']['ClearLogs']();
+}
+
 export function GetDefaultConfig() {
   return window['go']['desktop']['App']['GetDefaultConfig']();
 }
@@ -36,6 +40,10 @@ export function GetHistoryDir() {
 
 export function GetHistoryStats() {
   return window['go']['desktop']['App']['GetHistoryStats']();
+}
+
+export function GetLogs() {
+  return window['go']['desktop']['App']['GetLogs']();
 }
 
 export function LoadHistory() {
@@ -72,4 +80,8 @@ export function SaveHistory(arg1) {
 
 export function SelectDirectory(arg1) {
   return window['go']['desktop']['App']['SelectDirectory'](arg1);
+}
+
+export function UpdateAnalysisStatus(arg1, arg2) {
+  return window['go']['desktop']['App']['UpdateAnalysisStatus'](arg1, arg2);
 }
