@@ -853,19 +853,26 @@ function displayBatchResults(results, applyFilters = false) {
             badgeClass = 'error';
             badgeText = '✗ Ошибка';
         }
-        
+
+        // Иконка "Разрешено оператором"
+        const operatorBadge = result.resolvedByOperator ?
+            `<span class="badge" style="background: rgba(139, 92, 246, 0.2); color: rgb(139, 92, 246); border: 1px solid rgba(139, 92, 246, 0.4); font-size: 0.875rem; padding: 0.25rem 0.5rem; margin-left: 0.5rem;">
+                <span class="material-icons" style="font-size: 16px; vertical-align: middle; margin-right: 0.25rem;">verified</span>
+                Разрешено оператором
+            </span>` : '';
+
         // Находим исходный индекс в state.batchResults для корректного viewBatchResult
         const originalIndex = state.batchResults.findIndex(r => r.compass === result.compass);
-        
+
         // Все строки кликабельны (и success, и failed можно изменить)
         const rowAttrs = `data-batch-index="${originalIndex}" style="cursor: pointer;"`;
-        
+
         return `
         <tr ${rowAttrs}>
             <td><strong>${index + 1}</strong></td>
             <td><strong>${result.compass}</strong></td>
             <td>${result.deviceType || 'Неизвестно'}</td>
-            <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+            <td><span class="badge ${badgeClass}">${badgeText}</span>${operatorBadge}</td>
             <td>${result.turns ? result.turns.length : 0}/4</td>
             <td>
                 <button class="btn-icon" onclick="viewBatchResult(${originalIndex})" title="Детальный просмотр">
@@ -1133,6 +1140,8 @@ async function exportResults() {
         } catch (error) {
             console.error('Ошибка сохранения через backend:', error);
             // Fallback - обычное скачивание
+            console.warn('⚠️ Fallback на downloadFileDirectly');
+            showToast(`⚠️ Не удалось сохранить в выбранную директорию: ${error.message || 'проверьте права доступа'}`, 'warning');
             downloadFileDirectly(dataStr, filename, 'application/json');
         }
     } else {
@@ -1218,7 +1227,7 @@ function openDeviceTypeModal(exportType, data) {
     const confirmBtn = document.getElementById('confirmExportBtn');
     confirmBtn.onclick = () => {
         const exportDir = document.getElementById('exportDirInput').value;
-        const customDir = (exportDir && exportDir !== '(рядом с программой)') ? exportDir : null;
+        const customDir = (exportDir && exportDir !== '(рядом с программой)') ? exportDir : '';
         
         closeDeviceTypeModal();
         
@@ -1374,15 +1383,20 @@ async function downloadCSV(csvContent, filePrefix, suffix, customDir = null) {
     const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
     const filename = `${filePrefix}_${timestamp}_${suffix}.csv`;
     
+    console.log('📥 downloadCSV:', { filePrefix, suffix, filename, customDir, isWailsMode: isWailsMode() });
+    
     if (isWailsMode()) {
         try {
             // Сохраняем через Go backend
+            console.log('📤 Вызов SaveExportFile с customDir:', customDir);
             const savedPath = await window.go.desktop.App.SaveExportFile(csvContent, filename, 'csv', customDir || '');
             showToast(`📁 Сохранено: ${savedPath}`, 'success');
             console.log('✅ CSV сохранен:', savedPath);
         } catch (error) {
-            console.error('Ошибка сохранения через backend:', error);
+            console.error('❌ Ошибка сохранения через backend:', error);
             // Fallback - обычное скачивание
+            console.warn('⚠️ Fallback на downloadFileDirectly');
+            showToast(`⚠️ Не удалось сохранить в выбранную директорию: ${error.message || 'проверьте права доступа'}`, 'warning');
             downloadFileDirectly(csvContent, filename, 'text/csv;charset=utf-8;');
         }
     } else {
@@ -1617,6 +1631,13 @@ function displayHistory(history, applyFilters = false) {
             badgeClass = 'error';
             badgeText = '✗ Не прошло';
         }
+
+        // Иконка "Разрешено оператором"
+        const operatorBadge = item.resolvedByOperator ?
+            `<span class="badge" style="background: rgba(139, 92, 246, 0.2); color: rgb(139, 92, 246); border: 1px solid rgba(139, 92, 246, 0.4); font-size: 0.875rem; padding: 0.25rem 0.5rem; margin-left: 0.5rem;">
+                <span class="material-icons" style="font-size: 16px; vertical-align: middle; margin-right: 0.25rem;">verified</span>
+                Разрешено оператором
+            </span>` : '';
         
         // Все строки кликабельны (TRIM для безопасности!)
         const cleanID = (item.id || '').trim();
@@ -1628,7 +1649,7 @@ function displayHistory(history, applyFilters = false) {
                 <td>${dateStr} ${timeStr}</td>
                 <td><strong>${item.compass}</strong></td>
                 <td>${item.deviceType || 'Неизвестно'}</td>
-                <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                <td><span class="badge ${badgeClass}">${badgeText}</span>${operatorBadge}</td>
                 <td>${item.turnsCount}/4</td>
                 <td>
                     <button class="btn-icon" onclick="viewHistoryItem('${item.id}')" title="Просмотреть">
