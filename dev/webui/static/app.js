@@ -31,6 +31,19 @@ const DEFAULT_SETTINGS = {
     sumTolerance: 20.0
 };
 
+// Debounce function for automatic filtering
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
 // Проверка режима работы
 function isWailsMode() {
     return !!(window.go && window.go.desktop && window.go.desktop.App);
@@ -370,6 +383,11 @@ async function saveToHistory(analysisData, folderPath) {
         if (createdID && state.currentData) {
             state.currentData.historyItemID = createdID;
         }
+        
+        // Если страница истории активна, обновляем её
+        if (state.currentPage === 'history') {
+            setTimeout(loadHistory, 100); // Небольшая задержка для гарантии
+        }
     } catch (error) {
         console.error('Ошибка сохранения в историю:', error);
         // Не показываем ошибку пользователю, это не критично
@@ -460,6 +478,11 @@ async function saveBatchToHistory(results, baseDir) {
             // Одна операция вместо тысяч!
             await window.go.desktop.App.AddManyToHistory(historyItems);
             console.log(`💾 Сохранено в историю: ${historyItems.length} записей за один раз`);
+            
+            // Если страница истории активна, обновляем её
+            if (state.currentPage === 'history') {
+                setTimeout(loadHistory, 100);
+            }
         }
     } catch (error) {
         console.error('Ошибка сохранения пакета в историю:', error);
@@ -1486,18 +1509,6 @@ document.head.appendChild(style);
 
 // Обработчики кнопок фильтров пакетного анализа
 document.addEventListener('DOMContentLoaded', () => {
-    const applyFiltersBtn = document.getElementById('applyBatchFilters');
-    if (applyFiltersBtn) {
-        applyFiltersBtn.addEventListener('click', () => {
-            if (state.batchResults) {
-                displayBatchResults(state.batchResults, true);
-                showToast('🔍 Фильтры применены', 'success');
-            } else {
-                showToast('⚠️ Нет данных для фильтрации', 'warning');
-            }
-        });
-    }
-    
     const resetFiltersBtn = document.getElementById('resetBatchFilters');
     if (resetFiltersBtn) {
         resetFiltersBtn.addEventListener('click', () => {
@@ -1508,6 +1519,36 @@ document.addEventListener('DOMContentLoaded', () => {
             if (state.batchResults) {
                 displayBatchResults(state.batchResults, false);
                 showToast('♻️ Фильтры сброшены', 'info');
+            }
+        });
+    }
+
+    // Автоматическое применение фильтров при изменении значений
+    const batchSearchInput = document.getElementById('batchSearchInput');
+    const batchFilterStatus = document.getElementById('batchFilterStatus');
+    const batchSort = document.getElementById('batchSort');
+
+    if (batchSearchInput) {
+        const debouncedApply = debounce(() => {
+            if (state.batchResults) {
+                displayBatchResults(state.batchResults, true);
+            }
+        }, 300);
+        batchSearchInput.addEventListener('input', debouncedApply);
+    }
+
+    if (batchFilterStatus) {
+        batchFilterStatus.addEventListener('change', () => {
+            if (state.batchResults) {
+                displayBatchResults(state.batchResults, true);
+            }
+        });
+    }
+
+    if (batchSort) {
+        batchSort.addEventListener('change', () => {
+            if (state.batchResults) {
+                displayBatchResults(state.batchResults, true);
             }
         });
     }
@@ -1541,7 +1582,7 @@ async function loadHistory() {
         // Обновляем список типов устройств для фильтра
         updateDeviceTypeFilter(history);
         
-        displayHistory(history || []);
+        displayHistory(history || [], true);
         
         console.log(`✅ История загружена: ${history.length} записей (экономия памяти!)`);
     } catch (error) {
@@ -2118,19 +2159,6 @@ document.addEventListener('DOMContentLoaded', () => {
         clearBtn.addEventListener('click', clearHistory);
     }
     
-    // Применить фильтры
-    const applyFiltersBtn = document.getElementById('applyHistoryFilters');
-    if (applyFiltersBtn) {
-        applyFiltersBtn.addEventListener('click', () => {
-            if (state.historyDataFull) {
-                displayHistory(state.historyDataFull, true);
-                showToast('🔍 Фильтры применены', 'success');
-            } else {
-                showToast('⚠️ Нет данных для фильтрации', 'warning');
-            }
-        });
-    }
-    
     // Сбросить фильтры
     const resetFiltersBtn = document.getElementById('resetHistoryFilters');
     if (resetFiltersBtn) {
@@ -2150,18 +2178,80 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Автоматическое применение фильтров при изменении значений
+    const historySearchInput = document.getElementById('historySearchInput');
+    const historyFilterStatus = document.getElementById('historyFilterStatus');
+    const historyFilterDeviceType = document.getElementById('historyFilterDeviceType');
+    const historyFilterDateFrom = document.getElementById('historyFilterDateFrom');
+    const historyFilterDateTo = document.getElementById('historyFilterDateTo');
+    const historyFilterUnique = document.getElementById('historyFilterUnique');
+    const historySort = document.getElementById('historySort');
+
+    if (historySearchInput) {
+        const debouncedApply = debounce(() => {
+            if (state.historyDataFull) {
+                displayHistory(state.historyDataFull, true);
+            }
+        }, 300);
+        historySearchInput.addEventListener('input', debouncedApply);
+    }
+
+    if (historyFilterStatus) {
+        historyFilterStatus.addEventListener('change', () => {
+            if (state.historyDataFull) {
+                displayHistory(state.historyDataFull, true);
+            }
+        });
+    }
+
+    if (historyFilterDeviceType) {
+        historyFilterDeviceType.addEventListener('change', () => {
+            if (state.historyDataFull) {
+                displayHistory(state.historyDataFull, true);
+            }
+        });
+    }
+
+    if (historyFilterDateFrom) {
+        historyFilterDateFrom.addEventListener('change', () => {
+            if (state.historyDataFull) {
+                displayHistory(state.historyDataFull, true);
+            }
+        });
+    }
+
+    if (historyFilterDateTo) {
+        historyFilterDateTo.addEventListener('change', () => {
+            if (state.historyDataFull) {
+                displayHistory(state.historyDataFull, true);
+            }
+        });
+    }
+
+    if (historyFilterUnique) {
+        historyFilterUnique.addEventListener('change', () => {
+            if (state.historyDataFull) {
+                displayHistory(state.historyDataFull, true);
+            }
+        });
+    }
+
+    if (historySort) {
+        historySort.addEventListener('change', () => {
+            if (state.historyDataFull) {
+                displayHistory(state.historyDataFull, true);
+            }
+        });
+    }
     
     // Загружаем историю при переключении на страницу
     const historyNav = document.querySelector('[data-page="history"]');
     if (historyNav) {
         historyNav.addEventListener('click', () => {
             setTimeout(() => {
-                // Если история уже загружена - просто обновляем отображение с текущими фильтрами
-                if (state.historyDataFull && state.historyDataFull.length > 0) {
-                    displayHistory(state.historyDataFull, true);  // Применяем текущие фильтры
-                } else {
-                    loadHistory();  // Загружаем заново
-                }
+                // Всегда загружаем историю с сервера для актуальности данных
+                loadHistory();
             }, 100);
         });
     }
