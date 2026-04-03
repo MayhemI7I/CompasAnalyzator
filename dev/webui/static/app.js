@@ -1982,6 +1982,12 @@ function applyHistoryFilters(history) {
         filtered = filtered.filter(item => item.timestamp <= toTimestamp);
     }
     
+    // Фильтр "Уникальные записи"
+    const uniqueFilter = document.getElementById('historyFilterUnique');
+    if (uniqueFilter && uniqueFilter.checked) {
+        filtered = filterUniqueRecords(filtered);
+    }
+
     // Сортировка (если не было поиска)
     if (!searchQuery) {
         const sortBy = document.getElementById('historySort').value;
@@ -2024,6 +2030,35 @@ function compareCompassNames(a, b) {
     
     // Если числа одинаковые - сортируем по полной строке
     return a.localeCompare(b, 'ru');
+}
+// Фильтрация уникальных записей по № ДСС
+function filterUniqueRecords(history) {
+    // Группировка по полю compass (№ ДСС)
+    const groups = {};
+    history.forEach(item => {
+        const key = item.compass || '';
+        if (!groups[key]) {
+            groups[key] = [];
+        }
+        groups[key].push(item);
+    });
+    
+    const result = [];
+    // Для каждой группы выбираем одну запись по правилам:
+    // 1. Если есть успешные записи (isValid === true) - отсеиваем неуспешные
+    // 2. Из оставшихся выбираем запись с наибольшим timestamp (самую новую)
+    Object.values(groups).forEach(group => {
+        // Шаг 1: определяем, есть ли успешные записи
+        const successful = group.filter(item => item.isValid);
+        const candidates = successful.length > 0 ? successful : group;
+        // Шаг 2: выбираем самую новую запись (максимальный timestamp)
+        const newest = candidates.reduce((prev, current) => 
+            (prev.timestamp > current.timestamp) ? prev : current
+        );
+        result.push(newest);
+    });
+    
+    return result;
 }
 
 // Очистка истории

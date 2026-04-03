@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Compass Analyzer</title>
+    <!-- OFFLINE MODE: локальные шрифты и библиотеки -->
+    <link rel="stylesheet" href="fonts/material-icons.css?v=2.0.3">
+    <link rel="stylesheet" href="styles.css?v=2.0.3">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="material-icons logo-icon">explore</span>
+                    <h1>Compass<br>Analyzer</h1>
+                </div>
+                <p class="version">v2.0</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="analyze">
+                    <span class="material-icons">analytics</span>
+                    <span>Анализ</span>
+                </a>
+                <a href="#" class="nav-item" data-page="batch">
+                    <span class="material-icons">folder_open</span>
+                    <span>Пакетный анализ</span>
+                </a>
+                <a href="#" class="nav-item" data-page="history">
+                    <span class="material-icons">history</span>
+                    <span>История</span>
+                </a>
+                <a href="#" class="nav-item" data-page="settings">
+                    <span class="material-icons">settings</span>
+                    <span>Настройки</span>
+                </a>
+                <a href="#" class="nav-item" data-page="editor">
+                    <span class="material-icons">drive_file_rename_outline</span>
+                    <span>Редактор файлов</span>
+                </a>
+                <a href="#" class="nav-item" data-page="logs">
+                    <span class="material-icons">bug_report</span>
+                    <span>Логи отладки</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="author-card">
+                    <p class="author-name">Программа разработана</p>
+                    <p class="author-title">Ульяновым Александром Юрьевичем</p>
+                    <p class="copyright" style="opacity: 0.3; font-size: 0.75rem;">© ПакостинКорпорейтед</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-title">
+                    <h2 id="page-title">Анализ калибровки компаса</h2>
+                    <p id="page-subtitle">Система анализа калибровки компасов МТЦ</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="exportCSVBtn">
+                        <span class="material-icons">table_chart</span>
+                        CSV
+                    </button>
+                    <button class="btn btn-secondary" id="exportBtn">
+                        <span class="material-icons">download</span>
+                        JSON
+                    </button>
+                </div>
+            </header>
+
+            <!-- Analyze Page -->
+            <div class="page active" id="analyzePage">
+                <!-- Upload Zone -->
+                <div class="upload-zone" id="uploadZone">
+                    <span class="material-icons upload-icon">explore</span>
+                    <h3>Анализ компаса</h3>
+                    <p>Введите путь к папке с данными:</p>
+                    
+                    <div style="width: 100%; max-width: 600px;">
+                        <div class="form-group" style="margin: 0;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <span class="material-icons" style="font-size: 20px;">folder</span>
+                                <strong>Путь к папке компаса:</strong>
+                            </label>
+                            <div class="input-group">
+                                <input type="text" id="singleFolderInput" class="form-control" 
+                                       placeholder="E:\Данные\Компас\1234" 
+                                       style="flex: 1;">
+                                <button class="btn btn-primary" id="analyzeSingleBtn">
+                                    <span class="material-icons">play_arrow</span>
+                                    Анализировать
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                            💡 Пример: E:\MTCGeo\Калибровка\Коралл\17
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-section" id="resultsSection" style="display: none;">
+                    <!-- Device Info Panel -->
+                    <div id="deviceInfoPanel" class="device-info-panel" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(139, 92, 246, 0.9) 100%); border-radius: 12px; padding: 1.5rem 2rem; margin-bottom: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                        <!-- Информация о устройстве + Навигация -->
+                        <div style="display: grid; grid-template-columns: auto auto 1fr auto; gap: 2.5rem; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span class="material-icons" style="color: rgb(255, 255, 255); font-size: 40px;">category</span>
+                                <div>
+                                    <p style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.7); margin: 0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Тип устройства</p>
+                                    <p id="deviceTypeDisplay" style="font-size: 1.25rem; font-weight: 700; color: #fff; margin: 0;">—</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span class="material-icons" style="color: rgb(255, 255, 255); font-size: 40px;">numbers</span>
+                                <div>
+                                    <p style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.7); margin: 0; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Номер ДСС</p>
+                                    <p id="compassNumberDisplay" style="font-size: 1.25rem; font-weight: 700; color: #fff; margin: 0;">—</p>
+                                </div>
+                            </div>
+                            <div></div>
+                            <!-- Navigation Buttons -->
+                            <div id="navigationButtons" style="display: none; gap: 0.5rem; align-items: center;">
+                                <button class="nav-btn" id="prevAnalysisBtn" title="Предыдущий">
+                                    <span class="material-icons">chevron_left</span>
+                                </button>
+                                <span id="navPosition" style="color: rgba(255, 255, 255, 0.95); font-size: 0.875rem; font-weight: 600; white-space: nowrap;">1 / 10</span>
+                                <button class="nav-btn" id="nextAnalysisBtn" title="Следующий">
+                                    <span class="material-icons">chevron_right</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span id="statIcon" class="material-icons stat-icon success">check_circle</span>
+                            <div class="stat-content">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                    <h4 id="statValid">-</h4>
+                                    <div id="operatorBadgeContainer" style="display: none;"></div>
+                                </div>
+                                <p>Статус</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="material-icons stat-icon info">rotate_right</span>
+                            <div class="stat-content">
+                                <h4 id="statTurns">-</h4>
+                                <p>Найдено поворотов</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="material-icons stat-icon warning">lens_blur</span>
+                            <div class="stat-content">
+                                <h4 id="statSegments">-</h4>
+                                <p>Стабильных сегментов</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="material-icons stat-icon">dataset</span>
+                            <div class="stat-content">
+                                <h4 id="statAngles">-</h4>
+                                <p>Всего измерений</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Grid -->
+                    <div class="content-grid">
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3>Визуализация углов</h3>
+                                <button class="btn btn-secondary" id="resetChartZoom" title="Сбросить зум" style="height: 36px;">
+                                    <span class="material-icons">zoom_out_map</span>
+                                    Сбросить зум
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <!-- Контролы диапазона индексов -->
+                                <div style="display: grid; grid-template-columns: auto 100px auto 100px auto auto; gap: 0.75rem; align-items: center; margin-bottom: 1rem; padding: 0.75rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px;">
+                                    <label style="font-weight: 500; white-space: nowrap;">От индекса:</label>
+                                    <input type="number" id="chartStartIndex" class="form-control" min="0" value="0">
+                                    
+                                    <label style="font-weight: 500; white-space: nowrap;">До индекса:</label>
+                                    <input type="number" id="chartEndIndex" class="form-control" min="0" value="1000">
+                                    
+                                    <button class="btn btn-primary" id="applyChartRange" style="white-space: nowrap;">
+                                        <span class="material-icons" style="font-size: 18px;">filter_alt</span>
+                                        Применить
+                                    </button>
+                                    <button class="btn btn-secondary" id="resetChartRange" style="white-space: nowrap;">
+                                        <span class="material-icons" style="font-size: 18px;">refresh</span>
+                                        Сбросить
+                                    </button>
+                                </div>
+                                <canvas id="polarChart"></canvas>
+                                <small style="color: var(--text-secondary); text-align: center; display: block; margin-top: 0.5rem;">
+                                    💡 Используйте поля выше для выбора диапазона индексов, или колесико мыши для зума
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Последовательность поворотов</h3>
+                                <span class="badge" id="turnsBadge">0</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Индексы</th>
+                                                <th>Начальный угол</th>
+                                                <th>Конечный угол</th>
+                                                <th>Изменение</th>
+                                                <th>Статус</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="turnsTableBody">
+                                            <tr>
+                                                <td colspan="6" class="empty-state">
+                                                    <span class="material-icons">info</span>
+                                                    Нет данных
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Log Card -->
+                    <div class="card log-card">
+                        <div class="card-header">
+                            <h3>Детальный лог анализа</h3>
+                            <button class="btn-icon" id="copyLogBtn">
+                                <span class="material-icons">content_copy</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <pre id="logViewer" class="log-viewer">Лог появится после анализа...</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Batch Page -->
+            <div class="page" id="batchPage">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Пакетный анализ</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Директория с папками компасов</label>
+                            <div class="input-group">
+                                <input type="text" id="batchDirInput" class="form-control" 
+                                       placeholder="E:\Данные\Компасы">
+                                <button class="btn btn-primary" id="batchAnalyzeBtn">
+                                    <span class="material-icons">play_arrow</span>
+                                    Запустить
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="batch-results" id="batchResults" style="display: none;">
+                            <div class="batch-summary">
+                                <div class="summary-item success">
+                                    <span class="material-icons">check_circle</span>
+                                    <span id="batchSuccess">0</span> успешно
+                                </div>
+                                <div class="summary-item error">
+                                    <span class="material-icons">cancel</span>
+                                    <span id="batchFailed">0</span> с ошибками
+                                </div>
+                                <div class="summary-item info">
+                                    <span class="material-icons">analytics</span>
+                                    <span id="batchTotal">0</span> всего
+                                </div>
+                            </div>
+                            
+                            <!-- Фильтры пакетного анализа -->
+                            <div style="display: flex; gap: 1rem; margin-top: 1rem; padding: 0.75rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px; flex-wrap: wrap;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <label style="font-weight: 500; white-space: nowrap;">Поиск:</label>
+                                    <input type="text" id="batchSearchInput" class="form-control" 
+                                           placeholder="Номер компаса..." style="width: 150px;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <label style="font-weight: 500; white-space: nowrap;">Статус:</label>
+                                    <select id="batchFilterStatus" class="form-control" style="width: 180px;">
+                                        <option value="all">Все</option>
+                                        <option value="success">✓ Успешно</option>
+                                        <option value="failed">✗ Ошибки</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <label style="font-weight: 500; white-space: nowrap;">Сортировка:</label>
+                                    <select id="batchSort" class="form-control" style="width: 200px;">
+                                        <option value="name-asc" selected>№ ДСС (А-Я)</option>
+                                        <option value="name-desc">№ ДСС (Я-А)</option>
+                                        <option value="status-failed">Ошибки первые</option>
+                                        <option value="status-success">Успешные первые</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary" id="applyBatchFilters">
+                                    <span class="material-icons">filter_alt</span>
+                                    Применить
+                                </button>
+                                <button class="btn btn-warning" id="resetBatchFilters">
+                                    <span class="material-icons">clear</span>
+                                    Сбросить
+                                </button>
+                            </div>
+                            
+                            <div class="table-container" style="margin-top: 1.5rem;">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>№ ДСС</th>
+                                            <th>Тип устройства</th>
+                                            <th>Статус</th>
+                                            <th>Повороты</th>
+                                            <th>Действия</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="batchResultsBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Page -->
+            <div class="page" id="historyPage">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>История анализов</h3>
+                        <div class="header-actions" style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" id="refreshHistoryBtn" title="Обновить">
+                                <span class="material-icons">refresh</span>
+                                Обновить
+                            </button>
+                            <button class="btn btn-secondary" id="clearHistoryBtn" title="Очистить историю">
+                                <span class="material-icons">delete_sweep</span>
+                                Очистить
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Фильтры -->
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem; padding: 0.75rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label style="font-weight: 500; white-space: nowrap;">Поиск:</label>
+                                <input type="text" id="historySearchInput" class="form-control" 
+                                       placeholder="Номер компаса..." style="width: 150px;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label style="font-weight: 500; white-space: nowrap;">Статус:</label>
+                                <select id="historyFilterStatus" class="form-control" style="width: 180px;">
+                                    <option value="all">Все</option>
+                                    <option value="success">✓ Успешно</option>
+                                    <option value="failed">✗ Ошибки</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label style="font-weight: 500; white-space: nowrap;">От даты:</label>
+                                <input type="date" id="historyFilterDateFrom" class="form-control" style="width: 150px;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label style="font-weight: 500; white-space: nowrap;">До даты:</label>
+                                <input type="date" id="historyFilterDateTo" class="form-control" style="width: 150px;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label style="font-weight: 500; white-space: nowrap;">Тип:</label>
+                                <select id="historyFilterDeviceType" class="form-control" style="width: 150px;">
+                                    <option value="all">Все типы</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label style="font-weight: 500; white-space: nowrap;">
+                                    <input type="checkbox" id="historyFilterUnique" style="width: auto; margin-right: 0.25rem;">
+                                    Уникальные записи
+                                </label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label style="font-weight: 500; white-space: nowrap;">Сортировка:</label>
+                                <select id="historySort" class="form-control" style="width: 200px;">
+                                    <option value="date-desc">Дата (новые первые)</option>
+                                    <option value="date-asc">Дата (старые первые)</option>
+                                    <option value="name-asc" selected>№ ДСС (А-Я)</option>
+                                    <option value="name-desc">№ ДСС (Я-А)</option>
+                                    <option value="device-asc">Тип (А-Я)</option>
+                                    <option value="device-desc">Тип (Я-А)</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="applyHistoryFilters" style="white-space: nowrap;">
+                                <span class="material-icons" style="font-size: 18px;">filter_alt</span>
+                                Применить
+                            </button>
+                            <button class="btn btn-warning" id="resetHistoryFilters" style="white-space: nowrap;">
+                                <span class="material-icons" style="font-size: 18px;">clear</span>
+                                Сбросить
+                            </button>
+                        </div>
+
+                        <!-- Статистика -->
+                        <div class="batch-summary" id="historySummary" style="margin-bottom: 1.5rem;">
+                            <div class="summary-item success">
+                                <span class="material-icons">check_circle</span>
+                                <span id="historySuccess">0</span> успешно
+                            </div>
+                            <div class="summary-item error">
+                                <span class="material-icons">cancel</span>
+                                <span id="historyFailed">0</span> с ошибками
+                            </div>
+                            <div class="summary-item info">
+                                <span class="material-icons">history</span>
+                                <span id="historyTotal">0</span> всего
+                            </div>
+                        </div>
+
+                        <!-- Таблица истории -->
+                        <div class="table-container" id="historyTableContainer">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Дата и время</th>
+                                        <th>№ ДСС</th>
+                                        <th>Тип устройства</th>
+                                        <th>Статус</th>
+                                        <th>Повороты</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody">
+                                    <tr>
+                                        <td colspan="7" class="empty-state">
+                                            <span class="material-icons">hourglass_empty</span>
+                                            Загрузка...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Editor Page -->
+            <div class="page" id="editorPage">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Массовое переименование файлов</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="settings-info-box">
+                            <span class="material-icons">info</span>
+                            <div>
+                                <strong>Функция:</strong> Удаляет указанный текст из названий всех файлов в директории.
+                                Например: "1234_tim.csv" → "1234.csv"
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Директория для обработки</label>
+                            <div class="input-group">
+                                <input type="text" id="editorDirInput" class="form-control" 
+                                       placeholder="E:\Данные\Файлы">
+                            <button class="btn btn-secondary" id="selectEditorDirBtn">
+                                <span class="material-icons">folder_open</span>
+                                Выбрать
+                            </button>
+                            </div>
+                            <small>Выберите папку с файлами для переименования</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Текст для удаления из названий</label>
+                            <input type="text" id="editorTextInput" class="form-control" 
+                                   placeholder="tim" value="tim">
+                            <small>Этот текст будет удален из названий всех файлов</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" id="editorRecursive" style="width: auto;">
+                                <span>Обработать подпапки (рекурсивно)</span>
+                            </label>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                            <button class="btn btn-secondary" id="previewRenameBtn">
+                                <span class="material-icons">preview</span>
+                                Предпросмотр
+                            </button>
+                            <button class="btn btn-primary" id="executeRenameBtn">
+                                <span class="material-icons">drive_file_rename_outline</span>
+                                Выполнить переименование
+                            </button>
+                        </div>
+
+                        <!-- Результаты -->
+                        <div id="renameResults" style="display: none; margin-top: 2rem;">
+                            <h4>Результаты переименования</h4>
+                            
+                            <div class="batch-summary" style="margin: 1rem 0;">
+                                <div class="summary-item success">
+                                    <span class="material-icons">check_circle</span>
+                                    <span id="renameSuccess">0</span> успешно
+                                </div>
+                                <div class="summary-item error">
+                                    <span class="material-icons">cancel</span>
+                                    <span id="renameFailed">0</span> ошибок
+                                </div>
+                                <div class="summary-item info">
+                                    <span class="material-icons">description</span>
+                                    <span id="renameTotal">0</span> всего
+                                </div>
+                            </div>
+
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Старое имя</th>
+                                            <th>Новое имя</th>
+                                            <th>Статус</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="renameResultsBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs Page -->
+            <div class="page" id="logsPage">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Логи отладки</h3>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" id="refreshLogsBtn">
+                                <span class="material-icons">refresh</span>
+                                Обновить
+                            </button>
+                            <button class="btn btn-secondary" id="clearLogsBtn">
+                                <span class="material-icons">delete_sweep</span>
+                                Очистить
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="settings-info-box" style="margin-bottom: 1rem;">
+                            <span class="material-icons">info</span>
+                            <div>
+                                <strong>Просмотр логов отладки</strong><br>
+                                Здесь отображаются детальные логи работы приложения для диагностики проблем.
+                            </div>
+                        </div>
+                        
+                        <div style="background: var(--bg-card); border-radius: var(--radius-md); padding: 1rem; max-height: 600px; overflow-y: auto; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.875rem;">
+                            <pre id="logsViewer" style="margin: 0; white-space: pre-wrap; word-wrap: break-word; color: var(--text-primary);">Загрузка логов...</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div class="page" id="settingsPage">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Настройки анализа</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="settings-info-box">
+                            <span class="material-icons">info</span>
+                            <div>
+                                <strong>Важно:</strong> Настройки применяются ко всем новым анализам.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Порог стабильности (градусы)</label>
+                            <input type="number" id="setting-stability" class="form-control" 
+                                   value="5.0" step="0.1" min="0" max="20">
+                            <small>Рекомендуется: 3.0 - 7.0</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Допуск поворота (градусы)</label>
+                            <input type="number" id="setting-tolerance" class="form-control" 
+                                   value="10.0" step="0.1" min="0" max="30">
+                            <small>Рекомендуется: 8.0 - 12.0. Стандарт: 10.0°</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Допуск суммы поворотов (градусы)</label>
+                            <input type="number" id="setting-sumTolerance" class="form-control" 
+                                   value="20.0" step="0.1" min="0" max="50">
+                            <small>Сумма 4-х поворотов должна быть ≈360°. Стандарт: 20.0°</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Минимальная длина сегмента</label>
+                            <input type="number" id="setting-minLength" class="form-control" 
+                                   value="2" step="1" min="1" max="10">
+                            <small>Рекомендуется: 2 - 3</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Максимум выбросов (гистерезис)</label>
+                            <input type="number" id="setting-outliers" class="form-control" 
+                                   value="0" step="1" min="0" max="10">
+                            <small>Рекомендуется: 0 - 3</small>
+                        </div>
+
+                        <div class="settings-actions">
+                            <button class="btn btn-primary" id="saveSettingsBtn">
+                                <span class="material-icons">save</span>
+                                Сохранить настройки
+                            </button>
+                            <button class="btn btn-secondary" id="resetSettingsBtn">
+                                <span class="material-icons">restore</span>
+                                Сбросить
+                            </button>
+                        </div>
+
+                        <div class="settings-preview">
+                            <h4>Текущие значения</h4>
+                            <div class="settings-preview-grid">
+                                <div class="preview-item">
+                                    <span class="preview-label">Порог стабильности:</span>
+                                    <span class="preview-value" id="preview-stability">5.0°</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span class="preview-label">Допуск поворота:</span>
+                                    <span class="preview-value" id="preview-tolerance">±10.0°</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span class="preview-label">Допуск суммы:</span>
+                                    <span class="preview-value" id="preview-sumTolerance">±20.0°</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span class="preview-label">Мин. длина:</span>
+                                    <span class="preview-value" id="preview-minLength">2</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span class="preview-label">Макс. выбросов:</span>
+                                    <span class="preview-value" id="preview-outliers">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text">Анализ данных...</p>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Analysis Device Type Modal -->
+    <div class="modal-overlay" id="analysisDeviceTypeModal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Начало анализа</h3>
+                <button class="btn-icon" onclick="closeAnalysisDeviceModal()">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Тип устройства (ДСС)</label>
+                    <input type="text" id="analysisDeviceTypeInput" class="form-control" 
+                           placeholder="Например: Коралл, МТ-12" 
+                           value="Коралл">
+                    <small>Будет сохранен в истории и использован при экспорте</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAnalysisDeviceModal()">
+                    Отмена
+                </button>
+                <button class="btn btn-primary" id="confirmAnalysisBtn">
+                    <span class="material-icons">play_arrow</span>
+                    Начать анализ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Directory Modal -->
+    <div class="modal-overlay" id="deviceTypeModal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Экспорт результатов калибровки</h3>
+                <button class="btn-icon" onclick="closeDeviceTypeModal()">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Директория для сохранения</label>
+                    <div class="input-group">
+                        <input type="text" id="exportDirInput" class="form-control" 
+                               placeholder="Выберите папку..." readonly>
+                        <button class="btn btn-secondary" id="selectExportDirBtn">
+                            <span class="material-icons">folder_open</span>
+                            Выбрать
+                        </button>
+                    </div>
+                    <small>По умолчанию сохраняется рядом с программой</small>
+                </div>
+                <div id="exportInfo" style="padding: 0.75rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px; margin-top: 1rem;">
+                    <p style="margin: 0; font-weight: 500;">Будет экспортировано: <span id="exportCount">0</span> записей</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeviceTypeModal()">
+                    Отмена
+                </button>
+                <button class="btn btn-primary" id="confirmExportBtn">
+                    <span class="material-icons">download</span>
+                    Экспортировать
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Status Modal -->
+    <div class="modal-overlay" id="changeStatusModal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Изменение статуса анализа</h3>
+                <button class="btn-icon" onclick="closeChangeStatusModal()">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="padding: 1rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px; border-left: 4px solid rgb(99, 102, 241); margin-bottom: 1rem;">
+                    <p style="margin: 0; font-weight: 500; color: rgb(79, 70, 229);">
+                        <span class="material-icons" style="vertical-align: middle; font-size: 20px;">edit</span>
+                        Изменить статус анализа
+                    </p>
+                    <p id="changeStatusReason" style="margin: 0.5rem 0 0 0; font-size: 0.875rem; color: var(--text-secondary);"></p>
+                </div>
+                
+                <div class="form-group">
+                    <label style="font-weight: 600; margin-bottom: 0.75rem; display: block;">Выберите новый статус:</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-success" id="confirmSuccessBtn" style="flex: 1;">
+                            <span class="material-icons">check_circle</span>
+                            Успешно
+                        </button>
+                        <button class="btn btn-danger" id="confirmFailedBtn" style="flex: 1;">
+                            <span class="material-icons">cancel</span>
+                            Не прошло
+                        </button>
+                    </div>
+                    <small style="display: block; margin-top: 0.75rem; color: var(--text-secondary);">
+                        После подтверждения статус будет обновлен и сохранен в истории
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeChangeStatusModal()">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js - локальная копия для работы без интернета -->
+    <script src="vendor/chart.umd.min.js"></script>
+    <script src="vendor/chartjs-plugin-zoom.min.js"></script>
+    <script src="wailsjs/runtime/runtime.js"></script>
+    <script src="version.js?v=2.0.3"></script>
+    <script src="app.js?v=2.0.3"></script>
+</body>
+</html>
